@@ -1,11 +1,16 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
-import { authService, User, AuthResponse } from "../services/auth.service";
+import {
+  authService,
+  User,
+  AuthResponse,
+  RegisterDto,
+} from "../services/auth.service";
 
 interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
   login: (email: string, password: string) => Promise<void>;
-  register: (email: string, password: string) => Promise<void>;
+  register: (data: RegisterDto) => Promise<void>;
   logout: () => Promise<void>;
 }
 
@@ -20,7 +25,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const token = localStorage.getItem("token");
     const userData = localStorage.getItem("user");
     if (token && userData) {
-      setUser(JSON.parse(userData));
+      console.log("UserData:", userData);
+      // setUser(JSON.parse(userData));
       setIsAuthenticated(true);
     }
   }, []);
@@ -37,9 +43,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const register = async (email: string, password: string) => {
+  const register = async (data: RegisterDto) => {
     try {
-      const response = await authService.register({ email, password });
+      const response = await authService.register(data);
       setUser(response.user);
       setIsAuthenticated(true);
       localStorage.setItem("token", response.token);

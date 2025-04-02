@@ -17,8 +17,11 @@ export interface LoginDto {
 }
 
 export interface RegisterDto {
+  username: string;
   email: string;
   password: string;
+  role: string;
+  phone: string;
 }
 
 class AuthService {
