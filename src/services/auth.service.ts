@@ -1,14 +1,40 @@
 import { api } from "./api";
 
+export interface Role {
+  id: number;
+  name: string;
+  description: string;
+}
+
 export interface User {
-  id: string;
+  id: number;
+  username: string;
   email: string;
-  role: "CUSTOMER" | "FULFILLER";
+  status: string;
+  last_login: string;
+  last_activity: string;
+  phone: string;
+  failed_login_attempts: number;
+  last_login_attempt: string;
+  roles: Role[];
 }
 
 export interface AuthResponse {
-  user: User;
-  token: string;
+  id: number;
+  username: string;
+  email: string;
+  status: string;
+  last_login: string;
+  last_activity: string;
+  phone: string;
+  failed_login_attempts: number;
+  last_login_attempt: string;
+  password_changed_at: string | null;
+  roles: Role[];
+  created_at: string;
+  updated_at: string;
+  deleted_at: string | null;
+  accessToken: string;
 }
 
 export interface LoginDto {

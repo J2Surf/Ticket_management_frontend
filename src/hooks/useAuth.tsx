@@ -25,19 +25,31 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const token = localStorage.getItem("token");
     const userData = localStorage.getItem("user");
     if (token && userData) {
-      console.log("UserData:", userData);
-      // setUser(JSON.parse(userData));
-      setIsAuthenticated(true);
+      try {
+        const parsedUser = JSON.parse(userData);
+        setUser(parsedUser);
+        setIsAuthenticated(true);
+      } catch (error) {
+        console.error("Error parsing user data:", error);
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+      }
     }
   }, []);
 
   const login = async (email: string, password: string) => {
     try {
       const response = await authService.login({ email, password });
-      setUser(response.user);
+
+      if (!response || !response.accessToken) {
+        throw new Error("Invalid response from server");
+      }
+
+      const { accessToken, ...userData } = response;
+      setUser(userData);
       setIsAuthenticated(true);
-      localStorage.setItem("token", response.token);
-      localStorage.setItem("user", JSON.stringify(response.user));
+      localStorage.setItem("token", accessToken);
+      localStorage.setItem("user", JSON.stringify(userData));
     } catch (error) {
       throw new Error("Invalid email or password");
     }
@@ -46,10 +58,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const register = async (data: RegisterDto) => {
     try {
       const response = await authService.register(data);
-      setUser(response.user);
+      console.log("Register response in useAuth:", response);
+
+      if (!response || !response.accessToken) {
+        throw new Error("Invalid response from server");
+      }
+
+      const { accessToken, ...userData } = response;
+      setUser(userData);
       setIsAuthenticated(true);
-      localStorage.setItem("token", response.token);
-      localStorage.setItem("user", JSON.stringify(response.user));
+      localStorage.setItem("token", accessToken);
+      localStorage.setItem("user", JSON.stringify(userData));
     } catch (error) {
       throw new Error("Registration failed. Email might already be in use.");
     }

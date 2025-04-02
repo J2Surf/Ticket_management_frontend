@@ -15,6 +15,7 @@ import CreateTicketForm from "./components/tickets/CreateTicketForm";
 // import DashboardPage from "./pages/dashboard/DashboardPage";
 import { useAuth } from "./hooks/useAuth";
 import { AuthProvider } from "./hooks/useAuth";
+import DashboardPage from "./pages/dashboard/DashboardPage";
 
 const queryClient = new QueryClient();
 
@@ -51,7 +52,7 @@ function AppRoutes() {
           </PrivateRoute>
         }
       />
-      {/* <Route
+      <Route
         path="/dashboard"
         element={
           <PrivateRoute>
@@ -65,7 +66,7 @@ function AppRoutes() {
             </div>
           </PrivateRoute>
         }
-      /> */}
+      />
       <Route
         path="/tickets"
         element={
