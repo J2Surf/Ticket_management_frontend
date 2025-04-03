@@ -83,7 +83,7 @@ const Header: React.FC = () => {
               }`}
               onClick={toggleTheme}
             >
-              {isDarkMode ? (
+              {!isDarkMode ? (
                 <svg
                   className="w-5 h-5"
                   viewBox="0 0 20 20"

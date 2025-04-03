@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Routes, Route, useLocation } from "react-router-dom";
 import Panel from "./Panel";
 import { useAlert } from "../contexts/AlertContext";
+import { useTheme } from "../contexts/ThemeContext";
 
 interface Transaction {
   date: string;
@@ -24,13 +25,20 @@ const PaymentSection: React.FC<{
   balance: number;
   onConnectWallet: () => void;
   onDeposit: () => void;
-}> = ({ transactions, balance, onConnectWallet, onDeposit }) => (
+  isDarkMode: boolean;
+}> = ({ transactions, balance, onConnectWallet, onDeposit, isDarkMode }) => (
   <div className="space-y-8">
     {/* Accounts Section */}
-    <div className="bg-[#1F2937] rounded-xl p-6">
+    <div
+      className={`${isDarkMode ? "bg-[#1F2937]" : "bg-white"} rounded-xl p-6 ${
+        isDarkMode ? "" : "shadow-sm"
+      }`}
+    >
       <div className="flex items-center gap-2 mb-6">
         <svg
-          className="w-5 h-5 text-gray-300"
+          className={`w-5 h-5 ${
+            isDarkMode ? "text-gray-300" : "text-gray-600"
+          }`}
           viewBox="0 0 20 20"
           fill="currentColor"
         >
@@ -41,24 +49,56 @@ const PaymentSection: React.FC<{
             clipRule="evenodd"
           />
         </svg>
-        <h2 className="text-xl font-semibold text-white">Accounts</h2>
+        <h2
+          className={`text-xl font-semibold ${
+            isDarkMode ? "text-white" : "text-gray-900"
+          }`}
+        >
+          Accounts
+        </h2>
       </div>
 
       <div className="mb-6">
-        <div className="text-sm text-gray-400">Total Balance</div>
-        <div className="text-2xl font-bold text-white">
+        <div
+          className={`text-sm ${
+            isDarkMode ? "text-gray-400" : "text-gray-500"
+          }`}
+        >
+          Total Balance
+        </div>
+        <div
+          className={`text-2xl font-bold ${
+            isDarkMode ? "text-white" : "text-gray-900"
+          }`}
+        >
           ${balance.toLocaleString()}.25
         </div>
       </div>
 
-      <div className="text-sm text-gray-400 mb-4">Your Accounts</div>
+      <div
+        className={`text-sm ${
+          isDarkMode ? "text-gray-400" : "text-gray-500"
+        } mb-4`}
+      >
+        Your Accounts
+      </div>
 
       <div className="space-y-3">
-        <div className="flex items-center justify-between p-3 bg-[#111827] rounded-lg">
+        <div
+          className={`flex items-center justify-between p-3 ${
+            isDarkMode ? "bg-[#111827]" : "bg-gray-50"
+          } rounded-lg`}
+        >
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-green-500/20 rounded-lg flex items-center justify-center">
+            <div
+              className={`w-10 h-10 ${
+                isDarkMode ? "bg-green-500/20" : "bg-green-100"
+              } rounded-lg flex items-center justify-center`}
+            >
               <svg
-                className="w-5 h-5 text-green-500"
+                className={`w-5 h-5 ${
+                  isDarkMode ? "text-green-500" : "text-green-600"
+                }`}
                 viewBox="0 0 20 20"
                 fill="currentColor"
               >
@@ -71,18 +111,46 @@ const PaymentSection: React.FC<{
               </svg>
             </div>
             <div>
-              <div className="font-medium text-white">Main Savings</div>
-              <div className="text-sm text-gray-400">Personal savings</div>
+              <div
+                className={`font-medium ${
+                  isDarkMode ? "text-white" : "text-gray-900"
+                }`}
+              >
+                Main Savings
+              </div>
+              <div
+                className={`text-sm ${
+                  isDarkMode ? "text-gray-400" : "text-gray-500"
+                }`}
+              >
+                Personal savings
+              </div>
             </div>
           </div>
-          <div className="font-medium text-white">$8,459.45</div>
+          <div
+            className={`font-medium ${
+              isDarkMode ? "text-white" : "text-gray-900"
+            }`}
+          >
+            $8,459.45
+          </div>
         </div>
 
-        <div className="flex items-center justify-between p-3 bg-[#111827] rounded-lg">
+        <div
+          className={`flex items-center justify-between p-3 ${
+            isDarkMode ? "bg-[#111827]" : "bg-gray-50"
+          } rounded-lg`}
+        >
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-blue-500/20 rounded-lg flex items-center justify-center">
+            <div
+              className={`w-10 h-10 ${
+                isDarkMode ? "bg-blue-500/20" : "bg-blue-100"
+              } rounded-lg flex items-center justify-center`}
+            >
               <svg
-                className="w-5 h-5 text-blue-500"
+                className={`w-5 h-5 ${
+                  isDarkMode ? "text-blue-500" : "text-blue-600"
+                }`}
                 viewBox="0 0 20 20"
                 fill="currentColor"
               >
@@ -94,18 +162,46 @@ const PaymentSection: React.FC<{
               </svg>
             </div>
             <div>
-              <div className="font-medium text-white">Checking Account</div>
-              <div className="text-sm text-gray-400">Daily expenses</div>
+              <div
+                className={`font-medium ${
+                  isDarkMode ? "text-white" : "text-gray-900"
+                }`}
+              >
+                Checking Account
+              </div>
+              <div
+                className={`text-sm ${
+                  isDarkMode ? "text-gray-400" : "text-gray-500"
+                }`}
+              >
+                Daily expenses
+              </div>
             </div>
           </div>
-          <div className="font-medium text-white">$2,850.00</div>
+          <div
+            className={`font-medium ${
+              isDarkMode ? "text-white" : "text-gray-900"
+            }`}
+          >
+            $2,850.00
+          </div>
         </div>
 
-        <div className="flex items-center justify-between p-3 bg-[#111827] rounded-lg">
+        <div
+          className={`flex items-center justify-between p-3 ${
+            isDarkMode ? "bg-[#111827]" : "bg-gray-50"
+          } rounded-lg`}
+        >
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-purple-500/20 rounded-lg flex items-center justify-center">
+            <div
+              className={`w-10 h-10 ${
+                isDarkMode ? "bg-purple-500/20" : "bg-purple-100"
+              } rounded-lg flex items-center justify-center`}
+            >
               <svg
-                className="w-5 h-5 text-purple-500"
+                className={`w-5 h-5 ${
+                  isDarkMode ? "text-purple-500" : "text-purple-600"
+                }`}
                 viewBox="0 0 20 20"
                 fill="currentColor"
               >
@@ -114,18 +210,46 @@ const PaymentSection: React.FC<{
               </svg>
             </div>
             <div>
-              <div className="font-medium text-white">Investment Portfolio</div>
-              <div className="text-sm text-gray-400">Stock & ETFs</div>
+              <div
+                className={`font-medium ${
+                  isDarkMode ? "text-white" : "text-gray-900"
+                }`}
+              >
+                Investment Portfolio
+              </div>
+              <div
+                className={`text-sm ${
+                  isDarkMode ? "text-gray-400" : "text-gray-500"
+                }`}
+              >
+                Stock & ETFs
+              </div>
             </div>
           </div>
-          <div className="font-medium text-white">$15,230.80</div>
+          <div
+            className={`font-medium ${
+              isDarkMode ? "text-white" : "text-gray-900"
+            }`}
+          >
+            $15,230.80
+          </div>
         </div>
 
-        <div className="flex items-center justify-between p-3 bg-[#111827] rounded-lg">
+        <div
+          className={`flex items-center justify-between p-3 ${
+            isDarkMode ? "bg-[#111827]" : "bg-gray-50"
+          } rounded-lg`}
+        >
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-green-500/20 rounded-lg flex items-center justify-center">
+            <div
+              className={`w-10 h-10 ${
+                isDarkMode ? "bg-green-500/20" : "bg-green-100"
+              } rounded-lg flex items-center justify-center`}
+            >
               <svg
-                className="w-5 h-5 text-green-500"
+                className={`w-5 h-5 ${
+                  isDarkMode ? "text-green-500" : "text-green-600"
+                }`}
                 viewBox="0 0 20 20"
                 fill="currentColor"
               >
@@ -137,16 +261,40 @@ const PaymentSection: React.FC<{
               </svg>
             </div>
             <div>
-              <div className="font-medium text-white">Savings Account</div>
-              <div className="text-sm text-gray-400">Emergency fund</div>
+              <div
+                className={`font-medium ${
+                  isDarkMode ? "text-white" : "text-gray-900"
+                }`}
+              >
+                Savings Account
+              </div>
+              <div
+                className={`text-sm ${
+                  isDarkMode ? "text-gray-400" : "text-gray-500"
+                }`}
+              >
+                Emergency fund
+              </div>
             </div>
           </div>
-          <div className="font-medium text-white">$3,000.00</div>
+          <div
+            className={`font-medium ${
+              isDarkMode ? "text-white" : "text-gray-900"
+            }`}
+          >
+            $3,000.00
+          </div>
         </div>
       </div>
 
       <div className="grid grid-cols-4 gap-2 mt-6">
-        <button className="flex items-center justify-center gap-2 py-2 px-3 bg-[#111827] text-white rounded-lg hover:bg-gray-800 transition-colors">
+        <button
+          className={`flex items-center justify-center gap-2 py-2 px-3 ${
+            isDarkMode
+              ? "bg-[#111827] text-white hover:bg-gray-800"
+              : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+          } rounded-lg transition-colors`}
+        >
           <svg className="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
             <path
               fillRule="evenodd"
@@ -156,7 +304,13 @@ const PaymentSection: React.FC<{
           </svg>
           Add
         </button>
-        <button className="flex items-center justify-center gap-2 py-2 px-3 bg-[#111827] text-white rounded-lg hover:bg-gray-800 transition-colors">
+        <button
+          className={`flex items-center justify-center gap-2 py-2 px-3 ${
+            isDarkMode
+              ? "bg-[#111827] text-white hover:bg-gray-800"
+              : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+          } rounded-lg transition-colors`}
+        >
           <svg className="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
             <path
               fillRule="evenodd"
@@ -166,7 +320,13 @@ const PaymentSection: React.FC<{
           </svg>
           Send
         </button>
-        <button className="flex items-center justify-center gap-2 py-2 px-3 bg-[#111827] text-white rounded-lg hover:bg-gray-800 transition-colors">
+        <button
+          className={`flex items-center justify-center gap-2 py-2 px-3 ${
+            isDarkMode
+              ? "bg-[#111827] text-white hover:bg-gray-800"
+              : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+          } rounded-lg transition-colors`}
+        >
           <svg className="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
             <path
               fillRule="evenodd"
@@ -176,18 +336,30 @@ const PaymentSection: React.FC<{
           </svg>
           Top-up
         </button>
-        <button className="flex items-center justify-center gap-2 py-2 px-3 bg-[#111827] text-white rounded-lg hover:bg-gray-800 transition-colors">
+        <button
+          className={`flex items-center justify-center gap-2 py-2 px-3 ${
+            isDarkMode
+              ? "bg-[#111827] text-white hover:bg-gray-800"
+              : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+          } rounded-lg transition-colors`}
+        >
           More
         </button>
       </div>
     </div>
 
     {/* Recent Transactions Section */}
-    <div className="bg-[#1F2937] rounded-xl p-6">
+    <div
+      className={`${isDarkMode ? "bg-[#1F2937]" : "bg-white"} rounded-xl p-6 ${
+        isDarkMode ? "" : "shadow-sm"
+      }`}
+    >
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-2">
           <svg
-            className="w-5 h-5 text-gray-300"
+            className={`w-5 h-5 ${
+              isDarkMode ? "text-gray-300" : "text-gray-600"
+            }`}
             viewBox="0 0 20 20"
             fill="currentColor"
           >
@@ -198,21 +370,47 @@ const PaymentSection: React.FC<{
             />
           </svg>
           <div>
-            <h2 className="text-xl font-semibold text-white">
+            <h2
+              className={`text-xl font-semibold ${
+                isDarkMode ? "text-white" : "text-gray-900"
+              }`}
+            >
               Recent Transactions
             </h2>
-            <div className="text-sm text-gray-400">23 transactions</div>
+            <div
+              className={`text-sm ${
+                isDarkMode ? "text-gray-400" : "text-gray-500"
+              }`}
+            >
+              23 transactions
+            </div>
           </div>
         </div>
-        <div className="text-sm text-gray-400">This Month</div>
+        <div
+          className={`text-sm ${
+            isDarkMode ? "text-gray-400" : "text-gray-500"
+          }`}
+        >
+          This Month
+        </div>
       </div>
 
       <div className="space-y-4">
-        <div className="flex items-center justify-between p-3 bg-[#111827] rounded-lg">
+        <div
+          className={`flex items-center justify-between p-3 ${
+            isDarkMode ? "bg-[#111827]" : "bg-gray-50"
+          } rounded-lg`}
+        >
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center">
+            <div
+              className={`w-10 h-10 ${
+                isDarkMode ? "bg-gray-800" : "bg-gray-200"
+              } rounded-lg flex items-center justify-center`}
+            >
               <svg
-                className="w-5 h-5 text-gray-400"
+                className={`w-5 h-5 ${
+                  isDarkMode ? "text-gray-400" : "text-gray-600"
+                }`}
                 viewBox="0 0 20 20"
                 fill="currentColor"
               >
@@ -224,18 +422,40 @@ const PaymentSection: React.FC<{
               </svg>
             </div>
             <div>
-              <div className="font-medium text-white">Apple Store Purchase</div>
-              <div className="text-sm text-gray-400">Today, 2:45 PM</div>
+              <div
+                className={`font-medium ${
+                  isDarkMode ? "text-white" : "text-gray-900"
+                }`}
+              >
+                Apple Store Purchase
+              </div>
+              <div
+                className={`text-sm ${
+                  isDarkMode ? "text-gray-400" : "text-gray-500"
+                }`}
+              >
+                Today, 2:45 PM
+              </div>
             </div>
           </div>
           <div className="font-medium text-red-500">-$999.00</div>
         </div>
 
-        <div className="flex items-center justify-between p-3 bg-[#111827] rounded-lg">
+        <div
+          className={`flex items-center justify-between p-3 ${
+            isDarkMode ? "bg-[#111827]" : "bg-gray-50"
+          } rounded-lg`}
+        >
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center">
+            <div
+              className={`w-10 h-10 ${
+                isDarkMode ? "bg-gray-800" : "bg-gray-200"
+              } rounded-lg flex items-center justify-center`}
+            >
               <svg
-                className="w-5 h-5 text-gray-400"
+                className={`w-5 h-5 ${
+                  isDarkMode ? "text-gray-400" : "text-gray-600"
+                }`}
                 viewBox="0 0 20 20"
                 fill="currentColor"
               >
@@ -247,18 +467,40 @@ const PaymentSection: React.FC<{
               </svg>
             </div>
             <div>
-              <div className="font-medium text-white">Salary Deposit</div>
-              <div className="text-sm text-gray-400">Today, 9:00 AM</div>
+              <div
+                className={`font-medium ${
+                  isDarkMode ? "text-white" : "text-gray-900"
+                }`}
+              >
+                Salary Deposit
+              </div>
+              <div
+                className={`text-sm ${
+                  isDarkMode ? "text-gray-400" : "text-gray-500"
+                }`}
+              >
+                Today, 9:00 AM
+              </div>
             </div>
           </div>
           <div className="font-medium text-green-500">+$4,500.00</div>
         </div>
 
-        <div className="flex items-center justify-between p-3 bg-[#111827] rounded-lg">
+        <div
+          className={`flex items-center justify-between p-3 ${
+            isDarkMode ? "bg-[#111827]" : "bg-gray-50"
+          } rounded-lg`}
+        >
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center">
+            <div
+              className={`w-10 h-10 ${
+                isDarkMode ? "bg-gray-800" : "bg-gray-200"
+              } rounded-lg flex items-center justify-center`}
+            >
               <svg
-                className="w-5 h-5 text-gray-400"
+                className={`w-5 h-5 ${
+                  isDarkMode ? "text-gray-400" : "text-gray-600"
+                }`}
                 viewBox="0 0 20 20"
                 fill="currentColor"
               >
@@ -270,15 +512,33 @@ const PaymentSection: React.FC<{
               </svg>
             </div>
             <div>
-              <div className="font-medium text-white">Netflix Subscription</div>
-              <div className="text-sm text-gray-400">Yesterday</div>
+              <div
+                className={`font-medium ${
+                  isDarkMode ? "text-white" : "text-gray-900"
+                }`}
+              >
+                Netflix Subscription
+              </div>
+              <div
+                className={`text-sm ${
+                  isDarkMode ? "text-gray-400" : "text-gray-500"
+                }`}
+              >
+                Yesterday
+              </div>
             </div>
           </div>
           <div className="font-medium text-red-500">-$15.99</div>
         </div>
       </div>
 
-      <button className="w-full mt-6 py-3 text-center text-white bg-[#111827] rounded-lg hover:bg-gray-800 transition-colors flex items-center justify-center gap-2">
+      <button
+        className={`w-full mt-6 py-3 text-center ${
+          isDarkMode
+            ? "bg-[#1F2937] text-white hover:bg-gray-800"
+            : "bg-white text-gray-700 hover:bg-gray-50"
+        } rounded-lg transition-colors flex items-center justify-center gap-2`}
+      >
         View All Transactions
         <svg className="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
           <path
@@ -363,6 +623,7 @@ const TicketSection: React.FC<{
 const ClientDashboard: React.FC = () => {
   const location = useLocation();
   const { showAlert } = useAlert();
+  const { isDarkMode } = useTheme();
   const [balance] = useState(90);
   const [transactions] = useState<Transaction[]>([
     {
@@ -422,7 +683,11 @@ const ClientDashboard: React.FC = () => {
   ];
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
+    <div
+      className={`flex min-h-screen ${
+        isDarkMode ? "bg-[#111827] text-white" : "bg-gray-50 text-gray-900"
+      }`}
+    >
       <Panel items={panelItems} />
       <div className="flex-1 p-8">
         <Routes>
@@ -434,6 +699,7 @@ const ClientDashboard: React.FC = () => {
                 balance={balance}
                 onConnectWallet={handleConnectWallet}
                 onDeposit={handleDeposit}
+                isDarkMode={isDarkMode}
               />
             }
           />

@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Routes, Route, useLocation } from "react-router-dom";
 import Panel from "./Panel";
 import { useAlert } from "../contexts/AlertContext";
+import { useTheme } from "../contexts/ThemeContext";
 
 interface Transaction {
   date: string;
@@ -12,9 +13,12 @@ interface Transaction {
 }
 
 interface Ticket {
-  id: number;
-  name: string;
+  id: string;
+  paymentMethod: string;
+  paymentTag: string;
+  accountName: string;
   amount: number;
+  image: string;
   status: "Completed" | "Processing" | "Failed";
   action?: string;
 }
@@ -101,7 +105,7 @@ const PaymentSection: React.FC<{
 
 const TicketSection: React.FC<{
   tickets: Ticket[];
-  onAction: (action: string, ticketId: number) => void;
+  onAction: (action: string, ticketId: string) => void;
 }> = ({ tickets, onAction }) => (
   <div className="space-y-6">
     <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
@@ -130,7 +134,7 @@ const TicketSection: React.FC<{
                   {ticket.id}
                 </td>
                 <td className="p-4 text-gray-900 dark:text-gray-100">
-                  {ticket.name}
+                  {ticket.accountName}
                 </td>
                 <td className="p-4 font-medium text-gray-900 dark:text-gray-100">
                   {ticket.amount} USDT
@@ -204,6 +208,9 @@ const FulfillerDashboard: React.FC = () => {
     },
   ]);
 
+  const { isDarkMode } = useTheme();
+  const [activeTab, setActiveTab] = useState<"current" | "error">("current");
+
   const handleConnectWallet = () => {
     showAlert("info", "Connecting to wallet...");
   };
@@ -220,23 +227,284 @@ const FulfillerDashboard: React.FC = () => {
     },
   ];
 
+  const tickets: Ticket[] = [
+    {
+      id: "11-1742879552-PXBB",
+      paymentMethod: "CashApp",
+      paymentTag: "test",
+      accountName: "test",
+      amount: 1.0,
+      image: "path/to/image",
+      status: "Completed",
+    },
+  ];
+
   return (
-    <div className="flex min-h-screen bg-gray-50">
-      <Panel items={panelItems} />
-      <div className="flex-1 p-8">
-        <Routes>
-          <Route
-            path="/payment"
-            element={
-              <PaymentSection
-                transactions={transactions}
-                balance={balance}
-                onConnectWallet={handleConnectWallet}
-                onWithdraw={handleWithdraw}
-              />
-            }
-          />
-        </Routes>
+    <div
+      className={`w-full p-6 ${
+        isDarkMode ? "bg-[#111827] text-white" : "bg-gray-50 text-gray-900"
+      }`}
+    >
+      <div className="max-w-7xl mx-auto">
+        <div className="flex justify-between items-center mb-8">
+          <h1 className="text-2xl font-semibold">Dashboard Overview</h1>
+          <span className="text-sm text-gray-500">
+            Last updated: 12:13:00 AM
+          </span>
+        </div>
+
+        {/* Overview Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+          {/* Current Batch */}
+          <div
+            className={`p-4 rounded-lg ${
+              isDarkMode ? "bg-[#1F2937]" : "bg-white"
+            } shadow-sm`}
+          >
+            <div className="flex justify-between items-start">
+              <div>
+                <p className="text-blue-400 text-sm font-medium">
+                  CURRENT BATCH
+                </p>
+                <p className="text-2xl font-semibold mt-1">$0.00</p>
+              </div>
+              <div
+                className={`p-2 rounded-lg ${
+                  isDarkMode ? "bg-gray-800" : "bg-gray-100"
+                }`}
+              >
+                <svg
+                  className="w-6 h-6"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"
+                  />
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          {/* Next Batch */}
+          <div
+            className={`p-4 rounded-lg ${
+              isDarkMode ? "bg-[#1F2937]" : "bg-white"
+            } shadow-sm`}
+          >
+            <div className="flex justify-between items-start">
+              <div>
+                <p className="text-yellow-400 text-sm font-medium">
+                  NEXT BATCH
+                </p>
+                <p className="text-2xl font-semibold mt-1">$0.00</p>
+              </div>
+              <div
+                className={`p-2 rounded-lg ${
+                  isDarkMode ? "bg-gray-800" : "bg-gray-100"
+                }`}
+              >
+                <svg
+                  className="w-6 h-6"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"
+                  />
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          {/* Today's Total */}
+          <div
+            className={`p-4 rounded-lg ${
+              isDarkMode ? "bg-[#1F2937]" : "bg-white"
+            } shadow-sm`}
+          >
+            <div className="flex justify-between items-start">
+              <div>
+                <p className="text-green-400 text-sm font-medium">
+                  TODAY'S TOTAL
+                </p>
+                <p className="text-2xl font-semibold mt-1">$101.00</p>
+              </div>
+              <div
+                className={`p-2 rounded-lg ${
+                  isDarkMode ? "bg-gray-800" : "bg-gray-100"
+                }`}
+              >
+                <svg
+                  className="w-6 h-6"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M5 13l4 4L19 7"
+                  />
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          {/* Error Tickets */}
+          <div
+            className={`p-4 rounded-lg ${
+              isDarkMode ? "bg-[#1F2937]" : "bg-white"
+            } shadow-sm`}
+          >
+            <div className="flex justify-between items-start">
+              <div>
+                <p className="text-red-400 text-sm font-medium">
+                  ERROR TICKETS
+                </p>
+                <p className="text-2xl font-semibold mt-1">0</p>
+              </div>
+              <div
+                className={`p-2 rounded-lg ${
+                  isDarkMode ? "bg-gray-800" : "bg-gray-100"
+                }`}
+              >
+                <svg
+                  className="w-6 h-6"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Tickets Table */}
+        <div
+          className={`rounded-lg ${
+            isDarkMode ? "bg-[#1F2937]" : "bg-white"
+          } shadow-sm`}
+        >
+          <div className="border-b border-gray-200 dark:border-gray-700">
+            <nav className="flex">
+              <button
+                onClick={() => setActiveTab("current")}
+                className={`px-4 py-2 text-sm font-medium ${
+                  activeTab === "current"
+                    ? isDarkMode
+                      ? "border-b-2 border-blue-500 text-white"
+                      : "border-b-2 border-blue-500 text-gray-900"
+                    : isDarkMode
+                    ? "text-gray-400 hover:text-gray-300"
+                    : "text-gray-500 hover:text-gray-700"
+                }`}
+              >
+                Current Tickets
+                <span className="ml-2 bg-gray-100 text-gray-700 py-0.5 px-2 rounded-full text-xs">
+                  1 ticket
+                </span>
+              </button>
+              <button
+                onClick={() => setActiveTab("error")}
+                className={`px-4 py-2 text-sm font-medium ${
+                  activeTab === "error"
+                    ? isDarkMode
+                      ? "border-b-2 border-red-500 text-white"
+                      : "border-b-2 border-red-500 text-gray-900"
+                    : isDarkMode
+                    ? "text-gray-400 hover:text-gray-300"
+                    : "text-gray-500 hover:text-gray-700"
+                }`}
+              >
+                Error Tickets
+                <span className="ml-2 bg-gray-100 text-gray-700 py-0.5 px-2 rounded-full text-xs">
+                  0 errors
+                </span>
+              </button>
+            </nav>
+          </div>
+
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr
+                  className={`text-left ${
+                    isDarkMode ? "text-gray-400" : "text-gray-500"
+                  } text-sm`}
+                >
+                  <th className="px-6 py-3">Ticket ID</th>
+                  <th className="px-6 py-3">Payment Method</th>
+                  <th className="px-6 py-3">Payment Tag</th>
+                  <th className="px-6 py-3">Account Name</th>
+                  <th className="px-6 py-3">Amount</th>
+                  <th className="px-6 py-3">Image</th>
+                  <th className="px-6 py-3">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {tickets.map((ticket) => (
+                  <tr
+                    key={ticket.id}
+                    className={`border-t ${
+                      isDarkMode ? "border-gray-700" : "border-gray-200"
+                    }`}
+                  >
+                    <td className="px-6 py-4">{ticket.id}</td>
+                    <td className="px-6 py-4">{ticket.paymentMethod}</td>
+                    <td className="px-6 py-4">{ticket.paymentTag}</td>
+                    <td className="px-6 py-4">{ticket.accountName}</td>
+                    <td className="px-6 py-4">${ticket.amount.toFixed(2)}</td>
+                    <td className="px-6 py-4">
+                      <button
+                        className={`p-2 rounded-lg ${
+                          isDarkMode
+                            ? "bg-gray-800 hover:bg-gray-700"
+                            : "bg-gray-100 hover:bg-gray-200"
+                        }`}
+                      >
+                        <svg
+                          className="w-5 h-5"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                          />
+                        </svg>
+                      </button>
+                    </td>
+                    <td className="px-6 py-4">
+                      <button className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors">
+                        Process
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
     </div>
   );
