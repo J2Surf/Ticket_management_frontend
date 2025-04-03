@@ -15,9 +15,16 @@ import CreateTicketForm from "./components/tickets/CreateTicketForm";
 // import DashboardPage from "./pages/dashboard/DashboardPage";
 import { useAuth } from "./hooks/useAuth";
 import { AuthProvider } from "./hooks/useAuth";
+import { AlertProvider } from "./contexts/AlertContext";
+import { ThemeProvider } from "./contexts/ThemeContext";
 import DashboardPage from "./pages/dashboard/DashboardPage";
+import ClientDashboard from "./components/ClientDashboard";
+import FulfillerDashboard from "./components/FulfillerDashboard";
+import "./App.css";
 
 const queryClient = new QueryClient();
+
+type UserRole = "client" | "fulfiller";
 
 function PrivateRoute({ children }: { children: React.ReactNode }) {
   const { isAuthenticated } = useAuth();
@@ -29,7 +36,19 @@ function PrivateRoute({ children }: { children: React.ReactNode }) {
   return <>{children}</>;
 }
 
+const DashboardLayout: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => (
+  <>
+    <Header />
+    {children}
+  </>
+);
+
 function AppRoutes() {
+  // This would come from your authentication system
+  const userRole = "client" as UserRole; // Type assertion to fix the error
+
   return (
     <Routes>
       {/* Public routes */}
@@ -40,30 +59,50 @@ function AppRoutes() {
       <Route
         path="/"
         element={
-          <PrivateRoute>
-            <div>
-              <Header />
-              <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-                <div className="px-4 py-6 sm:px-0">
-                  {/* <DashboardPage /> */}
-                </div>
-              </main>
-            </div>
-          </PrivateRoute>
+          userRole === "client" ? (
+            <Navigate to="/client/payment" replace />
+          ) : (
+            <Navigate to="/fulfiller/payment" replace />
+          )
         }
       />
+      <Route
+        path="/client/*"
+        element={
+          userRole === "client" ? (
+            <DashboardLayout>
+              <ClientDashboard />
+            </DashboardLayout>
+          ) : (
+            <Navigate to="/fulfiller/payment" replace />
+          )
+        }
+      />
+      <Route
+        path="/fulfiller/*"
+        element={
+          userRole === "fulfiller" ? (
+            <DashboardLayout>
+              <FulfillerDashboard />
+            </DashboardLayout>
+          ) : (
+            <Navigate to="/client/payment" replace />
+          )
+        }
+      />
+
+      {/* Legacy routes */}
       <Route
         path="/dashboard"
         element={
           <PrivateRoute>
-            <div>
-              <Header />
+            <DashboardLayout>
               <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
                 <div className="px-4 py-6 sm:px-0">
                   <DashboardPage />
                 </div>
               </main>
-            </div>
+            </DashboardLayout>
           </PrivateRoute>
         }
       />
@@ -71,27 +110,28 @@ function AppRoutes() {
         path="/tickets"
         element={
           <PrivateRoute>
-            <Header />
-            <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-              <div className="px-4 py-6 sm:px-0">
-                <div className="mb-8">
-                  <h2 className="text-2xl font-semibold text-gray-900">
-                    Create New Ticket
-                  </h2>
-                  <div className="mt-4">
-                    <CreateTicketForm />
+            <DashboardLayout>
+              <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+                <div className="px-4 py-6 sm:px-0">
+                  <div className="mb-8">
+                    <h2 className="text-2xl font-semibold text-gray-900 dark:text-white">
+                      Create New Ticket
+                    </h2>
+                    <div className="mt-4">
+                      <CreateTicketForm />
+                    </div>
+                  </div>
+                  <div>
+                    <h2 className="text-2xl font-semibold text-gray-900 dark:text-white">
+                      Tickets
+                    </h2>
+                    <div className="mt-4">
+                      <TicketList />
+                    </div>
                   </div>
                 </div>
-                <div>
-                  <h2 className="text-2xl font-semibold text-gray-900">
-                    Tickets
-                  </h2>
-                  <div className="mt-4">
-                    <TicketList />
-                  </div>
-                </div>
-              </div>
-            </main>
+              </main>
+            </DashboardLayout>
           </PrivateRoute>
         }
       />
@@ -99,12 +139,13 @@ function AppRoutes() {
         path="/wallet"
         element={
           <PrivateRoute>
-            <Header />
-            <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-              <div className="px-4 py-6 sm:px-0">
-                <WalletPage />
-              </div>
-            </main>
+            <DashboardLayout>
+              <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+                <div className="px-4 py-6 sm:px-0">
+                  <WalletPage />
+                </div>
+              </main>
+            </DashboardLayout>
           </PrivateRoute>
         }
       />
@@ -115,13 +156,17 @@ function AppRoutes() {
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <BrowserRouter>
-          {/* <Router> */}
-          <AppRoutes />
-          {/* </Router> */}
-        </BrowserRouter>
-      </AuthProvider>
+      <ThemeProvider>
+        <AuthProvider>
+          <AlertProvider>
+            <div className="min-h-screen bg-gray-50">
+              <BrowserRouter>
+                <AppRoutes />
+              </BrowserRouter>
+            </div>
+          </AlertProvider>
+        </AuthProvider>
+      </ThemeProvider>
     </QueryClientProvider>
   );
 }

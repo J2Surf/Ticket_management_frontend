@@ -1,175 +1,232 @@
-import { Fragment } from "react";
-import { Disclosure, Menu, Transition } from "@headlessui/react";
-import { Bars3Icon, XMarkIcon, BellIcon } from "@heroicons/react/24/outline";
-import { useNavigate } from "react-router-dom";
-import { useAuth } from "../../hooks/useAuth";
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
+import { useTheme } from "../../contexts/ThemeContext";
 
-const navigation = [
-  { name: "Dashboard", href: "/dashboard" },
-  { name: "Tickets", href: "/tickets" },
-  { name: "Wallet", href: "/wallet" },
-];
-
-export default function Header() {
-  const navigate = useNavigate();
-  const { user, logout } = useAuth();
+const Header: React.FC = () => {
+  const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
+  const { isDarkMode, toggleTheme } = useTheme();
 
   return (
-    <Disclosure as="nav" className="bg-white shadow">
-      {({ open }) => (
-        <>
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div className="flex h-16 justify-between">
-              <div className="flex">
-                <div className="flex flex-shrink-0 items-center">
-                  <span className="text-xl font-bold text-primary-600">
-                    Ticket Management
-                  </span>
-                </div>
-                <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
-                  {navigation.map((item) => (
-                    <a
-                      key={item.name}
-                      href={item.href}
-                      className="inline-flex items-center border-b-2 border-transparent px-1 pt-1 text-sm font-medium text-gray-500 hover:border-primary-500 hover:text-gray-700"
-                    >
-                      {item.name}
-                    </a>
-                  ))}
-                </div>
-              </div>
-              <div className="hidden sm:ml-6 sm:flex sm:items-center">
-                <button
-                  type="button"
-                  className="rounded-full bg-white p-1 text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
-                >
-                  <span className="sr-only">View notifications</span>
-                  <BellIcon className="h-6 w-6" aria-hidden="true" />
-                </button>
-
-                {/* Profile dropdown */}
-                <Menu as="div" className="relative ml-3">
-                  <div>
-                    <Menu.Button className="flex rounded-full bg-white text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2">
-                      <span className="sr-only">Open user menu</span>
-                      <div className="h-8 w-8 rounded-full bg-primary-100 flex items-center justify-center">
-                        <span className="text-primary-600 font-medium">
-                          {user?.username?.[0]?.toUpperCase() || "U"}
-                        </span>
-                      </div>
-                    </Menu.Button>
-                  </div>
-
-                  <Transition
-                    as={Fragment}
-                    enter="transition ease-out duration-200"
-                    enterFrom="transform opacity-0 scale-95"
-                    enterTo="transform opacity-100 scale-100"
-                    leave="transition ease-in duration-75"
-                    leaveFrom="transform opacity-100 scale-100"
-                    leaveTo="transform opacity-0 scale-95"
+    <header
+      className={`${
+        isDarkMode ? "bg-[#111827] border-gray-800" : "bg-white border-gray-200"
+      } border-b`}
+    >
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-16">
+          {/* Left side - Breadcrumb */}
+          <div className="flex items-center">
+            <nav className="flex" aria-label="Breadcrumb">
+              <ol className="flex items-center space-x-2">
+                <li>
+                  <Link
+                    to="/"
+                    className={`text-sm font-medium ${
+                      isDarkMode
+                        ? "text-gray-300 hover:text-white"
+                        : "text-gray-600 hover:text-gray-900"
+                    }`}
                   >
-                    <Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-                      <Menu.Item>
-                        {({ active }) => (
-                          <button
-                            onClick={() => navigate("/profile")}
-                            className={`${
-                              active ? "bg-gray-100" : ""
-                            } block w-full px-4 py-2 text-left text-sm text-gray-700`}
-                          >
-                            Your Profile
-                          </button>
-                        )}
-                      </Menu.Item>
-                      <Menu.Item>
-                        {({ active }) => (
-                          <button
-                            onClick={logout}
-                            className={`${
-                              active ? "bg-gray-100" : ""
-                            } block w-full px-4 py-2 text-left text-sm text-gray-700`}
-                          >
-                            Sign out
-                          </button>
-                        )}
-                      </Menu.Item>
-                    </Menu.Items>
-                  </Transition>
-                </Menu>
-              </div>
-              <div className="-mr-2 flex items-center sm:hidden">
-                {/* Mobile menu button */}
-                <Disclosure.Button className="inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary-500">
-                  <span className="sr-only">Open main menu</span>
-                  {open ? (
-                    <XMarkIcon className="block h-6 w-6" aria-hidden="true" />
-                  ) : (
-                    <Bars3Icon className="block h-6 w-6" aria-hidden="true" />
-                  )}
-                </Disclosure.Button>
-              </div>
-            </div>
+                    Tapsndr
+                  </Link>
+                </li>
+                <li>
+                  <svg
+                    className={`w-5 h-5 ${
+                      isDarkMode ? "text-gray-600" : "text-gray-400"
+                    }`}
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                </li>
+                <li>
+                  <span
+                    className={`text-sm font-medium ${
+                      isDarkMode ? "text-gray-300" : "text-gray-600"
+                    }`}
+                  >
+                    dashboard
+                  </span>
+                </li>
+              </ol>
+            </nav>
           </div>
 
-          <Disclosure.Panel className="sm:hidden">
-            <div className="space-y-1 pb-3 pt-2">
-              {navigation.map((item) => (
-                <Disclosure.Button
-                  key={item.name}
-                  as="a"
-                  href={item.href}
-                  className="block border-l-4 border-transparent py-2 pl-3 pr-4 text-base font-medium text-gray-500 hover:border-primary-500 hover:bg-gray-50 hover:text-gray-700"
+          {/* Right side - Icons */}
+          <div className="flex items-center gap-3">
+            {/* Alert Bell */}
+            <button
+              className={`${
+                isDarkMode
+                  ? "text-gray-400 hover:text-white"
+                  : "text-gray-500 hover:text-gray-900"
+              } relative`}
+            >
+              <svg className="w-5 h-5" viewBox="0 0 20 20" fill="currentColor">
+                <path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z" />
+              </svg>
+              <div className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full"></div>
+            </button>
+
+            {/* Dark Mode Toggle */}
+            <button
+              className={`${
+                isDarkMode
+                  ? "text-gray-400 hover:text-white"
+                  : "text-gray-500 hover:text-gray-900"
+              }`}
+              onClick={toggleTheme}
+            >
+              {isDarkMode ? (
+                <svg
+                  className="w-5 h-5"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
                 >
-                  {item.name}
-                </Disclosure.Button>
-              ))}
-            </div>
-            <div className="border-t border-gray-200 pb-3 pt-4">
-              <div className="flex items-center px-4">
-                <div className="flex-shrink-0">
-                  <div className="h-10 w-10 rounded-full bg-primary-100 flex items-center justify-center">
-                    <span className="text-primary-600 font-medium">
-                      {user?.username?.[0]?.toUpperCase() || "U"}
-                    </span>
+                  <path
+                    fillRule="evenodd"
+                    d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              ) : (
+                <svg
+                  className="w-5 h-5"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" />
+                </svg>
+              )}
+            </button>
+
+            {/* Profile */}
+            <div className="relative">
+              <button
+                className="w-8 h-8 rounded-lg overflow-hidden"
+                onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
+              >
+                <img
+                  src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                  alt="Profile"
+                  className="w-full h-full object-cover"
+                />
+              </button>
+
+              {/* Profile Dropdown Menu */}
+              {isProfileMenuOpen && (
+                <div className="absolute right-0 mt-2 w-56 bg-[#1F2937] rounded-lg shadow-lg border border-gray-700 z-50">
+                  <div className="p-4 border-b border-gray-700">
+                    <div className="flex items-center gap-3">
+                      <img
+                        src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                        alt="Eugene An"
+                        className="w-10 h-10 rounded-lg"
+                      />
+                      <div>
+                        <div className="text-sm font-medium text-white">
+                          Eugene An
+                        </div>
+                        <div className="text-xs text-gray-400">
+                          Prompt Engineer
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="p-2">
+                    <Link
+                      to="/subscription"
+                      className="flex items-center gap-2 px-3 py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-800 rounded-lg"
+                    >
+                      <svg
+                        className="w-5 h-5"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                      >
+                        <path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z" />
+                        <path
+                          fillRule="evenodd"
+                          d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                      Subscription
+                      <span className="ml-auto text-xs text-gray-400">
+                        Free Trial
+                      </span>
+                    </Link>
+
+                    <Link
+                      to="/settings"
+                      className="flex items-center gap-2 px-3 py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-800 rounded-lg"
+                    >
+                      <svg
+                        className="w-5 h-5"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                      Settings
+                    </Link>
+
+                    <Link
+                      to="/terms"
+                      className="flex items-center gap-2 px-3 py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-800 rounded-lg"
+                    >
+                      <svg
+                        className="w-5 h-5"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z"
+                          clipRule="evenodd"
+                        />
+                        <path
+                          fillRule="evenodd"
+                          d="M8 11a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1zm0 4a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                      Terms & Policies
+                    </Link>
+
+                    <button className="w-full flex items-center gap-2 px-3 py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-800 rounded-lg">
+                      <svg
+                        className="w-5 h-5"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M3 3a1 1 0 00-1 1v12a1 1 0 102 0V4a1 1 0 00-1-1zm10.293 9.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L14.586 9H7a1 1 0 100 2h7.586l-1.293 1.293z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                      Logout
+                    </button>
                   </div>
                 </div>
-                <div className="ml-3">
-                  <div className="text-base font-medium text-gray-800">
-                    {user?.username}
-                  </div>
-                  <div className="text-sm font-medium text-gray-500">
-                    {user?.email}
-                  </div>
-                </div>
-                <button
-                  type="button"
-                  className="ml-auto flex-shrink-0 rounded-full bg-white p-1 text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
-                >
-                  <span className="sr-only">View notifications</span>
-                  <BellIcon className="h-6 w-6" aria-hidden="true" />
-                </button>
-              </div>
-              <div className="mt-3 space-y-1">
-                <Disclosure.Button
-                  as="button"
-                  onClick={() => navigate("/profile")}
-                  className="block w-full px-4 py-2 text-left text-base font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-800"
-                >
-                  Your Profile
-                </Disclosure.Button>
-                <Disclosure.Button
-                  as="button"
-                  onClick={logout}
-                  className="block w-full px-4 py-2 text-left text-base font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-800"
-                >
-                  Sign out
-                </Disclosure.Button>
-              </div>
+              )}
             </div>
-          </Disclosure.Panel>
-        </>
-      )}
-    </Disclosure>
+          </div>
+        </div>
+      </div>
+    </header>
   );
-}
+};
+
+export default Header;
