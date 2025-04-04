@@ -65,4 +65,10 @@ export const walletService = {
     const response = await api.post<Wallet>("/wallet/deposit", data);
     return response.data;
   },
+
+  async withdraw(data: TransactionDto): Promise<Wallet> {
+    console.log(data);
+    const response = await api.post<Wallet>("/wallet/withdraw", data);
+    return response.data;
+  },
 };

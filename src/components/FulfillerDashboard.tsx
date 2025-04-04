@@ -5,6 +5,7 @@ import { useAlert } from "../contexts/AlertContext";
 import { useTheme } from "../contexts/ThemeContext";
 import { ticketService, Ticket as ApiTicket } from "../services/ticket.service";
 import { walletService, Wallet } from "../services/wallet.service";
+import WithdrawModal from "./WithdrawModal";
 
 interface Transaction {
   date: string;
@@ -844,7 +845,7 @@ const FulfillerDashboard: React.FC = () => {
   const location = useLocation();
   const { showAlert } = useAlert();
   const { isDarkMode } = useTheme();
-  const [balance, setBalance] = useState(0);
+  const [balance, setBalance] = useState<number>(0);
   const [transactions] = useState<Transaction[]>([
     {
       date: "27/3/2025",
@@ -870,6 +871,8 @@ const FulfillerDashboard: React.FC = () => {
   const [wallets, setWallets] = useState<Wallet[]>([]);
   const [selectedWallet, setSelectedWallet] = useState<Wallet | null>(null);
   const [showWalletDropdown, setShowWalletDropdown] = useState(false);
+  const [isWithdrawModalOpen, setIsWithdrawModalOpen] = useState(false);
+  const [gasFee] = useState<number>(5); // Fixed gas fee of 5 USDT for withdrawals
 
   useEffect(() => {
     const fetchWallets = async () => {
@@ -1006,7 +1009,53 @@ const FulfillerDashboard: React.FC = () => {
   };
 
   const handleWithdraw = () => {
-    showAlert("info", "Processing withdrawal...");
+    if (!selectedWallet) {
+      showAlert("error", "Please select a wallet first");
+      return;
+    }
+
+    if (balance <= gasFee) {
+      showAlert(
+        "error",
+        `Insufficient balance. Minimum required: ${gasFee} USDT for gas fee`
+      );
+      return;
+    }
+
+    setIsWithdrawModalOpen(true);
+  };
+
+  const handleWithdrawSubmit = async (amount: number) => {
+    try {
+      if (!selectedWallet) {
+        showAlert("error", "Please select a wallet first");
+        return;
+      }
+
+      const maxWithdrawable = balance - gasFee;
+
+      if (amount > maxWithdrawable) {
+        showAlert(
+          "error",
+          `Maximum withdrawable amount is ${maxWithdrawable.toFixed(
+            2
+          )} USDT (balance - gas fee)`
+        );
+        return;
+      }
+
+      const updatedWallet = await walletService.withdraw({
+        type: "USDT",
+        amount: amount,
+      });
+
+      setBalance(Number(updatedWallet.balance));
+      showAlert("success", "Withdrawal successful");
+      setIsWithdrawModalOpen(false);
+    } catch (error) {
+      showAlert("error", "Failed to process withdrawal");
+      console.error("Error processing withdrawal:", error);
+    }
   };
 
   const handleTicketAction = async (action: string, ticketId: number) => {
@@ -1148,6 +1197,15 @@ const FulfillerDashboard: React.FC = () => {
           />
         </Routes>
       </div>
+      <WithdrawModal
+        isOpen={isWithdrawModalOpen}
+        onClose={() => setIsWithdrawModalOpen(false)}
+        onWithdraw={handleWithdrawSubmit}
+        isDarkMode={isDarkMode}
+        selectedWallet={selectedWallet}
+        balance={Number(balance)}
+        gasFee={Number(gasFee)}
+      />
     </div>
   );
 };
