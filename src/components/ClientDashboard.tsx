@@ -4,6 +4,7 @@ import Panel from "./Panel";
 import { useAlert } from "../contexts/AlertContext";
 import { useTheme } from "../contexts/ThemeContext";
 import { ticketService, Ticket as ApiTicket } from "../services/ticket.service";
+import { walletService, Wallet } from "../services/wallet.service";
 
 interface Transaction {
   date: string;
@@ -26,12 +27,119 @@ const PaymentSection: React.FC<{
   balance: number;
   onConnectWallet: () => void;
   onDeposit: () => void;
+  onWithdraw: () => void;
   isDarkMode: boolean;
-}> = ({ transactions, balance, onConnectWallet, onDeposit, isDarkMode }) => (
+  wallets: Wallet[];
+  selectedWallet: Wallet | null;
+  onWalletSelect: (wallet: Wallet) => void;
+  showWalletDropdown: boolean;
+  setShowWalletDropdown: (show: boolean) => void;
+}> = ({
+  transactions,
+  balance,
+  onConnectWallet,
+  onDeposit,
+  onWithdraw,
+  isDarkMode,
+  wallets,
+  selectedWallet,
+  onWalletSelect,
+  showWalletDropdown,
+  setShowWalletDropdown,
+}) => (
   <div className="space-y-8">
     <div className="flex justify-between items-center mb-8">
       <h1 className="text-2xl font-semibold">Payment Overview</h1>
       <span className="text-sm text-gray-500">Last updated: 12:13:00 AM</span>
+    </div>
+    <div className="flex gap-4">
+      <div className="relative">
+        <button
+          onClick={() => setShowWalletDropdown(!showWalletDropdown)}
+          className={`px-4 py-2 rounded-lg font-medium flex items-center gap-2 ${
+            isDarkMode
+              ? "bg-[#1F2937] text-white hover:bg-gray-800"
+              : "bg-white text-gray-700 hover:bg-gray-50 border border-gray-200"
+          }`}
+        >
+          <svg className="w-5 h-5" viewBox="0 0 20 20" fill="currentColor">
+            <path
+              fillRule="evenodd"
+              d="M17.778 8.222c-4.296-4.296-11.26-4.296-15.556 0A1 1 0 01.808 6.808c5.076-5.077 13.308-5.077 18.384 0a1 1 0 01-1.414 1.414zM14.95 11.05a7 7 0 00-9.9 0 1 1 0 01-1.414-1.414 9 9 0 0112.728 0 1 1 0 01-1.414 1.414zM12.12 13.88a3 3 0 00-4.242 0 1 1 0 01-1.415-1.415 5 5 0 017.072 0 1 1 0 01-1.415 1.415zM9 16a1 1 0 100-2 1 1 0 000 2z"
+              clipRule="evenodd"
+            />
+          </svg>
+          {selectedWallet
+            ? `Connected: ${selectedWallet.address.slice(
+                0,
+                6
+              )}...${selectedWallet.address.slice(-4)}`
+            : "Connect Wallet"}
+        </button>
+        {showWalletDropdown && (
+          <div
+            className={`absolute mt-2 w-64 rounded-md shadow-lg ${
+              isDarkMode ? "bg-[#1F2937]" : "bg-white"
+            } ring-1 ring-black ring-opacity-5 z-10`}
+          >
+            <div className="py-1" role="menu" aria-orientation="vertical">
+              {wallets.map((wallet) => (
+                <button
+                  key={wallet.id}
+                  onClick={() => {
+                    onWalletSelect(wallet);
+                    setShowWalletDropdown(false);
+                  }}
+                  className={`block w-full text-left px-4 py-2 text-sm ${
+                    isDarkMode
+                      ? "text-gray-300 hover:bg-gray-700"
+                      : "text-gray-700 hover:bg-gray-100"
+                  }`}
+                  role="menuitem"
+                >
+                  {wallet.address}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+
+      <button
+        onClick={onDeposit}
+        className={`px-4 py-2 rounded-lg font-medium flex items-center gap-2 ${
+          isDarkMode
+            ? "bg-green-600 text-white hover:bg-green-700"
+            : "bg-green-500 text-white hover:bg-green-600"
+        }`}
+      >
+        <svg className="w-5 h-5" viewBox="0 0 20 20" fill="currentColor">
+          <path
+            fillRule="evenodd"
+            d="M10 3a1 1 0 00-1 1v9.586L5.707 10.293a1 1 0 10-1.414 1.414l4 4a1 1 0 001.414 0l4-4a1 1 0 00-1.414-1.414L10 13.586V4a1 1 0 00-1-1z"
+            clipRule="evenodd"
+          />
+        </svg>
+        Deposit
+      </button>
+
+      <button
+        onClick={onWithdraw}
+        className={`px-4 py-2 rounded-lg font-medium flex items-center gap-2 ${
+          isDarkMode
+            ? "bg-red-600 text-white hover:bg-red-700"
+            : "bg-red-500 text-white hover:bg-red-600"
+        }`}
+      >
+        <svg className="w-5 h-5" viewBox="0 0 20 20" fill="currentColor">
+          <path
+            fillRule="evenodd"
+            d="M10 17a1 1 0 001-1V6.414l3.293 3.293a1 1 0 001.414-1.414l-4-4a1 1 0 00-1.414 0l-4 4a1 1 0 101.414 1.414L10 6.414V16a1 1 0 001 1z"
+            clipRule="evenodd"
+          />
+        </svg>
+        Withdraw
+      </button>
     </div>
 
     {/* Accounts Section */}
@@ -859,7 +967,7 @@ const ClientDashboard: React.FC = () => {
   const location = useLocation();
   const { showAlert } = useAlert();
   const { isDarkMode } = useTheme();
-  const [balance] = useState(90);
+  const [balance, setBalance] = useState(0);
   const [transactions] = useState<Transaction[]>([
     {
       date: "27/3/2025",
@@ -881,6 +989,23 @@ const ClientDashboard: React.FC = () => {
   const [limit] = useState(10);
   const [sortField, setSortField] = useState<string>("id");
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
+  const [wallets, setWallets] = useState<Wallet[]>([]);
+  const [selectedWallet, setSelectedWallet] = useState<Wallet | null>(null);
+  const [showWalletDropdown, setShowWalletDropdown] = useState(false);
+
+  useEffect(() => {
+    const fetchWallets = async () => {
+      try {
+        const fetchedWallets = await walletService.getWallets();
+        setWallets(fetchedWallets);
+      } catch (error) {
+        showAlert("error", "Failed to fetch wallets");
+        console.error("Error fetching wallets:", error);
+      }
+    };
+
+    fetchWallets();
+  }, [showAlert]);
 
   useEffect(() => {
     const fetchTickets = async () => {
@@ -961,12 +1086,37 @@ const ClientDashboard: React.FC = () => {
     return status;
   };
 
-  const handleConnectWallet = () => {
-    showAlert("info", "Connecting to wallet...");
+  const handleConnectWallet = async () => {
+    try {
+      if (!selectedWallet) {
+        showAlert("error", "Please select a wallet first");
+        return;
+      }
+
+      const connectedWallet = await walletService.connectWallet({
+        type: "USDT",
+        address: selectedWallet.address,
+      });
+
+      setBalance(connectedWallet.balance);
+      showAlert("success", "Wallet connected successfully");
+    } catch (error) {
+      showAlert("error", "Failed to connect wallet");
+      console.error("Error connecting wallet:", error);
+    }
+  };
+
+  const handleWalletSelect = (wallet: Wallet) => {
+    setSelectedWallet(wallet);
+    handleConnectWallet();
   };
 
   const handleDeposit = () => {
     showAlert("info", "Processing deposit...");
+  };
+
+  const handleWithdraw = () => {
+    showAlert("info", "Processing withdrawal...");
   };
 
   const handleTicketAction = async (action: string, ticketId: number) => {
@@ -1066,7 +1216,13 @@ const ClientDashboard: React.FC = () => {
                 balance={balance}
                 onConnectWallet={handleConnectWallet}
                 onDeposit={handleDeposit}
+                onWithdraw={handleWithdraw}
                 isDarkMode={isDarkMode}
+                wallets={wallets}
+                selectedWallet={selectedWallet}
+                onWalletSelect={handleWalletSelect}
+                showWalletDropdown={showWalletDropdown}
+                setShowWalletDropdown={setShowWalletDropdown}
               />
             }
           />

@@ -5,12 +5,13 @@ export interface Wallet {
   type: "CUSTOMER" | "FULFILLER";
   balance: number;
   user_id: number;
+  address: string;
   created_at: string;
   updated_at: string;
 }
 
 export interface ConnectWalletDto {
-  type: "CUSTOMER" | "FULFILLER";
+  type: "USDT" | "BTC";
   address: string;
 }
 
@@ -29,7 +30,7 @@ export const walletService = {
     return response.data;
   },
 
-  async getWallet(type: "CUSTOMER" | "FULFILLER"): Promise<Wallet> {
+  async getWallet(type: "USDT" | "BTC"): Promise<Wallet> {
     const response = await api.get<Wallet>(`/wallet/${type}`);
     return response.data;
   },
