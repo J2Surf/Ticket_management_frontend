@@ -79,7 +79,7 @@ const PaymentSection: React.FC<{
         </button>
         {showWalletDropdown && (
           <div
-            className={`absolute mt-2 w-64 rounded-md shadow-lg ${
+            className={`absolute mt-2 w-44 rounded-md shadow-lg ${
               isDarkMode ? "bg-[#1F2937]" : "bg-white"
             } ring-1 ring-black ring-opacity-5 z-10`}
           >
@@ -93,12 +93,12 @@ const PaymentSection: React.FC<{
                   }}
                   className={`block w-full text-left px-4 py-2 text-sm ${
                     isDarkMode
-                      ? "text-gray-300 hover:bg-gray-700"
+                      ? "text-gray-700 hover:bg-gray-700"
                       : "text-gray-700 hover:bg-gray-100"
                   }`}
                   role="menuitem"
                 >
-                  {wallet.address}
+                  {wallet.address.slice(0, 6)}...{wallet.address.slice(-4)}
                 </button>
               ))}
             </div>
@@ -1108,9 +1108,21 @@ const ClientDashboard: React.FC = () => {
     }
   };
 
-  const handleWalletSelect = (wallet: Wallet) => {
+  const handleWalletSelect = async (wallet: Wallet) => {
     setSelectedWallet(wallet);
-    handleConnectWallet();
+    // Connect the wallet directly using the wallet parameter
+    try {
+      const connectedWallet = await walletService.connectWallet({
+        type: "USDT",
+        address: wallet.address,
+      });
+
+      setBalance(connectedWallet.balance);
+      showAlert("success", "Wallet connected successfully");
+    } catch (error) {
+      showAlert("error", "Failed to connect wallet");
+      console.error("Error connecting wallet:", error);
+    }
   };
 
   const handleDeposit = () => {
