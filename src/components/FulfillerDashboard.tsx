@@ -558,7 +558,7 @@ const TicketSection: React.FC<{
                     ? "bg-gray-700 text-gray-500 cursor-not-allowed"
                     : "bg-gray-200 text-gray-400 cursor-not-allowed"
                   : isDarkMode
-                  ? "bg-gray-700 text-white hover:bg-gray-600"
+                  ? "bg-gray-700 text-gray-700 hover:bg-gray-600"
                   : "bg-gray-200 text-gray-700 hover:bg-gray-300"
               }`}
             >
@@ -573,7 +573,7 @@ const TicketSection: React.FC<{
                     ? "bg-gray-700 text-gray-500 cursor-not-allowed"
                     : "bg-gray-200 text-gray-400 cursor-not-allowed"
                   : isDarkMode
-                  ? "bg-gray-700 text-white hover:bg-gray-600"
+                  ? "bg-gray-700 text-gray-700 hover:bg-gray-600"
                   : "bg-gray-200 text-gray-700 hover:bg-gray-300"
               }`}
             >
