@@ -1233,7 +1233,7 @@ const ClientDashboard: React.FC = () => {
       }`}
     >
       <Panel items={panelItems} />
-      <div className="flex-1 p-8">
+      <div className="flex-1 p-8 w-[1200px] h-[800px] overflow-auto">
         <Routes>
           <Route
             path="/payment"
