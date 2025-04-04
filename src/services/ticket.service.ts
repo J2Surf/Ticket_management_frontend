@@ -62,6 +62,11 @@ export const ticketService = {
     return response.data;
   },
 
+  async declineTicket(id: string): Promise<Ticket> {
+    const response = await api.put<Ticket>(`/tickets/${id}/decline`);
+    return response.data;
+  },
+
   async getTicketsByStatus(status: string): Promise<Ticket[]> {
     const response = await api.get<Ticket[]>(`/tickets/status/${status}`);
     return response.data;

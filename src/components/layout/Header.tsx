@@ -1,10 +1,26 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useTheme } from "../../contexts/ThemeContext";
+import { useAuth } from "../../hooks/useAuth";
 
 const Header: React.FC = () => {
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
   const { isDarkMode, toggleTheme } = useTheme();
+  const { user, logout } = useAuth();
+  const userRole = user?.roles?.[0]?.name?.toLowerCase() || "user";
+  const dashboardTitle =
+    userRole === "fulfiller" ? "Fulfiller Dashboard" : "Client Dashboard";
+  const navigate = useNavigate();
+
+  const handleLogout = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    try {
+      await logout();
+      navigate("/login");
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
+  };
 
   return (
     <header
@@ -17,44 +33,13 @@ const Header: React.FC = () => {
           {/* Left side - Breadcrumb */}
           <div className="flex items-center">
             <nav className="flex" aria-label="Breadcrumb">
-              <ol className="flex items-center space-x-2">
-                <li>
-                  <Link
-                    to="/"
-                    className={`text-sm font-medium ${
-                      isDarkMode
-                        ? "text-gray-300 hover:text-white"
-                        : "text-gray-600 hover:text-gray-900"
-                    }`}
-                  >
-                    Tapsndr
-                  </Link>
-                </li>
-                <li>
-                  <svg
-                    className={`w-5 h-5 ${
-                      isDarkMode ? "text-gray-600" : "text-gray-400"
-                    }`}
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                </li>
-                <li>
-                  <span
-                    className={`text-sm font-medium ${
-                      isDarkMode ? "text-gray-300" : "text-gray-600"
-                    }`}
-                  >
-                    dashboard
-                  </span>
-                </li>
-              </ol>
+              <span
+                className={`text-xl font-medium ${
+                  isDarkMode ? "text-gray-300" : "text-gray-600"
+                }`}
+              >
+                {dashboardTitle}
+              </span>
             </nav>
           </div>
 
@@ -133,9 +118,7 @@ const Header: React.FC = () => {
                         <div className="text-sm font-medium text-white">
                           Eugene An
                         </div>
-                        <div className="text-xs text-gray-400">
-                          Prompt Engineer
-                        </div>
+                        <div className="text-xs text-gray-400">Fulfiller</div>
                       </div>
                     </div>
                   </div>
@@ -204,7 +187,11 @@ const Header: React.FC = () => {
                       Terms & Policies
                     </Link>
 
-                    <button className="w-full flex items-center gap-2 px-3 py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-800 rounded-lg">
+                    <a
+                      href="#"
+                      onClick={handleLogout}
+                      className="flex items-center gap-2 px-3 py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-800 rounded-lg"
+                    >
                       <svg
                         className="w-5 h-5"
                         viewBox="0 0 20 20"
@@ -217,7 +204,7 @@ const Header: React.FC = () => {
                         />
                       </svg>
                       Logout
-                    </button>
+                    </a>
                   </div>
                 </div>
               )}

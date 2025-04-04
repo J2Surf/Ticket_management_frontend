@@ -24,7 +24,7 @@ import "./App.css";
 
 const queryClient = new QueryClient();
 
-type UserRole = "client" | "fulfiller";
+type UserRole = "user" | "fulfiller";
 
 function PrivateRoute({ children }: { children: React.ReactNode }) {
   const { isAuthenticated } = useAuth();
@@ -46,8 +46,11 @@ const DashboardLayout: React.FC<{ children: React.ReactNode }> = ({
 );
 
 function AppRoutes() {
-  // This would come from your authentication system
-  const userRole = "client" as UserRole; // Type assertion to fix the error
+  const { user } = useAuth();
+  const userRole = (user?.roles?.[0]?.name as UserRole) || "user";
+
+  console.log("AppRoutes user:", user);
+  console.log("AppRoutes userRole:", userRole);
 
   return (
     <Routes>
@@ -59,7 +62,7 @@ function AppRoutes() {
       <Route
         path="/"
         element={
-          userRole === "client" ? (
+          userRole === "user" ? (
             <Navigate to="/client/payment" replace />
           ) : (
             <Navigate to="/fulfiller/payment" replace />
@@ -69,7 +72,7 @@ function AppRoutes() {
       <Route
         path="/client/*"
         element={
-          userRole === "client" ? (
+          userRole === "user" ? (
             <DashboardLayout>
               <ClientDashboard />
             </DashboardLayout>

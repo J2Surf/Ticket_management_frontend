@@ -7,6 +7,9 @@ interface PanelProps {
     name: string;
     path: string;
     isActive?: boolean;
+    icon?: React.ReactNode;
+    badge?: string;
+    description?: string;
   }[];
 }
 
@@ -57,90 +60,20 @@ const Panel: React.FC<PanelProps> = ({ items }) => {
                   isDarkMode
                     ? "text-gray-300 hover:text-white hover:bg-gray-800"
                     : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
-                } py-2 px-3 rounded-lg`}
+                } py-2 px-3 rounded-lg ${
+                  item.isActive ? "bg-gray-100 dark:bg-gray-800" : ""
+                }`}
+                title={item.description || item.name}
               >
-                <svg
-                  className="w-5 h-5 mr-3"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                >
-                  <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
-                </svg>
+                {item.icon}
                 <span className="text-sm">{item.name}</span>
+                {item.badge && (
+                  <span className="ml-auto bg-blue-500 text-white text-xs px-2 py-0.5 rounded-full">
+                    {item.badge}
+                  </span>
+                )}
               </Link>
             ))}
-          </nav>
-        </div>
-
-        <div className="mb-8">
-          <div
-            className={`text-xs font-medium ${
-              isDarkMode ? "text-gray-500" : "text-gray-400"
-            } mb-4`}
-          >
-            FINANCE
-          </div>
-          <nav className="space-y-1">
-            <Link
-              to="/transactions"
-              className={`flex items-center ${
-                isDarkMode
-                  ? "text-gray-300 hover:text-white hover:bg-gray-800"
-                  : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
-              } py-2 px-3 rounded-lg`}
-            >
-              <svg
-                className="w-5 h-5 mr-3"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-              >
-                <path d="M8 5a1 1 0 100 2h5.586l-1.293 1.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L13.586 5H8zM12 15a1 1 0 100-2H6.414l1.293-1.293a1 1 0 10-1.414-1.414l-3 3a1 1 0 000 1.414l3 3a1 1 0 001.414-1.414L6.414 15H12z" />
-              </svg>
-              <span className="text-sm">Transactions</span>
-            </Link>
-            <Link
-              to="/invoices"
-              className={`flex items-center ${
-                isDarkMode
-                  ? "text-gray-300 hover:text-white hover:bg-gray-800"
-                  : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
-              } py-2 px-3 rounded-lg`}
-            >
-              <svg
-                className="w-5 h-5 mr-3"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z"
-                  clipRule="evenodd"
-                />
-              </svg>
-              <span className="text-sm">Invoices</span>
-            </Link>
-            <Link
-              to="/payments"
-              className={`flex items-center ${
-                isDarkMode
-                  ? "text-gray-300 hover:text-white hover:bg-gray-800"
-                  : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
-              } py-2 px-3 rounded-lg`}
-            >
-              <svg
-                className="w-5 h-5 mr-3"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-              >
-                <path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z" />
-                <path
-                  fillRule="evenodd"
-                  d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z"
-                  clipRule="evenodd"
-                />
-              </svg>
-              <span className="text-sm">Payments</span>
-            </Link>
           </nav>
         </div>
 

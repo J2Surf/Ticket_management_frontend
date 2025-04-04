@@ -1,4 +1,5 @@
 import { api } from "./api";
+import axios from "axios";
 
 export interface Role {
   id: number;
@@ -22,7 +23,7 @@ export interface User {
 export interface AuthResponse {
   id: number;
   username: string;
-  email: string;
+  email?: string;
   status: string;
   last_login: string;
   last_activity: string;
@@ -30,7 +31,7 @@ export interface AuthResponse {
   failed_login_attempts: number;
   last_login_attempt: string;
   password_changed_at: string | null;
-  roles: Role[];
+  roles: string[];
   created_at: string;
   updated_at: string;
   deleted_at: string | null;
@@ -38,7 +39,8 @@ export interface AuthResponse {
 }
 
 export interface LoginDto {
-  email: string;
+  email?: string;
+  username?: string;
   password: string;
 }
 
@@ -50,9 +52,19 @@ export interface RegisterDto {
   phone: string;
 }
 
-class AuthService {
+export class AuthService {
+  private apiUrl = import.meta.env.VITE_API_URL || "http://localhost:3000";
+
   async login(credentials: LoginDto): Promise<AuthResponse> {
-    const response = await api.post<AuthResponse>("/auth/login", credentials);
+    const response = await axios.post<AuthResponse>(
+      `${this.apiUrl}/auth/login`,
+      credentials,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
     return response.data;
   }
 
@@ -61,8 +73,23 @@ class AuthService {
     return response.data;
   }
 
-  async logout(): Promise<void> {
-    await api.post("/auth/logout");
+  async logout(): Promise<{ message: string; timestamp: string }> {
+    const token = localStorage.getItem("token");
+    const response = await axios.post<{ message: string; timestamp: string }>(
+      `${this.apiUrl}/auth/logout`,
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    return response.data;
+  }
+
+  getToken(): string | null {
+    return localStorage.getItem("token");
   }
 }
 
