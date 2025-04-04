@@ -35,7 +35,7 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4 sm:p-6 lg:p-8">
+    <div className="w-[1200px] h-[800px] overflow-auto flex items-center justify-center bg-gray-50 p-4 sm:p-6 lg:p-8">
       <div className="w-full max-w-sm sm:max-w-md space-y-6 sm:space-y-8">
         <div>
           <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900 text-center">

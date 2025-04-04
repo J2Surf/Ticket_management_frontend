@@ -116,7 +116,7 @@ const DepositModal: React.FC<DepositModalProps> = ({
               onClick={onClose}
               className={`px-4 py-2 rounded-lg ${
                 isDarkMode
-                  ? "bg-gray-700 text-white hover:bg-gray-600"
+                  ? "bg-gray-700 text-gray-700 hover:bg-gray-600"
                   : "bg-gray-200 text-gray-700 hover:bg-gray-300"
               }`}
             >
@@ -124,7 +124,7 @@ const DepositModal: React.FC<DepositModalProps> = ({
             </button>
             <button
               type="submit"
-              className="px-4 py-2 rounded-lg bg-green-500 text-white hover:bg-green-600"
+              className="px-4 py-2 rounded-lg bg-green-500 text-gray-700 hover:bg-green-600"
             >
               Deposit
             </button>
