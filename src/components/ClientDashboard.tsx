@@ -17,7 +17,7 @@ interface Ticket {
   id: number;
   name: string;
   amount: number;
-  status: "Completed" | "Processing" | "Disputed";
+  status: string;
   action?: string;
 }
 
@@ -532,160 +532,184 @@ const TicketSection: React.FC<{
   onAction: (action: string, ticketId: number) => void;
   isDarkMode: boolean;
   loading?: boolean;
-}> = ({ tickets, onAction, isDarkMode, loading = false }) => (
-  <div className="space-y-8">
-    <div className="flex justify-between items-center mb-8">
-      <h1 className="text-2xl font-semibold">Ticket Management</h1>
-      <span className="text-sm text-gray-500">
-        Last updated: {new Date().toLocaleTimeString()}
-      </span>
-    </div>
+}> = ({ tickets, onAction, isDarkMode, loading = false }) => {
+  const getTicketAction = (status: string): boolean => {
+    return status.toLowerCase() === "new";
+  };
 
-    <div
-      className={`${isDarkMode ? "bg-[#1F2937]" : "bg-white"} rounded-xl p-6 ${
-        isDarkMode ? "" : "shadow-sm"
-      }`}
-    >
-      <div className="flex items-center gap-2 mb-6">
-        <svg
-          className={`w-5 h-5 ${
-            isDarkMode ? "text-gray-300" : "text-gray-600"
-          }`}
-          viewBox="0 0 20 20"
-          fill="currentColor"
-        >
-          <path
-            fillRule="evenodd"
-            d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z"
-            clipRule="evenodd"
-          />
-        </svg>
-        <h2
-          className={`text-xl font-semibold ${
-            isDarkMode ? "text-white" : "text-gray-900"
-          }`}
-        >
-          Recent Tickets
-        </h2>
+  return (
+    <div className="space-y-8">
+      <div className="flex justify-between items-center mb-8">
+        <h1 className="text-2xl font-semibold">Ticket Management</h1>
+        <span className="text-sm text-gray-500">
+          Last updated: {new Date().toLocaleTimeString()}
+        </span>
       </div>
 
-      <div className="overflow-x-auto">
-        {loading ? (
-          <div className="flex justify-center items-center py-8">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
-          </div>
-        ) : tickets.length === 0 ? (
-          <div className="text-center py-8 text-gray-500">No tickets found</div>
-        ) : (
-          <table className="min-w-full">
-            <thead>
-              <tr>
-                <th
-                  className={`p-4 text-left ${
-                    isDarkMode ? "text-gray-400" : "text-gray-500"
-                  }`}
-                >
-                  ID
-                </th>
-                <th
-                  className={`p-4 text-left ${
-                    isDarkMode ? "text-gray-400" : "text-gray-500"
-                  }`}
-                >
-                  NAME
-                </th>
-                <th
-                  className={`p-4 text-left ${
-                    isDarkMode ? "text-gray-400" : "text-gray-500"
-                  }`}
-                >
-                  AMOUNT
-                </th>
-                <th
-                  className={`p-4 text-left ${
-                    isDarkMode ? "text-gray-400" : "text-gray-500"
-                  }`}
-                >
-                  STATUS
-                </th>
-                <th
-                  className={`p-4 text-left ${
-                    isDarkMode ? "text-gray-400" : "text-gray-500"
-                  }`}
-                >
-                  ACTION
-                </th>
-              </tr>
-            </thead>
-            <tbody
-              className={`divide-y ${
-                isDarkMode ? "divide-gray-700" : "divide-gray-100"
-              }`}
-            >
-              {tickets.map((ticket) => (
-                <tr
-                  key={ticket.id}
-                  className={`${
-                    isDarkMode ? "hover:bg-gray-800" : "hover:bg-gray-50"
-                  }`}
-                >
-                  <td
-                    className={`p-4 font-mono ${
-                      isDarkMode ? "text-gray-300" : "text-gray-900"
+      <div
+        className={`${
+          isDarkMode ? "bg-[#1F2937]" : "bg-white"
+        } rounded-xl p-6 ${isDarkMode ? "" : "shadow-sm"}`}
+      >
+        <div className="flex items-center gap-2 mb-6">
+          <svg
+            className={`w-5 h-5 ${
+              isDarkMode ? "text-gray-300" : "text-gray-600"
+            }`}
+            viewBox="0 0 20 20"
+            fill="currentColor"
+          >
+            <path
+              fillRule="evenodd"
+              d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z"
+              clipRule="evenodd"
+            />
+          </svg>
+          <h2
+            className={`text-xl font-semibold ${
+              isDarkMode ? "text-white" : "text-gray-900"
+            }`}
+          >
+            Recent Tickets
+          </h2>
+        </div>
+
+        <div className="overflow-x-auto">
+          {loading ? (
+            <div className="flex justify-center items-center py-8">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+            </div>
+          ) : tickets.length === 0 ? (
+            <div className="text-center py-8 text-gray-500">
+              No tickets found
+            </div>
+          ) : (
+            <table className="min-w-full">
+              <thead>
+                <tr>
+                  <th
+                    className={`p-4 text-left ${
+                      isDarkMode ? "text-gray-400" : "text-gray-500"
                     }`}
                   >
-                    {ticket.id}
-                  </td>
-                  <td
-                    className={`p-4 ${
-                      isDarkMode ? "text-gray-300" : "text-gray-900"
+                    ID
+                  </th>
+                  <th
+                    className={`p-4 text-left ${
+                      isDarkMode ? "text-gray-400" : "text-gray-500"
                     }`}
                   >
-                    {ticket.name}
-                  </td>
-                  <td
-                    className={`p-4 font-medium ${
-                      isDarkMode ? "text-gray-300" : "text-gray-900"
+                    NAME
+                  </th>
+                  <th
+                    className={`p-4 text-left ${
+                      isDarkMode ? "text-gray-400" : "text-gray-500"
                     }`}
                   >
-                    {ticket.amount} USDT
-                  </td>
-                  <td className="p-4">
-                    <span
-                      className={`px-3 py-1 rounded-full text-sm font-medium ${
-                        ticket.status === "Completed"
-                          ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
-                          : ticket.status === "Processing"
-                          ? "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400"
-                          : "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400"
+                    AMOUNT
+                  </th>
+                  <th
+                    className={`p-4 text-left ${
+                      isDarkMode ? "text-gray-400" : "text-gray-500"
+                    }`}
+                  >
+                    STATUS
+                  </th>
+                  <th
+                    className={`p-4 text-left ${
+                      isDarkMode ? "text-gray-400" : "text-gray-500"
+                    }`}
+                  >
+                    ACTION
+                  </th>
+                </tr>
+              </thead>
+              <tbody
+                className={`divide-y ${
+                  isDarkMode ? "divide-gray-700" : "divide-gray-100"
+                }`}
+              >
+                {tickets.map((ticket) => (
+                  <tr
+                    key={ticket.id}
+                    className={`${
+                      isDarkMode ? "hover:bg-gray-800" : "hover:bg-gray-50"
+                    }`}
+                  >
+                    <td
+                      className={`p-4 font-mono ${
+                        isDarkMode ? "text-gray-300" : "text-gray-900"
                       }`}
                     >
-                      {ticket.status}
-                    </span>
-                  </td>
-                  <td className="p-4">
-                    {ticket.action && (
-                      <button
-                        onClick={() => onAction(ticket.action!, ticket.id)}
-                        className={`font-medium ${
-                          isDarkMode
-                            ? "text-blue-400 hover:text-blue-300"
-                            : "text-blue-600 hover:text-blue-700"
-                        } hover:underline transition-colors`}
+                      {ticket.id}
+                    </td>
+                    <td
+                      className={`p-4 ${
+                        isDarkMode ? "text-gray-300" : "text-gray-900"
+                      }`}
+                    >
+                      {ticket.name}
+                    </td>
+                    <td
+                      className={`p-4 font-medium ${
+                        isDarkMode ? "text-gray-300" : "text-gray-900"
+                      }`}
+                    >
+                      {ticket.amount} USDT
+                    </td>
+                    <td className="p-4">
+                      <span
+                        className={`px-3 py-1 rounded-full text-sm font-medium ${
+                          ticket.status.toLowerCase() === "completed"
+                            ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400"
+                            : ticket.status.toLowerCase() === "new"
+                            ? "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400"
+                            : ticket.status.toLowerCase() === "validated"
+                            ? "bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400"
+                            : ticket.status.toLowerCase() === "declined"
+                            ? "bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400"
+                            : "bg-gray-100 text-gray-700 dark:bg-gray-900/30 dark:text-gray-400"
+                        }`}
                       >
-                        {ticket.action}
-                      </button>
-                    )}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
+                        {ticket.status}
+                      </span>
+                    </td>
+                    <td className="p-4">
+                      {getTicketAction(ticket.status) ? (
+                        <div className="flex gap-2">
+                          <button
+                            onClick={() => onAction("validate", ticket.id)}
+                            className={`font-medium ${
+                              isDarkMode
+                                ? "text-green-400 hover:text-green-300"
+                                : "text-green-600 hover:text-green-700"
+                            } hover:underline transition-colors`}
+                          >
+                            Validate
+                          </button>
+                          <button
+                            onClick={() => onAction("decline", ticket.id)}
+                            className={`font-medium ${
+                              isDarkMode
+                                ? "text-red-400 hover:text-red-300"
+                                : "text-red-600 hover:text-red-700"
+                            } hover:underline transition-colors`}
+                          >
+                            Decline
+                          </button>
+                        </div>
+                      ) : null}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+        </div>
       </div>
     </div>
-  </div>
-);
+  );
+};
 
 const ClientDashboard: React.FC = () => {
   const location = useLocation();
@@ -718,7 +742,6 @@ const ClientDashboard: React.FC = () => {
           name: ticket.facebook_name,
           amount: ticket.amount,
           status: mapTicketStatus(ticket.status),
-          action: getTicketAction(ticket.status),
         }));
         setTickets(formattedTickets);
       } catch (error) {
@@ -732,31 +755,8 @@ const ClientDashboard: React.FC = () => {
     fetchTickets();
   }, [showAlert]);
 
-  const mapTicketStatus = (
-    status: string
-  ): "Completed" | "Processing" | "Disputed" => {
-    switch (status.toLowerCase()) {
-      case "completed":
-        return "Completed";
-      case "new":
-      case "validated":
-        return "Processing";
-      case "declined":
-        return "Disputed";
-      default:
-        return "Processing";
-    }
-  };
-
-  const getTicketAction = (status: string): string | undefined => {
-    switch (status.toLowerCase()) {
-      case "completed":
-        return "dispute";
-      case "declined":
-        return "solve";
-      default:
-        return undefined;
-    }
+  const mapTicketStatus = (status: string): string => {
+    return status;
   };
 
   const handleConnectWallet = () => {
@@ -769,12 +769,12 @@ const ClientDashboard: React.FC = () => {
 
   const handleTicketAction = async (action: string, ticketId: number) => {
     try {
-      if (action === "dispute") {
-        await ticketService.declineTicket(ticketId.toString());
-        showAlert("success", `Ticket #${ticketId} has been disputed`);
-      } else if (action === "solve") {
+      if (action === "validate") {
         await ticketService.validateTicket(ticketId.toString());
-        showAlert("success", `Ticket #${ticketId} has been solved`);
+        showAlert("success", `Ticket #${ticketId} has been validated`);
+      } else if (action === "decline") {
+        await ticketService.declineTicket(ticketId.toString());
+        showAlert("success", `Ticket #${ticketId} has been declined`);
       }
       // Refresh tickets after action
       const response = await ticketService.getTickets();
@@ -783,7 +783,6 @@ const ClientDashboard: React.FC = () => {
         name: ticket.facebook_name,
         amount: ticket.amount,
         status: mapTicketStatus(ticket.status),
-        action: getTicketAction(ticket.status),
       }));
       setTickets(formattedTickets);
     } catch (error) {
