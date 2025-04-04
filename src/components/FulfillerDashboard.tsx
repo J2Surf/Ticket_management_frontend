@@ -22,6 +22,7 @@ interface Ticket {
   amount: number;
   status: string;
   payment_method: string;
+  payment_tag: string;
   account_name: string;
   image: string;
   action?: string;
@@ -65,11 +66,29 @@ const PaymentSection: React.FC<{
               : "bg-white text-gray-700 hover:bg-gray-50 border border-gray-200"
           }`}
         >
-          <svg className="w-5 h-5" viewBox="0 0 20 20" fill="currentColor">
+          <svg
+            className="w-5 h-5"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+          >
             <path
-              fillRule="evenodd"
-              d="M17.778 8.222c-4.296-4.296-11.26-4.296-15.556 0A1 1 0 01.808 6.808c5.076-5.077 13.308-5.077 18.384 0a1 1 0 01-1.414 1.414zM14.95 11.05a7 7 0 00-9.9 0 1 1 0 01-1.414-1.414 9 9 0 0112.728 0 1 1 0 01-1.414 1.414zM12.12 13.88a3 3 0 00-4.242 0 1 1 0 01-1.415-1.415 5 5 0 017.072 0 1 1 0 01-1.415 1.415zM9 16a1 1 0 100-2 1 1 0 000 2z"
-              clipRule="evenodd"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"
+            />
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M22 8H2"
+            />
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M18 12h0"
             />
           </svg>
           {selectedWallet
@@ -432,7 +451,7 @@ const TicketSection: React.FC<{
   onSort,
 }) => {
   const getTicketAction = (status: string): boolean => {
-    return false;
+    return status.toLowerCase() === "validated";
   };
 
   const getCompletedAction = (status: string): boolean => {
@@ -627,9 +646,33 @@ const TicketSection: React.FC<{
                   >
                     <button
                       className="flex items-center focus:outline-none"
-                      onClick={() => onSort("time")}
+                      onClick={() => onSort("payment_method")}
                     >
-                      TIME {getSortIcon("time")}
+                      Payment Method {getSortIcon("payment_method")}
+                    </button>
+                  </th>
+                  <th
+                    className={`p-4 text-left ${
+                      isDarkMode ? "text-gray-400" : "text-gray-500"
+                    }`}
+                  >
+                    <button
+                      className="flex items-center focus:outline-none"
+                      onClick={() => onSort("payment_tag")}
+                    >
+                      Payment Tag {getSortIcon("payment_tag")}
+                    </button>
+                  </th>
+                  <th
+                    className={`p-4 text-left ${
+                      isDarkMode ? "text-gray-400" : "text-gray-500"
+                    }`}
+                  >
+                    <button
+                      className="flex items-center focus:outline-none"
+                      onClick={() => onSort("account_name")}
+                    >
+                      Account Name {getSortIcon("account_name")}
                     </button>
                   </th>
                   <th
@@ -642,30 +685,6 @@ const TicketSection: React.FC<{
                       onClick={() => onSort("amount")}
                     >
                       AMOUNT {getSortIcon("amount")}
-                    </button>
-                  </th>
-                  <th
-                    className={`p-4 text-left ${
-                      isDarkMode ? "text-gray-400" : "text-gray-500"
-                    }`}
-                  >
-                    <button
-                      className="flex items-center focus:outline-none"
-                      onClick={() => onSort("payment_method")}
-                    >
-                      PAYMENT METHOD {getSortIcon("payment_method")}
-                    </button>
-                  </th>
-                  <th
-                    className={`p-4 text-left ${
-                      isDarkMode ? "text-gray-400" : "text-gray-500"
-                    }`}
-                  >
-                    <button
-                      className="flex items-center focus:outline-none"
-                      onClick={() => onSort("account_name")}
-                    >
-                      ACCOUNT NAME {getSortIcon("account_name")}
                     </button>
                   </th>
                   <th
@@ -692,7 +711,7 @@ const TicketSection: React.FC<{
                       isDarkMode ? "text-gray-400" : "text-gray-500"
                     }`}
                   >
-                    ACTION
+                    Actions
                   </th>
                 </tr>
               </thead>
@@ -727,20 +746,6 @@ const TicketSection: React.FC<{
                         isDarkMode ? "text-gray-300" : "text-gray-900"
                       }`}
                     >
-                      {ticket.time}
-                    </td>
-                    <td
-                      className={`p-4 font-medium ${
-                        isDarkMode ? "text-gray-300" : "text-gray-900"
-                      }`}
-                    >
-                      {ticket.amount} USDT
-                    </td>
-                    <td
-                      className={`p-4 ${
-                        isDarkMode ? "text-gray-300" : "text-gray-900"
-                      }`}
-                    >
                       {ticket.payment_method}
                     </td>
                     <td
@@ -748,7 +753,21 @@ const TicketSection: React.FC<{
                         isDarkMode ? "text-gray-300" : "text-gray-900"
                       }`}
                     >
+                      {ticket.payment_tag}
+                    </td>
+                    <td
+                      className={`p-4 ${
+                        isDarkMode ? "text-gray-300" : "text-gray-900"
+                      }`}
+                    >
                       {ticket.account_name}
+                    </td>
+                    <td
+                      className={`p-4 font-medium ${
+                        isDarkMode ? "text-gray-300" : "text-gray-900"
+                      }`}
+                    >
+                      {ticket.amount} USDT
                     </td>
                     <td className="p-4">
                       <span
@@ -903,6 +922,7 @@ const FulfillerDashboard: React.FC = () => {
           amount: ticket.amount,
           status: mapTicketStatus(ticket.status),
           payment_method: ticket.payment_method || "N/A",
+          payment_tag: ticket.payment_tag || "N/A",
           account_name: ticket.account_name || "N/A",
           image: ticket.image || "",
         }));
@@ -1088,6 +1108,7 @@ const FulfillerDashboard: React.FC = () => {
         amount: ticket.amount,
         status: mapTicketStatus(ticket.status),
         payment_method: ticket.payment_method || "N/A",
+        payment_tag: ticket.payment_tag || "N/A",
         account_name: ticket.account_name || "N/A",
         image: ticket.image || "",
       }));
