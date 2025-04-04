@@ -535,6 +535,9 @@ const TicketSection: React.FC<{
   currentPage: number;
   totalPages: number;
   onPageChange: (page: number) => void;
+  sortField: string;
+  sortDirection: "asc" | "desc";
+  onSort: (field: string) => void;
 }> = ({
   tickets,
   onAction,
@@ -543,9 +546,48 @@ const TicketSection: React.FC<{
   currentPage,
   totalPages,
   onPageChange,
+  sortField,
+  sortDirection,
+  onSort,
 }) => {
   const getTicketAction = (status: string): boolean => {
     return status.toLowerCase() === "new";
+  };
+
+  const getSortIcon = (field: string) => {
+    if (sortField !== field) {
+      return (
+        <svg
+          className="w-4 h-4 ml-1 opacity-50"
+          viewBox="0 0 20 20"
+          fill="currentColor"
+        >
+          <path
+            fillRule="evenodd"
+            d="M10 3a1 1 0 01.707.293l3 3a1 1 0 01-1.414 1.414L10 5.414 7.707 7.707a1 1 0 01-1.414-1.414l3-3A1 1 0 0110 3zm-3.707 9.293a1 1 0 011.414 0L10 14.586l2.293-2.293a1 1 0 011.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z"
+            clipRule="evenodd"
+          />
+        </svg>
+      );
+    }
+
+    return sortDirection === "asc" ? (
+      <svg className="w-4 h-4 ml-1" viewBox="0 0 20 20" fill="currentColor">
+        <path
+          fillRule="evenodd"
+          d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z"
+          clipRule="evenodd"
+        />
+      </svg>
+    ) : (
+      <svg className="w-4 h-4 ml-1" viewBox="0 0 20 20" fill="currentColor">
+        <path
+          fillRule="evenodd"
+          d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+          clipRule="evenodd"
+        />
+      </svg>
+    );
   };
 
   return (
@@ -674,28 +716,48 @@ const TicketSection: React.FC<{
                       isDarkMode ? "text-gray-400" : "text-gray-500"
                     }`}
                   >
-                    ID
+                    <button
+                      className="flex items-center focus:outline-none"
+                      onClick={() => onSort("id")}
+                    >
+                      ID {getSortIcon("id")}
+                    </button>
                   </th>
                   <th
                     className={`p-4 text-left ${
                       isDarkMode ? "text-gray-400" : "text-gray-500"
                     }`}
                   >
-                    NAME
+                    <button
+                      className="flex items-center focus:outline-none"
+                      onClick={() => onSort("name")}
+                    >
+                      NAME {getSortIcon("name")}
+                    </button>
                   </th>
                   <th
                     className={`p-4 text-left ${
                       isDarkMode ? "text-gray-400" : "text-gray-500"
                     }`}
                   >
-                    AMOUNT
+                    <button
+                      className="flex items-center focus:outline-none"
+                      onClick={() => onSort("amount")}
+                    >
+                      AMOUNT {getSortIcon("amount")}
+                    </button>
                   </th>
                   <th
                     className={`p-4 text-left ${
                       isDarkMode ? "text-gray-400" : "text-gray-500"
                     }`}
                   >
-                    STATUS
+                    <button
+                      className="flex items-center focus:outline-none"
+                      onClick={() => onSort("status")}
+                    >
+                      STATUS {getSortIcon("status")}
+                    </button>
                   </th>
                   <th
                     className={`p-4 text-left ${
@@ -817,6 +879,8 @@ const ClientDashboard: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [limit] = useState(10);
+  const [sortField, setSortField] = useState<string>("id");
+  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
 
   useEffect(() => {
     const fetchTickets = async () => {
@@ -832,7 +896,15 @@ const ClientDashboard: React.FC = () => {
           amount: ticket.amount,
           status: mapTicketStatus(ticket.status),
         }));
-        setTickets(formattedTickets);
+
+        // Sort tickets based on current sort field and direction
+        const sortedTickets = sortTickets(
+          formattedTickets,
+          sortField,
+          sortDirection
+        );
+
+        setTickets(sortedTickets);
         setTotalPages(response.meta.totalPages);
       } catch (error) {
         showAlert("error", "Failed to fetch tickets");
@@ -843,7 +915,47 @@ const ClientDashboard: React.FC = () => {
     };
 
     fetchTickets();
-  }, [showAlert, currentPage, limit]);
+  }, [showAlert, currentPage, limit, sortField, sortDirection]);
+
+  const sortTickets = (
+    ticketsToSort: Ticket[],
+    field: string,
+    direction: "asc" | "desc"
+  ): Ticket[] => {
+    return [...ticketsToSort].sort((a, b) => {
+      let valueA: any = a[field as keyof Ticket];
+      let valueB: any = b[field as keyof Ticket];
+
+      // Handle numeric values
+      if (field === "id" || field === "amount") {
+        valueA = Number(valueA);
+        valueB = Number(valueB);
+      }
+
+      // Handle string values
+      if (typeof valueA === "string") {
+        valueA = valueA.toLowerCase();
+        valueB = valueB.toLowerCase();
+      }
+
+      if (direction === "asc") {
+        return valueA > valueB ? 1 : -1;
+      } else {
+        return valueA < valueB ? 1 : -1;
+      }
+    });
+  };
+
+  const handleSort = (field: string) => {
+    if (sortField === field) {
+      // Toggle direction if clicking the same field
+      setSortDirection(sortDirection === "asc" ? "desc" : "asc");
+    } else {
+      // Set new field and default to ascending
+      setSortField(field);
+      setSortDirection("asc");
+    }
+  };
 
   const mapTicketStatus = (status: string): string => {
     return status;
@@ -878,7 +990,15 @@ const ClientDashboard: React.FC = () => {
         amount: ticket.amount,
         status: mapTicketStatus(ticket.status),
       }));
-      setTickets(formattedTickets);
+
+      // Sort tickets based on current sort field and direction
+      const sortedTickets = sortTickets(
+        formattedTickets,
+        sortField,
+        sortDirection
+      );
+
+      setTickets(sortedTickets);
       setTotalPages(response.meta.totalPages);
     } catch (error) {
       showAlert("error", `Failed to ${action} ticket #${ticketId}`);
@@ -961,6 +1081,9 @@ const ClientDashboard: React.FC = () => {
                 currentPage={currentPage}
                 totalPages={totalPages}
                 onPageChange={handlePageChange}
+                sortField={sortField}
+                sortDirection={sortDirection}
+                onSort={handleSort}
               />
             }
           />
