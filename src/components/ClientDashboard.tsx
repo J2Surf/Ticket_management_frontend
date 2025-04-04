@@ -532,7 +532,18 @@ const TicketSection: React.FC<{
   onAction: (action: string, ticketId: number) => void;
   isDarkMode: boolean;
   loading?: boolean;
-}> = ({ tickets, onAction, isDarkMode, loading = false }) => {
+  currentPage: number;
+  totalPages: number;
+  onPageChange: (page: number) => void;
+}> = ({
+  tickets,
+  onAction,
+  isDarkMode,
+  loading = false,
+  currentPage,
+  totalPages,
+  onPageChange,
+}) => {
   const getTicketAction = (status: string): boolean => {
     return status.toLowerCase() === "new";
   };
@@ -551,27 +562,98 @@ const TicketSection: React.FC<{
           isDarkMode ? "bg-[#1F2937]" : "bg-white"
         } rounded-xl p-6 ${isDarkMode ? "" : "shadow-sm"}`}
       >
-        <div className="flex items-center gap-2 mb-6">
-          <svg
-            className={`w-5 h-5 ${
-              isDarkMode ? "text-gray-300" : "text-gray-600"
-            }`}
-            viewBox="0 0 20 20"
-            fill="currentColor"
-          >
-            <path
-              fillRule="evenodd"
-              d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z"
-              clipRule="evenodd"
-            />
-          </svg>
-          <h2
-            className={`text-xl font-semibold ${
-              isDarkMode ? "text-white" : "text-gray-900"
-            }`}
-          >
-            Recent Tickets
-          </h2>
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center gap-2">
+            <svg
+              className={`w-5 h-5 ${
+                isDarkMode ? "text-gray-300" : "text-gray-600"
+              }`}
+              viewBox="0 0 20 20"
+              fill="currentColor"
+            >
+              <path
+                fillRule="evenodd"
+                d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z"
+                clipRule="evenodd"
+              />
+            </svg>
+            <h2
+              className={`text-xl font-semibold ${
+                isDarkMode ? "text-white" : "text-gray-900"
+              }`}
+            >
+              Recent Tickets
+            </h2>
+          </div>
+
+          {/* Pagination Controls */}
+          <div className="flex items-center space-x-2">
+            <button
+              onClick={() => onPageChange(1)}
+              disabled={currentPage === 1}
+              className={`px-3 py-1 rounded-md ${
+                currentPage === 1
+                  ? isDarkMode
+                    ? "bg-gray-700 text-gray-500 cursor-not-allowed"
+                    : "bg-gray-200 text-gray-400 cursor-not-allowed"
+                  : isDarkMode
+                  ? "bg-gray-700 text-white hover:bg-gray-600"
+                  : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+              }`}
+            >
+              First
+            </button>
+            <button
+              onClick={() => onPageChange(currentPage - 1)}
+              disabled={currentPage === 1}
+              className={`px-3 py-1 rounded-md ${
+                currentPage === 1
+                  ? isDarkMode
+                    ? "bg-gray-700 text-gray-500 cursor-not-allowed"
+                    : "bg-gray-200 text-gray-400 cursor-not-allowed"
+                  : isDarkMode
+                  ? "bg-gray-700 text-white hover:bg-gray-600"
+                  : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+              }`}
+            >
+              Previous
+            </button>
+            <span
+              className={`${isDarkMode ? "text-gray-300" : "text-gray-700"}`}
+            >
+              Page {currentPage} of {totalPages}
+            </span>
+            <button
+              onClick={() => onPageChange(currentPage + 1)}
+              disabled={currentPage === totalPages}
+              className={`px-3 py-1 rounded-md ${
+                currentPage === totalPages
+                  ? isDarkMode
+                    ? "bg-gray-700 text-gray-500 cursor-not-allowed"
+                    : "bg-gray-200 text-gray-400 cursor-not-allowed"
+                  : isDarkMode
+                  ? "bg-gray-700 text-white hover:bg-gray-600"
+                  : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+              }`}
+            >
+              Next
+            </button>
+            <button
+              onClick={() => onPageChange(totalPages)}
+              disabled={currentPage === totalPages}
+              className={`px-3 py-1 rounded-md ${
+                currentPage === totalPages
+                  ? isDarkMode
+                    ? "bg-gray-700 text-gray-500 cursor-not-allowed"
+                    : "bg-gray-200 text-gray-400 cursor-not-allowed"
+                  : isDarkMode
+                  ? "bg-gray-700 text-white hover:bg-gray-600"
+                  : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+              }`}
+            >
+              Last
+            </button>
+          </div>
         </div>
 
         <div className="overflow-x-auto">
@@ -732,11 +814,18 @@ const ClientDashboard: React.FC = () => {
 
   const [tickets, setTickets] = useState<Ticket[]>([]);
   const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [limit] = useState(10);
 
   useEffect(() => {
     const fetchTickets = async () => {
       try {
-        const response = await ticketService.getTickets();
+        const response = await ticketService.getTickets(
+          undefined,
+          currentPage,
+          limit
+        );
         const formattedTickets = response.data.map((ticket: ApiTicket) => ({
           id: ticket.id,
           name: ticket.facebook_name,
@@ -744,6 +833,7 @@ const ClientDashboard: React.FC = () => {
           status: mapTicketStatus(ticket.status),
         }));
         setTickets(formattedTickets);
+        setTotalPages(response.meta.totalPages);
       } catch (error) {
         showAlert("error", "Failed to fetch tickets");
         console.error("Error fetching tickets:", error);
@@ -753,7 +843,7 @@ const ClientDashboard: React.FC = () => {
     };
 
     fetchTickets();
-  }, [showAlert]);
+  }, [showAlert, currentPage, limit]);
 
   const mapTicketStatus = (status: string): string => {
     return status;
@@ -777,7 +867,11 @@ const ClientDashboard: React.FC = () => {
         showAlert("success", `Ticket #${ticketId} has been declined`);
       }
       // Refresh tickets after action
-      const response = await ticketService.getTickets();
+      const response = await ticketService.getTickets(
+        undefined,
+        currentPage,
+        limit
+      );
       const formattedTickets = response.data.map((ticket: ApiTicket) => ({
         id: ticket.id,
         name: ticket.facebook_name,
@@ -785,10 +879,16 @@ const ClientDashboard: React.FC = () => {
         status: mapTicketStatus(ticket.status),
       }));
       setTickets(formattedTickets);
+      setTotalPages(response.meta.totalPages);
     } catch (error) {
       showAlert("error", `Failed to ${action} ticket #${ticketId}`);
       console.error(`Error ${action}ing ticket:`, error);
     }
+  };
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    setLoading(true);
   };
 
   // Payment icon component
@@ -858,6 +958,9 @@ const ClientDashboard: React.FC = () => {
                 onAction={handleTicketAction}
                 isDarkMode={isDarkMode}
                 loading={loading}
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={handlePageChange}
               />
             }
           />
