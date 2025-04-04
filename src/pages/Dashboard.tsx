@@ -76,7 +76,9 @@ const Dashboard: React.FC = () => {
                   {ticket.facebook_name}
                 </p>
                 <p className="text-sm text-gray-500">
-                  {new Date(ticket.created_at).toLocaleDateString()}
+                  {ticket.created_at
+                    ? new Date(ticket.created_at).toLocaleDateString()
+                    : "N/A"}
                 </p>
               </div>
               <span

@@ -5,6 +5,7 @@ import { useAlert } from "../contexts/AlertContext";
 import { useTheme } from "../contexts/ThemeContext";
 import { ticketService, Ticket as ApiTicket } from "../services/ticket.service";
 import { walletService, Wallet } from "../services/wallet.service";
+import DepositModal from "./DepositModal";
 
 interface Transaction {
   date: string;
@@ -992,6 +993,7 @@ const ClientDashboard: React.FC = () => {
   const [wallets, setWallets] = useState<Wallet[]>([]);
   const [selectedWallet, setSelectedWallet] = useState<Wallet | null>(null);
   const [showWalletDropdown, setShowWalletDropdown] = useState(false);
+  const [isDepositModalOpen, setIsDepositModalOpen] = useState(false);
 
   useEffect(() => {
     const fetchWallets = async () => {
@@ -1112,7 +1114,32 @@ const ClientDashboard: React.FC = () => {
   };
 
   const handleDeposit = () => {
-    showAlert("info", "Processing deposit...");
+    if (!selectedWallet) {
+      showAlert("error", "Please select a wallet first");
+      return;
+    }
+    setIsDepositModalOpen(true);
+  };
+
+  const handleDepositSubmit = async (amount: number) => {
+    try {
+      if (!selectedWallet) {
+        showAlert("error", "Please select a wallet first");
+        return;
+      }
+
+      const updatedWallet = await walletService.deposit({
+        type: "USDT",
+        amount: amount,
+      });
+
+      setBalance(updatedWallet.balance);
+      showAlert("success", "Deposit successful");
+      setIsDepositModalOpen(false);
+    } catch (error) {
+      showAlert("error", "Failed to process deposit");
+      console.error("Error processing deposit:", error);
+    }
   };
 
   const handleWithdraw = () => {
@@ -1211,19 +1238,28 @@ const ClientDashboard: React.FC = () => {
           <Route
             path="/payment"
             element={
-              <PaymentSection
-                transactions={transactions}
-                balance={balance}
-                onConnectWallet={handleConnectWallet}
-                onDeposit={handleDeposit}
-                onWithdraw={handleWithdraw}
-                isDarkMode={isDarkMode}
-                wallets={wallets}
-                selectedWallet={selectedWallet}
-                onWalletSelect={handleWalletSelect}
-                showWalletDropdown={showWalletDropdown}
-                setShowWalletDropdown={setShowWalletDropdown}
-              />
+              <>
+                <PaymentSection
+                  transactions={transactions}
+                  balance={balance}
+                  onConnectWallet={handleConnectWallet}
+                  onDeposit={handleDeposit}
+                  onWithdraw={handleWithdraw}
+                  isDarkMode={isDarkMode}
+                  wallets={wallets}
+                  selectedWallet={selectedWallet}
+                  onWalletSelect={handleWalletSelect}
+                  showWalletDropdown={showWalletDropdown}
+                  setShowWalletDropdown={setShowWalletDropdown}
+                />
+                <DepositModal
+                  isOpen={isDepositModalOpen}
+                  onClose={() => setIsDepositModalOpen(false)}
+                  onDeposit={handleDepositSubmit}
+                  isDarkMode={isDarkMode}
+                  selectedWallet={selectedWallet}
+                />
+              </>
             }
           />
           <Route

@@ -24,6 +24,11 @@ export interface Transaction {
   created_at: string;
 }
 
+export interface TransactionDto {
+  type: "USDT" | "BTC";
+  amount: number;
+}
+
 export const walletService = {
   async getWallets(): Promise<Wallet[]> {
     const response = await api.get<Wallet[]>("/wallet");
@@ -52,7 +57,12 @@ export const walletService = {
     amount: number;
     type: "DEPOSIT" | "WITHDRAWAL";
   }): Promise<Transaction> {
-    const response = await api.post<Transaction>("/wallet/transaction", data);
+    const response = await api.post<Transaction>("/wallet/deposit", data);
+    return response.data;
+  },
+
+  async deposit(data: TransactionDto): Promise<Wallet> {
+    const response = await api.post<Wallet>("/wallet/deposit", data);
     return response.data;
   },
 };
