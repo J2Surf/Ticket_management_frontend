@@ -2,16 +2,18 @@ import { api } from "./api";
 
 export interface Ticket {
   id: number;
+  ticket_id?: string;
+  created_at?: string;
   facebook_name: string;
   amount: number;
+  status: string;
+  payment_method?: string;
+  account_name?: string;
+  image?: string;
   game: string;
   game_id: string;
-  payment_method: string;
   payment_tag: string;
-  account_name: string;
   payment_qr_code: string;
-  status: string;
-  created_at: string;
 }
 
 export interface CreateTicketDto {
@@ -58,12 +60,20 @@ export const ticketService = {
   },
 
   async validateTicket(id: string): Promise<Ticket> {
-    const response = await api.put<Ticket>(`/tickets/${id}/validate`);
+    const response = await api.post<Ticket>(`/tickets/${id}/validate`);
     return response.data;
   },
 
   async declineTicket(id: string): Promise<Ticket> {
-    const response = await api.put<Ticket>(`/tickets/${id}/decline`);
+    const response = await api.post<Ticket>(`/tickets/${id}/decline`);
+    return response.data;
+  },
+
+  async completeTicket(
+    id: string,
+    data: { paymentImageUrl: string; transactionId: string; user_id: number }
+  ): Promise<any> {
+    const response = await api.put(`/tickets/${id}/complete`, data);
     return response.data;
   },
 
