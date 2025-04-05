@@ -48,82 +48,66 @@ const PaymentSection: React.FC<{
   onWalletSelect,
   showWalletDropdown,
   setShowWalletDropdown,
-}) => (
-  <div className="space-y-8">
-    <div className="flex justify-between items-center mb-8">
-      <h1 className="text-2xl font-semibold">Payment Overview</h1>
-      <span className="text-sm text-gray-500">Last updated: 12:13:00 AM</span>
-    </div>
-    <div className="flex gap-4">
-      <div className="relative">
-        <button
-          onClick={() => setShowWalletDropdown(!showWalletDropdown)}
-          className={`px-4 py-2 rounded-lg font-medium flex items-center gap-2 ${
-            isDarkMode
-              ? "bg-[#1F2937] text-gray-700 hover:bg-gray-800"
-              : "bg-white text-gray-700 hover:bg-gray-50 border border-gray-200"
-          }`}
-        >
-          <svg
-            className="w-5 h-5"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
+}) => {
+  return (
+    <div className="space-y-8">
+      <div className="flex justify-between items-center mb-8">
+        <h1 className="text-2xl font-semibold">Payment Overview</h1>
+        <span className="text-sm text-gray-500">Last updated: 12:13:00 AM</span>
+      </div>
+      <div className="flex gap-4">
+        <div className="relative">
+          <button
+            onClick={() => setShowWalletDropdown(!showWalletDropdown)}
+            className={`px-4 py-2 rounded-lg font-medium flex items-center gap-2 ${
+              isDarkMode
+                ? "bg-[#1F2937] text-gray-700 hover:bg-gray-800"
+                : "bg-white text-gray-700 hover:bg-gray-50 border border-gray-200"
+            }`}
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"
-            />
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M22 8H2"
-            />
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M18 12h0"
-            />
-          </svg>
-          {selectedWallet
-            ? `Connected: ${selectedWallet.address.slice(
-                0,
-                6
-              )}...${selectedWallet.address.slice(-4)}`
-            : "Connect Wallet"}
-        </button>
-        {showWalletDropdown && (
-          <div
-            className={`absolute mt-2 w-44 rounded-md shadow-lg ${
-              isDarkMode ? "bg-[#1F2937]" : "bg-white"
-            } ring-1 ring-black ring-opacity-5 z-10`}
-          >
-            <div className="py-1" role="menu" aria-orientation="vertical">
-              {wallets.length === 0 ? (
-                <button
-                  onClick={() => {
-                    onConnectWallet();
-                    setShowWalletDropdown(false);
-                  }}
-                  className={`block w-full text-left px-4 py-2 text-sm ${
-                    isDarkMode
-                      ? "text-gray-700 hover:bg-gray-700"
-                      : "text-gray-700 hover:bg-gray-100"
-                  }`}
-                  role="menuitem"
-                >
-                  Create Wallet
-                </button>
-              ) : (
-                wallets.map((wallet) => (
+            <svg
+              className="w-5 h-5"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"
+              />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M22 8H2"
+              />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M18 12h0"
+              />
+            </svg>
+            {selectedWallet
+              ? `Connected: ${selectedWallet.address.slice(
+                  0,
+                  6
+                )}...${selectedWallet.address.slice(-4)}`
+              : "Connect Wallet"}
+          </button>
+          {showWalletDropdown && (
+            <div
+              className={`absolute mt-2 w-44 rounded-md shadow-lg ${
+                isDarkMode ? "bg-[#1F2937]" : "bg-white"
+              } ring-1 ring-black ring-opacity-5 z-10`}
+            >
+              <div className="py-1" role="menu" aria-orientation="vertical">
+                {wallets.length === 0 ? (
                   <button
-                    key={wallet.id}
                     onClick={() => {
-                      onWalletSelect(wallet);
+                      onConnectWallet();
                       setShowWalletDropdown(false);
                     }}
                     className={`block w-full text-left px-4 py-2 text-sm ${
@@ -133,380 +117,81 @@ const PaymentSection: React.FC<{
                     }`}
                     role="menuitem"
                   >
-                    {wallet.address.slice(0, 6)}...{wallet.address.slice(-4)}
+                    Create Wallet
                   </button>
-                ))
-              )}
+                ) : (
+                  wallets.map((wallet) => (
+                    <div
+                      key={wallet.id}
+                      className="flex justify-between items-center"
+                    >
+                      <button
+                        onClick={() => {
+                          onWalletSelect(wallet);
+                          setShowWalletDropdown(false);
+                        }}
+                        className={`block w-full text-left px-4 py-2 text-sm ${
+                          isDarkMode
+                            ? "text-gray-300 hover:bg-gray-700"
+                            : "text-gray-700 hover:bg-gray-100"
+                        }`}
+                        role="menuitem"
+                      >
+                        {wallet.type} - {wallet.address.substring(0, 6)}...
+                        {wallet.address.substring(wallet.address.length - 4)}
+                      </button>
+                    </div>
+                  ))
+                )}
+              </div>
             </div>
-          </div>
-        )}
-      </div>
-
-      <button
-        onClick={onDeposit}
-        className={`px-4 py-2 rounded-lg font-medium flex items-center gap-2 ${
-          isDarkMode
-            ? "bg-green-600 text-gray-700 hover:bg-green-700"
-            : "bg-green-500 text-gray-700 hover:bg-green-600"
-        }`}
-      >
-        <svg className="w-5 h-5" viewBox="0 0 20 20" fill="currentColor">
-          <path
-            fillRule="evenodd"
-            d="M10 3a1 1 0 00-1 1v9.586L5.707 10.293a1 1 0 10-1.414 1.414l4 4a1 1 0 001.414 0l4-4a1 1 0 00-1.414-1.414L10 13.586V4a1 1 0 00-1-1z"
-            clipRule="evenodd"
-          />
-        </svg>
-        Deposit
-      </button>
-
-      <button
-        onClick={onWithdraw}
-        className={`px-4 py-2 rounded-lg font-medium flex items-center gap-2 ${
-          isDarkMode
-            ? "bg-red-600 text-gray-700 hover:bg-red-700"
-            : "bg-red-500 text-gray-700 hover:bg-red-600"
-        }`}
-      >
-        <svg className="w-5 h-5" viewBox="0 0 20 20" fill="currentColor">
-          <path
-            fillRule="evenodd"
-            d="M10 17a1 1 0 001-1V6.414l3.293 3.293a1 1 0 001.414-1.414l-4-4a1 1 0 00-1.414 0l-4 4a1 1 0 101.414 1.414L10 6.414V16a1 1 0 001 1z"
-            clipRule="evenodd"
-          />
-        </svg>
-        Withdraw
-      </button>
-    </div>
-
-    {/* Accounts Section */}
-    <div
-      className={`${isDarkMode ? "bg-[#1F2937]" : "bg-white"} rounded-xl p-6 ${
-        isDarkMode ? "" : "shadow-sm"
-      }`}
-    >
-      <div className="flex items-center gap-2 mb-6">
-        <svg
-          className={`w-5 h-5 ${
-            isDarkMode ? "text-gray-300" : "text-gray-600"
-          }`}
-          viewBox="0 0 20 20"
-          fill="currentColor"
-        >
-          <path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z" />
-          <path
-            fillRule="evenodd"
-            d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z"
-            clipRule="evenodd"
-          />
-        </svg>
-        <h2
-          className={`text-xl font-semibold ${
-            isDarkMode ? "text-white" : "text-gray-900"
-          }`}
-        >
-          Accounts
-        </h2>
-      </div>
-
-      <div className="mb-6">
-        <div
-          className={`text-sm ${
-            isDarkMode ? "text-gray-400" : "text-gray-500"
-          }`}
-        >
-          Total Balance
+          )}
         </div>
-        <div
-          className={`text-2xl font-bold ${
-            isDarkMode ? "text-white" : "text-gray-900"
+
+        <button
+          onClick={onDeposit}
+          className={`px-4 py-2 rounded-lg font-medium flex items-center gap-2 ${
+            isDarkMode
+              ? "bg-green-600 text-gray-700 hover:bg-green-700"
+              : "bg-green-500 text-gray-700 hover:bg-green-600"
           }`}
         >
-          ${balance.toLocaleString()}.25
-        </div>
+          <svg className="w-5 h-5" viewBox="0 0 20 20" fill="currentColor">
+            <path
+              fillRule="evenodd"
+              d="M10 3a1 1 0 00-1 1v9.586L5.707 10.293a1 1 0 10-1.414 1.414l4 4a1 1 0 001.414 0l4-4a1 1 0 00-1.414-1.414L10 13.586V4a1 1 0 00-1-1z"
+              clipRule="evenodd"
+            />
+          </svg>
+          Deposit
+        </button>
+
+        <button
+          onClick={onWithdraw}
+          className={`px-4 py-2 rounded-lg font-medium flex items-center gap-2 ${
+            isDarkMode
+              ? "bg-red-600 text-gray-700 hover:bg-red-700"
+              : "bg-red-500 text-gray-700 hover:bg-red-600"
+          }`}
+        >
+          <svg className="w-5 h-5" viewBox="0 0 20 20" fill="currentColor">
+            <path
+              fillRule="evenodd"
+              d="M10 17a1 1 0 001-1V6.414l3.293 3.293a1 1 0 001.414-1.414l-4-4a1 1 0 00-1.414 0l-4 4a1 1 0 101.414 1.414L10 6.414V16a1 1 0 001 1z"
+              clipRule="evenodd"
+            />
+          </svg>
+          Withdraw
+        </button>
       </div>
 
+      {/* Accounts Section */}
       <div
-        className={`text-sm ${
-          isDarkMode ? "text-gray-400" : "text-gray-500"
-        } mb-4`}
+        className={`${
+          isDarkMode ? "bg-[#1F2937]" : "bg-white"
+        } rounded-xl p-6 ${isDarkMode ? "" : "shadow-sm"}`}
       >
-        Your Accounts
-      </div>
-
-      <div className="space-y-3">
-        <div
-          className={`flex items-center justify-between p-3 ${
-            isDarkMode ? "bg-[#111827]" : "bg-gray-50"
-          } rounded-lg`}
-        >
-          <div className="flex items-center gap-3">
-            <div
-              className={`w-10 h-10 ${
-                isDarkMode ? "bg-green-500/20" : "bg-green-100"
-              } rounded-lg flex items-center justify-center`}
-            >
-              <svg
-                className={`w-5 h-5 ${
-                  isDarkMode ? "text-green-500" : "text-green-600"
-                }`}
-                viewBox="0 0 20 20"
-                fill="currentColor"
-              >
-                <path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z" />
-                <path
-                  fillRule="evenodd"
-                  d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z"
-                  clipRule="evenodd"
-                />
-              </svg>
-            </div>
-            <div>
-              <div
-                className={`font-medium ${
-                  isDarkMode ? "text-white" : "text-gray-900"
-                }`}
-              >
-                Main Savings
-              </div>
-              <div
-                className={`text-sm ${
-                  isDarkMode ? "text-gray-400" : "text-gray-500"
-                }`}
-              >
-                Personal savings
-              </div>
-            </div>
-          </div>
-          <div
-            className={`font-medium ${
-              isDarkMode ? "text-white" : "text-gray-900"
-            }`}
-          >
-            $8,459.45
-          </div>
-        </div>
-
-        <div
-          className={`flex items-center justify-between p-3 ${
-            isDarkMode ? "bg-[#111827]" : "bg-gray-50"
-          } rounded-lg`}
-        >
-          <div className="flex items-center gap-3">
-            <div
-              className={`w-10 h-10 ${
-                isDarkMode ? "bg-blue-500/20" : "bg-blue-100"
-              } rounded-lg flex items-center justify-center`}
-            >
-              <svg
-                className={`w-5 h-5 ${
-                  isDarkMode ? "text-blue-500" : "text-blue-600"
-                }`}
-                viewBox="0 0 20 20"
-                fill="currentColor"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm3 1h6v4H7V5zm6 6H7v2h6v-2z"
-                  clipRule="evenodd"
-                />
-              </svg>
-            </div>
-            <div>
-              <div
-                className={`font-medium ${
-                  isDarkMode ? "text-white" : "text-gray-900"
-                }`}
-              >
-                Checking Account
-              </div>
-              <div
-                className={`text-sm ${
-                  isDarkMode ? "text-gray-400" : "text-gray-500"
-                }`}
-              >
-                Daily expenses
-              </div>
-            </div>
-          </div>
-          <div
-            className={`font-medium ${
-              isDarkMode ? "text-white" : "text-gray-900"
-            }`}
-          >
-            $2,850.00
-          </div>
-        </div>
-
-        <div
-          className={`flex items-center justify-between p-3 ${
-            isDarkMode ? "bg-[#111827]" : "bg-gray-50"
-          } rounded-lg`}
-        >
-          <div className="flex items-center gap-3">
-            <div
-              className={`w-10 h-10 ${
-                isDarkMode ? "bg-purple-500/20" : "bg-purple-100"
-              } rounded-lg flex items-center justify-center`}
-            >
-              <svg
-                className={`w-5 h-5 ${
-                  isDarkMode ? "text-purple-500" : "text-purple-600"
-                }`}
-                viewBox="0 0 20 20"
-                fill="currentColor"
-              >
-                <path d="M2 10a8 8 0 018-8v8h8a8 8 0 11-16 0z" />
-                <path d="M12 2.252A8.014 8.014 0 0117.748 8H12V2.252z" />
-              </svg>
-            </div>
-            <div>
-              <div
-                className={`font-medium ${
-                  isDarkMode ? "text-white" : "text-gray-900"
-                }`}
-              >
-                Investment Portfolio
-              </div>
-              <div
-                className={`text-sm ${
-                  isDarkMode ? "text-gray-400" : "text-gray-500"
-                }`}
-              >
-                Stock & ETFs
-              </div>
-            </div>
-          </div>
-          <div
-            className={`font-medium ${
-              isDarkMode ? "text-white" : "text-gray-900"
-            }`}
-          >
-            $15,230.80
-          </div>
-        </div>
-
-        <div
-          className={`flex items-center justify-between p-3 ${
-            isDarkMode ? "bg-[#111827]" : "bg-gray-50"
-          } rounded-lg`}
-        >
-          <div className="flex items-center gap-3">
-            <div
-              className={`w-10 h-10 ${
-                isDarkMode ? "bg-green-500/20" : "bg-green-100"
-              } rounded-lg flex items-center justify-center`}
-            >
-              <svg
-                className={`w-5 h-5 ${
-                  isDarkMode ? "text-green-500" : "text-green-600"
-                }`}
-                viewBox="0 0 20 20"
-                fill="currentColor"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm3 1h6v4H7V5zm6 6H7v2h6v-2z"
-                  clipRule="evenodd"
-                />
-              </svg>
-            </div>
-            <div>
-              <div
-                className={`font-medium ${
-                  isDarkMode ? "text-white" : "text-gray-900"
-                }`}
-              >
-                Savings Account
-              </div>
-              <div
-                className={`text-sm ${
-                  isDarkMode ? "text-gray-400" : "text-gray-500"
-                }`}
-              >
-                Emergency fund
-              </div>
-            </div>
-          </div>
-          <div
-            className={`font-medium ${
-              isDarkMode ? "text-white" : "text-gray-900"
-            }`}
-          >
-            $3,000.00
-          </div>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-4 gap-2 mt-6">
-        <button
-          className={`flex items-center justify-center gap-2 py-2 px-3 ${
-            isDarkMode
-              ? "bg-[#111827] text-gray-700 hover:bg-gray-800"
-              : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-          } rounded-lg transition-colors`}
-        >
-          <svg className="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
-            <path
-              fillRule="evenodd"
-              d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"
-              clipRule="evenodd"
-            />
-          </svg>
-          Add
-        </button>
-        <button
-          className={`flex items-center justify-center gap-2 py-2 px-3 ${
-            isDarkMode
-              ? "bg-[#111827] text-gray-700 hover:bg-gray-800"
-              : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-          } rounded-lg transition-colors`}
-        >
-          <svg className="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
-            <path
-              fillRule="evenodd"
-              d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 001.414 1.414L9 9.414V13a1 1 0 102 0V9.414l1.293 1.293a1 1 0 001.414-1.414z"
-              clipRule="evenodd"
-            />
-          </svg>
-          Send
-        </button>
-        <button
-          className={`flex items-center justify-center gap-2 py-2 px-3 ${
-            isDarkMode
-              ? "bg-[#111827] text-gray-700 hover:bg-gray-800"
-              : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-          } rounded-lg transition-colors`}
-        >
-          <svg className="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
-            <path
-              fillRule="evenodd"
-              d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 001.414 1.414L9 9.414V13a1 1 0 102 0V9.414l1.293 1.293a1 1 0 001.414-1.414z"
-              clipRule="evenodd"
-            />
-          </svg>
-          Top-up
-        </button>
-        <button
-          className={`flex items-center justify-center gap-2 py-2 px-3 ${
-            isDarkMode
-              ? "bg-[#111827] text-gray-700 hover:bg-gray-800"
-              : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-          } rounded-lg transition-colors`}
-        >
-          More
-        </button>
-      </div>
-    </div>
-
-    {/* Recent Transactions Section */}
-    <div
-      className={`${isDarkMode ? "bg-[#1F2937]" : "bg-white"} rounded-xl p-6 ${
-        isDarkMode ? "" : "shadow-sm"
-      }`}
-    >
-      <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 mb-6">
           <svg
             className={`w-5 h-5 ${
               isDarkMode ? "text-gray-300" : "text-gray-600"
@@ -514,163 +199,485 @@ const PaymentSection: React.FC<{
             viewBox="0 0 20 20"
             fill="currentColor"
           >
+            <path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z" />
             <path
               fillRule="evenodd"
-              d="M10 2a4 4 0 00-4 4v1H5a1 1 0 00-.994.89l-1 9A1 1 0 004 18h12a1 1 0 00.994-1.11l-1-9A1 1 0 0015 7h-1V6a4 4 0 00-4-4zm2 5V6a2 2 0 10-4 0v1h4zm-6 3a1 1 0 112 0 1 1 0 01-2 0zm7-1a1 1 0 100 2 1 1 0 000-2z"
+              d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z"
               clipRule="evenodd"
             />
           </svg>
-          <div>
-            <h2
-              className={`text-xl font-semibold ${
-                isDarkMode ? "text-white" : "text-gray-900"
-              }`}
-            >
-              Recent Transactions
-            </h2>
-            <div
-              className={`text-sm ${
-                isDarkMode ? "text-gray-400" : "text-gray-500"
-              }`}
-            >
-              23 transactions
-            </div>
+          <h2
+            className={`text-xl font-semibold ${
+              isDarkMode ? "text-white" : "text-gray-900"
+            }`}
+          >
+            Accounts
+          </h2>
+        </div>
+
+        <div className="mb-6">
+          <div
+            className={`text-sm ${
+              isDarkMode ? "text-gray-400" : "text-gray-500"
+            }`}
+          >
+            Total Balance
+          </div>
+          <div
+            className={`text-2xl font-bold ${
+              isDarkMode ? "text-white" : "text-gray-900"
+            }`}
+          >
+            ${balance.toLocaleString()}
           </div>
         </div>
+
         <div
           className={`text-sm ${
             isDarkMode ? "text-gray-400" : "text-gray-500"
-          }`}
+          } mb-4`}
         >
-          This Month
+          Your Accounts
+        </div>
+
+        <div className="space-y-3">
+          <div
+            className={`flex items-center justify-between p-3 ${
+              isDarkMode ? "bg-[#111827]" : "bg-gray-50"
+            } rounded-lg`}
+          >
+            <div className="flex items-center gap-3">
+              <div
+                className={`w-10 h-10 ${
+                  isDarkMode ? "bg-green-500/20" : "bg-green-100"
+                } rounded-lg flex items-center justify-center`}
+              >
+                <svg
+                  className={`w-5 h-5 ${
+                    isDarkMode ? "text-green-500" : "text-green-600"
+                  }`}
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z" />
+                  <path
+                    fillRule="evenodd"
+                    d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              </div>
+              <div>
+                <div
+                  className={`font-medium ${
+                    isDarkMode ? "text-white" : "text-gray-900"
+                  }`}
+                >
+                  Main Savings
+                </div>
+                <div
+                  className={`text-sm ${
+                    isDarkMode ? "text-gray-400" : "text-gray-500"
+                  }`}
+                >
+                  Personal savings
+                </div>
+              </div>
+            </div>
+            <div
+              className={`font-medium ${
+                isDarkMode ? "text-white" : "text-gray-900"
+              }`}
+            >
+              $8,459.45
+            </div>
+          </div>
+
+          <div
+            className={`flex items-center justify-between p-3 ${
+              isDarkMode ? "bg-[#111827]" : "bg-gray-50"
+            } rounded-lg`}
+          >
+            <div className="flex items-center gap-3">
+              <div
+                className={`w-10 h-10 ${
+                  isDarkMode ? "bg-blue-500/20" : "bg-blue-100"
+                } rounded-lg flex items-center justify-center`}
+              >
+                <svg
+                  className={`w-5 h-5 ${
+                    isDarkMode ? "text-blue-500" : "text-blue-600"
+                  }`}
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm3 1h6v4H7V5zm6 6H7v2h6v-2z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              </div>
+              <div>
+                <div
+                  className={`font-medium ${
+                    isDarkMode ? "text-white" : "text-gray-900"
+                  }`}
+                >
+                  Checking Account
+                </div>
+                <div
+                  className={`text-sm ${
+                    isDarkMode ? "text-gray-400" : "text-gray-500"
+                  }`}
+                >
+                  Daily expenses
+                </div>
+              </div>
+            </div>
+            <div
+              className={`font-medium ${
+                isDarkMode ? "text-white" : "text-gray-900"
+              }`}
+            >
+              $2,850.00
+            </div>
+          </div>
+
+          <div
+            className={`flex items-center justify-between p-3 ${
+              isDarkMode ? "bg-[#111827]" : "bg-gray-50"
+            } rounded-lg`}
+          >
+            <div className="flex items-center gap-3">
+              <div
+                className={`w-10 h-10 ${
+                  isDarkMode ? "bg-purple-500/20" : "bg-purple-100"
+                } rounded-lg flex items-center justify-center`}
+              >
+                <svg
+                  className={`w-5 h-5 ${
+                    isDarkMode ? "text-purple-500" : "text-purple-600"
+                  }`}
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path d="M2 10a8 8 0 018-8v8h8a8 8 0 11-16 0z" />
+                  <path d="M12 2.252A8.014 8.014 0 0117.748 8H12V2.252z" />
+                </svg>
+              </div>
+              <div>
+                <div
+                  className={`font-medium ${
+                    isDarkMode ? "text-white" : "text-gray-900"
+                  }`}
+                >
+                  Investment Portfolio
+                </div>
+                <div
+                  className={`text-sm ${
+                    isDarkMode ? "text-gray-400" : "text-gray-500"
+                  }`}
+                >
+                  Stock & ETFs
+                </div>
+              </div>
+            </div>
+            <div
+              className={`font-medium ${
+                isDarkMode ? "text-white" : "text-gray-900"
+              }`}
+            >
+              $15,230.80
+            </div>
+          </div>
+
+          <div
+            className={`flex items-center justify-between p-3 ${
+              isDarkMode ? "bg-[#111827]" : "bg-gray-50"
+            } rounded-lg`}
+          >
+            <div className="flex items-center gap-3">
+              <div
+                className={`w-10 h-10 ${
+                  isDarkMode ? "bg-green-500/20" : "bg-green-100"
+                } rounded-lg flex items-center justify-center`}
+              >
+                <svg
+                  className={`w-5 h-5 ${
+                    isDarkMode ? "text-green-500" : "text-green-600"
+                  }`}
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm3 1h6v4H7V5zm6 6H7v2h6v-2z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              </div>
+              <div>
+                <div
+                  className={`font-medium ${
+                    isDarkMode ? "text-white" : "text-gray-900"
+                  }`}
+                >
+                  Savings Account
+                </div>
+                <div
+                  className={`text-sm ${
+                    isDarkMode ? "text-gray-400" : "text-gray-500"
+                  }`}
+                >
+                  Emergency fund
+                </div>
+              </div>
+            </div>
+            <div
+              className={`font-medium ${
+                isDarkMode ? "text-white" : "text-gray-900"
+              }`}
+            >
+              $3,000.00
+            </div>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-4 gap-2 mt-6">
+          <button
+            className={`flex items-center justify-center gap-2 py-2 px-3 ${
+              isDarkMode
+                ? "bg-[#111827] text-gray-700 hover:bg-gray-800"
+                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+            } rounded-lg transition-colors`}
+          >
+            <svg className="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
+              <path
+                fillRule="evenodd"
+                d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"
+                clipRule="evenodd"
+              />
+            </svg>
+            Add
+          </button>
+          <button
+            className={`flex items-center justify-center gap-2 py-2 px-3 ${
+              isDarkMode
+                ? "bg-[#111827] text-gray-700 hover:bg-gray-800"
+                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+            } rounded-lg transition-colors`}
+          >
+            <svg className="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
+              <path
+                fillRule="evenodd"
+                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 001.414 1.414L9 9.414V13a1 1 0 102 0V9.414l1.293 1.293a1 1 0 001.414-1.414z"
+                clipRule="evenodd"
+              />
+            </svg>
+            Send
+          </button>
+          <button
+            className={`flex items-center justify-center gap-2 py-2 px-3 ${
+              isDarkMode
+                ? "bg-[#111827] text-gray-700 hover:bg-gray-800"
+                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+            } rounded-lg transition-colors`}
+          >
+            <svg className="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
+              <path
+                fillRule="evenodd"
+                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 001.414 1.414L9 9.414V13a1 1 0 102 0V9.414l1.293 1.293a1 1 0 001.414-1.414z"
+                clipRule="evenodd"
+              />
+            </svg>
+            Top-up
+          </button>
+          <button
+            className={`flex items-center justify-center gap-2 py-2 px-3 ${
+              isDarkMode
+                ? "bg-[#111827] text-gray-700 hover:bg-gray-800"
+                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+            } rounded-lg transition-colors`}
+          >
+            More
+          </button>
         </div>
       </div>
 
-      <div className="overflow-x-auto">
-        <table className="w-full">
-          <thead>
-            <tr>
-              <th
-                className={`p-4 text-left ${
+      {/* Recent Transactions Section */}
+      <div
+        className={`${
+          isDarkMode ? "bg-[#1F2937]" : "bg-white"
+        } rounded-xl p-6 ${isDarkMode ? "" : "shadow-sm"}`}
+      >
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center gap-2">
+            <svg
+              className={`w-5 h-5 ${
+                isDarkMode ? "text-gray-300" : "text-gray-600"
+              }`}
+              viewBox="0 0 20 20"
+              fill="currentColor"
+            >
+              <path
+                fillRule="evenodd"
+                d="M10 2a4 4 0 00-4 4v1H5a1 1 0 00-.994.89l-1 9A1 1 0 004 18h12a1 1 0 00.994-1.11l-1-9A1 1 0 0015 7h-1V6a4 4 0 00-4-4zm2 5V6a2 2 0 10-4 0v1h4zm-6 3a1 1 0 112 0 1 1 0 01-2 0zm7-1a1 1 0 100 2 1 1 0 000-2z"
+                clipRule="evenodd"
+              />
+            </svg>
+            <div>
+              <h2
+                className={`text-xl font-semibold ${
+                  isDarkMode ? "text-white" : "text-gray-900"
+                }`}
+              >
+                Recent Transactions
+              </h2>
+              <div
+                className={`text-sm ${
                   isDarkMode ? "text-gray-400" : "text-gray-500"
                 }`}
               >
-                Date
-              </th>
-              <th
-                className={`p-4 text-left ${
-                  isDarkMode ? "text-gray-400" : "text-gray-500"
-                }`}
-              >
-                Income
-              </th>
-              <th
-                className={`p-4 text-left ${
-                  isDarkMode ? "text-gray-400" : "text-gray-500"
-                }`}
-              >
-                Outcome
-              </th>
-              <th
-                className={`p-4 text-left ${
-                  isDarkMode ? "text-gray-400" : "text-gray-500"
-                }`}
-              >
-                Ticket Name
-              </th>
-              <th
-                className={`p-4 text-left ${
-                  isDarkMode ? "text-gray-400" : "text-gray-500"
-                }`}
-              >
-                Transaction Hash
-              </th>
-            </tr>
-          </thead>
-          <tbody
-            className={`divide-y ${
-              isDarkMode ? "divide-gray-700" : "divide-gray-100"
+                23 transactions
+              </div>
+            </div>
+          </div>
+          <div
+            className={`text-sm ${
+              isDarkMode ? "text-gray-400" : "text-gray-500"
             }`}
           >
-            {transactions.map((transaction) => (
-              <tr
-                key={transaction.transactionHash}
-                className={`${
-                  isDarkMode ? "hover:bg-gray-800" : "hover:bg-gray-50"
-                }`}
-              >
-                <td
-                  className={`p-4 ${
-                    isDarkMode ? "text-gray-300" : "text-gray-900"
-                  }`}
-                >
-                  {transaction.date}
-                </td>
-                <td
-                  className={`p-4 font-medium ${
-                    isDarkMode ? "text-gray-300" : "text-gray-900"
-                  }`}
-                >
-                  {transaction.income ? (
-                    <span className="text-green-500">
-                      +${transaction.income.toLocaleString()}
-                    </span>
-                  ) : (
-                    "-"
-                  )}
-                </td>
-                <td
-                  className={`p-4 font-medium ${
-                    isDarkMode ? "text-gray-300" : "text-gray-900"
-                  }`}
-                >
-                  {transaction.outcome ? (
-                    <span className="text-red-500">
-                      -${transaction.outcome.toLocaleString()}
-                    </span>
-                  ) : (
-                    "-"
-                  )}
-                </td>
-                <td
-                  className={`p-4 ${
-                    isDarkMode ? "text-gray-300" : "text-gray-900"
-                  }`}
-                >
-                  {transaction.ticketName || "-"}
-                </td>
-                <td
-                  className={`p-4 font-mono ${
-                    isDarkMode ? "text-gray-300" : "text-gray-900"
-                  }`}
-                >
-                  {transaction.transactionHash}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+            This Month
+          </div>
+        </div>
 
-      <button
-        className={`w-full mt-6 py-3 text-center ${
-          isDarkMode
-            ? "bg-[#111827] text-gray-700 hover:bg-gray-800"
-            : "bg-white text-gray-700 hover:bg-gray-50"
-        } rounded-lg transition-colors flex items-center justify-center gap-2`}
-      >
-        View All Transactions
-        <svg className="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
-          <path
-            fillRule="evenodd"
-            d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-            clipRule="evenodd"
-          />
-        </svg>
-      </button>
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead>
+              <tr>
+                <th
+                  className={`p-4 text-left ${
+                    isDarkMode ? "text-gray-400" : "text-gray-500"
+                  }`}
+                >
+                  Date
+                </th>
+                <th
+                  className={`p-4 text-left ${
+                    isDarkMode ? "text-gray-400" : "text-gray-500"
+                  }`}
+                >
+                  Income
+                </th>
+                <th
+                  className={`p-4 text-left ${
+                    isDarkMode ? "text-gray-400" : "text-gray-500"
+                  }`}
+                >
+                  Outcome
+                </th>
+                <th
+                  className={`p-4 text-left ${
+                    isDarkMode ? "text-gray-400" : "text-gray-500"
+                  }`}
+                >
+                  Ticket Name
+                </th>
+                <th
+                  className={`p-4 text-left ${
+                    isDarkMode ? "text-gray-400" : "text-gray-500"
+                  }`}
+                >
+                  Transaction Hash
+                </th>
+              </tr>
+            </thead>
+            <tbody
+              className={`divide-y ${
+                isDarkMode ? "divide-gray-700" : "divide-gray-100"
+              }`}
+            >
+              {transactions.map((transaction) => (
+                <tr
+                  key={transaction.transactionHash}
+                  className={`${
+                    isDarkMode ? "hover:bg-gray-800" : "hover:bg-gray-50"
+                  }`}
+                >
+                  <td
+                    className={`p-4 ${
+                      isDarkMode ? "text-gray-300" : "text-gray-900"
+                    }`}
+                  >
+                    {transaction.date}
+                  </td>
+                  <td
+                    className={`p-4 font-medium ${
+                      isDarkMode ? "text-gray-300" : "text-gray-900"
+                    }`}
+                  >
+                    {transaction.income ? (
+                      <span className="text-green-500">
+                        +${transaction.income.toLocaleString()}
+                      </span>
+                    ) : (
+                      "-"
+                    )}
+                  </td>
+                  <td
+                    className={`p-4 font-medium ${
+                      isDarkMode ? "text-gray-300" : "text-gray-900"
+                    }`}
+                  >
+                    {transaction.outcome ? (
+                      <span className="text-red-500">
+                        -${transaction.outcome.toLocaleString()}
+                      </span>
+                    ) : (
+                      "-"
+                    )}
+                  </td>
+                  <td
+                    className={`p-4 ${
+                      isDarkMode ? "text-gray-300" : "text-gray-900"
+                    }`}
+                  >
+                    {transaction.ticketName || "-"}
+                  </td>
+                  <td
+                    className={`p-4 font-mono ${
+                      isDarkMode ? "text-gray-300" : "text-gray-900"
+                    }`}
+                  >
+                    {transaction.transactionHash}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        <button
+          className={`w-full mt-6 py-3 text-center ${
+            isDarkMode
+              ? "bg-[#111827] text-gray-700 hover:bg-gray-800"
+              : "bg-white text-gray-700 hover:bg-gray-50"
+          } rounded-lg transition-colors flex items-center justify-center gap-2`}
+        >
+          View All Transactions
+          <svg className="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
+            <path
+              fillRule="evenodd"
+              d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+              clipRule="evenodd"
+            />
+          </svg>
+        </button>
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 const TicketSection: React.FC<{
   tickets: Ticket[];
@@ -1129,21 +1136,33 @@ const ClientDashboard: React.FC = () => {
   const handleConnectWallet = async () => {
     try {
       if (wallets.length === 0) {
-        // Create a new wallet
-        const newWallet = await walletService.createWallet({
-          type: "USDT",
-          address: "", // This will be generated by the backend
-        });
-        setWallets([...wallets, newWallet]);
-        setSelectedWallet(newWallet);
-        showAlert("success", "Wallet created successfully");
+        // Create a new Ethereum wallet
+        const newWallet = await walletService.createEthereumWallet();
+
+        // Convert EthereumWalletDto to Wallet format
+        const wallet: Wallet = {
+          id: newWallet.id,
+          type: "CUSTOMER", // Default type
+          balance: newWallet.balance,
+          user_id: 0, // This will be set by the backend
+          address: newWallet.address,
+          created_at: newWallet.createdAt,
+          updated_at: newWallet.updatedAt,
+        };
+
+        setWallets([...wallets, wallet]);
+        setSelectedWallet(wallet);
+
+        // Show success message with private key warning
+        showAlert("success", "Ethereum wallet created successfully.");
       } else if (!selectedWallet) {
         showAlert("error", "Please select a wallet first");
         return;
       } else {
         const connectedWallet = await walletService.connectWallet({
-          type: "USDT",
-          address: selectedWallet.address,
+          type: "ETH", // Default to USDT for now
+          tokenType: "USDT",
+          walletAddress: selectedWallet.address,
         });
 
         setBalance(connectedWallet.balance);
@@ -1160,8 +1179,9 @@ const ClientDashboard: React.FC = () => {
     // Connect the wallet directly using the wallet parameter
     try {
       const connectedWallet = await walletService.connectWallet({
-        type: "USDT",
-        address: wallet.address,
+        type: "ETH",
+        tokenType: "USDT",
+        walletAddress: wallet.address,
       });
 
       setBalance(connectedWallet.balance);

@@ -1,5 +1,8 @@
 import { api } from "./api";
 
+export type TokenType = "ETH" | "BTC" | "USDT" | "THB";
+export type WalletType = "ETH";
+
 export interface Wallet {
   id: number;
   type: "CUSTOMER" | "FULFILLER";
@@ -8,11 +11,31 @@ export interface Wallet {
   address: string;
   created_at: string;
   updated_at: string;
+  token_type?: TokenType;
 }
 
 export interface ConnectWalletDto {
-  type: "USDT" | "BTC";
+  type: WalletType;
+  tokenType: TokenType;
+  walletAddress: string;
+}
+
+export interface EthereumWalletDto {
+  id: number;
+  type: "ETH";
   address: string;
+  balance: number;
+  privateKey: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface PrivateKeyResponse {
+  privateKey: string;
+}
+
+export interface PublicKeyResponse {
+  publicKey: string;
 }
 
 export interface Transaction {
@@ -35,7 +58,7 @@ export const walletService = {
     return response.data;
   },
 
-  async getWallet(type: "USDT" | "BTC"): Promise<Wallet> {
+  async getWallet(type: "ETH"): Promise<Wallet> {
     const response = await api.get<Wallet>(`/wallet/${type}`);
     return response.data;
   },
@@ -45,9 +68,50 @@ export const walletService = {
     return response.data;
   },
 
-  async connectWallet(data: ConnectWalletDto): Promise<Wallet> {
-    const response = await api.post<Wallet>("/wallet/connect", data);
+  async createEthereumWallet(): Promise<EthereumWalletDto> {
+    const response = await api.post<EthereumWalletDto>(
+      "/wallet/create/ethereum"
+    );
     return response.data;
+  },
+
+  async getPrivateKey(walletId: number): Promise<string> {
+    const response = await api.get<PrivateKeyResponse>(
+      `/wallet/private-key/${walletId}`
+    );
+    return response.data.privateKey;
+  },
+
+  async getPublicKey(walletId: number): Promise<string> {
+    const response = await api.get<PublicKeyResponse>(
+      `/wallet/public-key/${walletId}`
+    );
+    return response.data.publicKey;
+  },
+
+  async connectWallet(data: ConnectWalletDto): Promise<Wallet> {
+    console.log("connectWallet data", data);
+    try {
+      const response = await api.post<Wallet>("/wallet/connect", data);
+      return response.data;
+    } catch (error: any) {
+      console.error("Error connecting wallet:", error);
+      if (error.response?.status === 401) {
+        // Handle unauthorized access - token might be missing or expired
+        console.error("Authentication error. Please log in again.");
+      } else if (error.response?.status === 403) {
+        // Handle forbidden access - user doesn't have required roles
+        console.error(
+          "Access forbidden. You don't have permission to connect a wallet."
+        );
+      } else if (error.response?.status === 404) {
+        // Handle not found error
+        console.error(
+          "Wallet endpoint not found. Please check if the backend server is running."
+        );
+      }
+      throw error;
+    }
   },
 
   async getTransactions(walletId: number): Promise<Transaction[]> {
