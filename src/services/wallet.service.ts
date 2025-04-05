@@ -40,6 +40,11 @@ export const walletService = {
     return response.data;
   },
 
+  async createWallet(data: ConnectWalletDto): Promise<Wallet> {
+    const response = await api.post<Wallet>("/wallet/create", data);
+    return response.data;
+  },
+
   async connectWallet(data: ConnectWalletDto): Promise<Wallet> {
     const response = await api.post<Wallet>("/wallet/connect", data);
     return response.data;
