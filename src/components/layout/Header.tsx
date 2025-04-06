@@ -111,21 +111,24 @@ const Header: React.FC = () => {
                     <div className="flex items-center gap-3">
                       <img
                         src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                        alt="Eugene An"
+                        alt="First Last Name"
                         className="w-10 h-10 rounded-lg"
                       />
                       <div>
                         <div className="text-sm font-medium text-white">
-                          Eugene An
+                          First Last Name
                         </div>
-                        <div className="text-xs text-gray-400">Fulfiller</div>
+                        <div className="text-xs text-gray-400">
+                          {userRole === "fulfiller" ? "Fulfiller" : "User"}
+                        </div>
                       </div>
                     </div>
                   </div>
 
                   <div className="p-2">
                     <Link
-                      to="/subscription"
+                      to=""
+                      // to="/subscription"
                       className="flex items-center gap-2 px-3 py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-800 rounded-lg"
                     >
                       <svg
@@ -147,7 +150,8 @@ const Header: React.FC = () => {
                     </Link>
 
                     <Link
-                      to="/settings"
+                      to=""
+                      // to="/settings"
                       className="flex items-center gap-2 px-3 py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-800 rounded-lg"
                     >
                       <svg
@@ -165,7 +169,8 @@ const Header: React.FC = () => {
                     </Link>
 
                     <Link
-                      to="/terms"
+                      to=""
+                      // to="/terms"
                       className="flex items-center gap-2 px-3 py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-800 rounded-lg"
                     >
                       <svg

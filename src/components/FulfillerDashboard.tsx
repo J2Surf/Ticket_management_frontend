@@ -199,7 +199,7 @@ const PaymentSection: React.FC<{
           </h2>
         </div>
 
-        <div className="mb-6">
+        <div>
           <div
             className={`text-sm ${
               isDarkMode ? "text-gray-400" : "text-gray-500"
@@ -214,66 +214,6 @@ const PaymentSection: React.FC<{
           >
             ${balance.toLocaleString()}
           </div>
-        </div>
-
-        <div className="grid grid-cols-4 gap-2 mt-6">
-          <button
-            className={`flex items-center justify-center gap-2 py-2 px-3 ${
-              isDarkMode
-                ? "bg-[#111827] text-gray-700 hover:bg-gray-800"
-                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-            } rounded-lg transition-colors`}
-          >
-            <svg className="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
-              <path
-                fillRule="evenodd"
-                d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"
-                clipRule="evenodd"
-              />
-            </svg>
-            Add
-          </button>
-          <button
-            className={`flex items-center justify-center gap-2 py-2 px-3 ${
-              isDarkMode
-                ? "bg-[#111827] text-gray-700 hover:bg-gray-800"
-                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-            } rounded-lg transition-colors`}
-          >
-            <svg className="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
-              <path
-                fillRule="evenodd"
-                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 001.414 1.414L9 9.414V13a1 1 0 102 0V9.414l1.293 1.293a1 1 0 001.414-1.414z"
-                clipRule="evenodd"
-              />
-            </svg>
-            Send
-          </button>
-          <button
-            className={`flex items-center justify-center gap-2 py-2 px-3 ${
-              isDarkMode
-                ? "bg-[#111827] text-gray-700 hover:bg-gray-800"
-                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-            } rounded-lg transition-colors`}
-          >
-            <svg className="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
-              <path
-                fillRule="evenodd"
-                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 001.414 1.414L9 9.414V13a1 1 0 102 0V9.414l1.293 1.293a1 1 0 001.414-1.414z"
-                clipRule="evenodd"
-              />
-            </svg>
-            Top-up
-          </button>
-          <button
-            className={`flex items-center justify-center gap-2 py-2 px-3 ${
-              isDarkMode
-                ? "bg-[#111827] text-gray-700 hover:bg-gray-800"
-                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-            } rounded-lg transition-colors`}
-          >
-            More
-          </button>
         </div>
       </div>
 

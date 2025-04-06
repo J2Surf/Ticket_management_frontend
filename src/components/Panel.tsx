@@ -87,7 +87,8 @@ const Panel: React.FC<PanelProps> = ({ items }) => {
           </div>
           <nav className="space-y-1">
             <Link
-              to="/members"
+              to=""
+              // to="/members"
               className={`flex items-center ${
                 isDarkMode
                   ? "text-gray-300 hover:text-white hover:bg-gray-800"
@@ -112,7 +113,8 @@ const Panel: React.FC<PanelProps> = ({ items }) => {
             ></div>
 
             <Link
-              to="/settings"
+              to=""
+              // to="/settings"
               className={`flex items-center ${
                 isDarkMode
                   ? "text-gray-300 hover:text-white hover:bg-gray-800"
@@ -134,7 +136,8 @@ const Panel: React.FC<PanelProps> = ({ items }) => {
             </Link>
 
             <Link
-              to="/help"
+              to=""
+              // to="/help"
               className={`flex items-center ${
                 isDarkMode
                   ? "text-gray-300 hover:text-white hover:bg-gray-800"
