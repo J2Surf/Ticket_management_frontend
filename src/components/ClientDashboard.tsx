@@ -228,7 +228,7 @@ const PaymentSection: React.FC<{
               isDarkMode ? "text-white" : "text-gray-900"
             }`}
           >
-            ${balance.toLocaleString()}
+            ${balance.toString()}
           </div>
         </div>
       </div>
@@ -892,7 +892,7 @@ const ClientDashboard: React.FC = () => {
           tokenType: "USDT",
           walletAddress: selectedWallet.address,
         });
-
+        console.log("connectedWallet 2", connectedWallet);
         setBalance(connectedWallet.balance);
         showAlert("success", "Wallet connected successfully");
       }
@@ -912,6 +912,7 @@ const ClientDashboard: React.FC = () => {
         walletAddress: wallet.address,
       });
 
+      console.log("connectedWallet 3", connectedWallet);
       setBalance(connectedWallet.balance);
       showAlert("success", "Wallet connected successfully");
     } catch (error) {
