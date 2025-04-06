@@ -4,8 +4,14 @@ import Panel from "./Panel";
 import { useAlert } from "../contexts/AlertContext";
 import { useTheme } from "../contexts/ThemeContext";
 import { ticketService, Ticket as ApiTicket } from "../services/ticket.service";
-import { walletService, Wallet } from "../services/wallet.service";
+import {
+  walletService,
+  Wallet,
+  CryptoTransaction,
+} from "../services/wallet.service";
 import WithdrawModal from "./WithdrawModal";
+import { useAuth } from "../hooks/useAuth";
+import { format } from "date-fns";
 
 interface Transaction {
   date: string;
@@ -29,7 +35,7 @@ interface Ticket {
 }
 
 const PaymentSection: React.FC<{
-  transactions: Transaction[];
+  // transactions: Transaction[];
   balance: number;
   onConnectWallet: () => void;
   onWithdraw: () => void;
@@ -39,8 +45,10 @@ const PaymentSection: React.FC<{
   onWalletSelect: (wallet: Wallet) => void;
   showWalletDropdown: boolean;
   setShowWalletDropdown: (show: boolean) => void;
+  cryptoTransactions: CryptoTransaction[];
+  isCryptoLoading: boolean;
 }> = ({
-  transactions,
+  // transactions,
   balance,
   onConnectWallet,
   onWithdraw,
@@ -50,6 +58,8 @@ const PaymentSection: React.FC<{
   onWalletSelect,
   showWalletDropdown,
   setShowWalletDropdown,
+  cryptoTransactions,
+  isCryptoLoading,
 }) => {
   return (
     <div className="space-y-8">
@@ -251,7 +261,7 @@ const PaymentSection: React.FC<{
                   isDarkMode ? "text-gray-400" : "text-gray-500"
                 }`}
               >
-                23 transactions
+                {cryptoTransactions.length} transactions
               </div>
             </div>
           </div>
@@ -265,109 +275,115 @@ const PaymentSection: React.FC<{
         </div>
 
         <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead>
-              <tr>
-                <th
-                  className={`p-4 text-left ${
-                    isDarkMode ? "text-gray-400" : "text-gray-500"
-                  }`}
-                >
-                  Date
-                </th>
-                <th
-                  className={`p-4 text-left ${
-                    isDarkMode ? "text-gray-400" : "text-gray-500"
-                  }`}
-                >
-                  Income
-                </th>
-                <th
-                  className={`p-4 text-left ${
-                    isDarkMode ? "text-gray-400" : "text-gray-500"
-                  }`}
-                >
-                  Outcome
-                </th>
-                <th
-                  className={`p-4 text-left ${
-                    isDarkMode ? "text-gray-400" : "text-gray-500"
-                  }`}
-                >
-                  Ticket Name
-                </th>
-                <th
-                  className={`p-4 text-left ${
-                    isDarkMode ? "text-gray-400" : "text-gray-500"
-                  }`}
-                >
-                  Transaction Hash
-                </th>
-              </tr>
-            </thead>
-            <tbody
-              className={`divide-y ${
-                isDarkMode ? "divide-gray-700" : "divide-gray-100"
-              }`}
-            >
-              {transactions.map((transaction) => (
-                <tr
-                  key={transaction.transactionHash}
-                  className={`${
-                    isDarkMode ? "hover:bg-gray-800" : "hover:bg-gray-50"
-                  }`}
-                >
-                  <td
-                    className={`p-4 ${
-                      isDarkMode ? "text-gray-300" : "text-gray-900"
+          {isCryptoLoading ? (
+            <div className="flex justify-center items-center py-8">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+            </div>
+          ) : cryptoTransactions.length === 0 ? (
+            <div className="text-center py-8 text-gray-500">
+              No transactions found
+            </div>
+          ) : (
+            <table className="w-full">
+              <thead>
+                <tr>
+                  <th
+                    className={`p-4 text-left ${
+                      isDarkMode ? "text-gray-400" : "text-gray-500"
                     }`}
                   >
-                    {transaction.date}
-                  </td>
-                  <td
-                    className={`p-4 font-medium ${
-                      isDarkMode ? "text-gray-300" : "text-gray-900"
+                    Date
+                  </th>
+                  <th
+                    className={`p-4 text-left ${
+                      isDarkMode ? "text-gray-400" : "text-gray-500"
                     }`}
                   >
-                    {transaction.income ? (
-                      <span className="text-green-500">
-                        +${transaction.income.toLocaleString()}
-                      </span>
-                    ) : (
-                      "-"
-                    )}
-                  </td>
-                  <td
-                    className={`p-4 font-medium ${
-                      isDarkMode ? "text-gray-300" : "text-gray-900"
+                    Type
+                  </th>
+                  <th
+                    className={`p-4 text-left ${
+                      isDarkMode ? "text-gray-400" : "text-gray-500"
                     }`}
                   >
-                    {transaction.outcome ? (
-                      <span className="text-red-500">
-                        -${transaction.outcome.toLocaleString()}
-                      </span>
-                    ) : (
-                      "-"
-                    )}
-                  </td>
-                  <td
-                    className={`p-4 ${
-                      isDarkMode ? "text-gray-300" : "text-gray-900"
+                    Amount
+                  </th>
+                  <th
+                    className={`p-4 text-left ${
+                      isDarkMode ? "text-gray-400" : "text-gray-500"
                     }`}
                   >
-                    {transaction.ticketName || "-"}
-                  </td>
-                  <td
-                    className={`p-4 font-mono ${
-                      isDarkMode ? "text-gray-300" : "text-gray-900"
+                    Description
+                  </th>
+                  <th
+                    className={`p-4 text-left ${
+                      isDarkMode ? "text-gray-400" : "text-gray-500"
                     }`}
                   >
-                    {transaction.transactionHash}
-                  </td>
+                    Transaction Hash
+                  </th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody
+                className={`divide-y ${
+                  isDarkMode ? "divide-gray-700" : "divide-gray-100"
+                }`}
+              >
+                {cryptoTransactions.map((transaction) => (
+                  <tr
+                    key={transaction.id}
+                    className={`${
+                      isDarkMode ? "hover:bg-gray-800" : "hover:bg-gray-50"
+                    }`}
+                  >
+                    <td
+                      className={`p-4 ${
+                        isDarkMode ? "text-gray-300" : "text-gray-900"
+                      }`}
+                    >
+                      {format(new Date(transaction.created_at), "dd/MM/yyyy")}
+                    </td>
+                    <td
+                      className={`p-4 font-medium ${
+                        isDarkMode ? "text-gray-300" : "text-gray-900"
+                      }`}
+                    >
+                      {transaction.transaction_type}
+                    </td>
+                    <td
+                      className={`p-4 font-medium ${
+                        isDarkMode ? "text-gray-300" : "text-gray-900"
+                      }`}
+                    >
+                      {transaction.transaction_type === "deposit" ? (
+                        <span className="text-green-500">
+                          +${transaction.amount.toLocaleString()}
+                        </span>
+                      ) : (
+                        <span className="text-red-500">
+                          -${transaction.amount.toLocaleString()}
+                        </span>
+                      )}
+                    </td>
+                    <td
+                      className={`p-4 ${
+                        isDarkMode ? "text-gray-300" : "text-gray-900"
+                      }`}
+                    >
+                      {transaction.description || "-"}
+                    </td>
+                    <td
+                      className={`p-4 font-mono ${
+                        isDarkMode ? "text-gray-300" : "text-gray-900"
+                      }`}
+                    >
+                      {transaction.transaction_hash || "-"}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
         </div>
 
         <button
@@ -828,6 +844,7 @@ const FulfillerDashboard: React.FC = () => {
   const location = useLocation();
   const { showAlert } = useAlert();
   const { isDarkMode } = useTheme();
+  const { user } = useAuth();
   const [balance, setBalance] = useState<number>(0);
   const [transactions] = useState<Transaction[]>([
     {
@@ -856,6 +873,10 @@ const FulfillerDashboard: React.FC = () => {
   const [showWalletDropdown, setShowWalletDropdown] = useState(false);
   const [isWithdrawModalOpen, setIsWithdrawModalOpen] = useState(false);
   const [gasFee] = useState<number>(5); // Fixed gas fee of 5 USDT for withdrawals
+  const [cryptoTransactions, setCryptoTransactions] = useState<
+    CryptoTransaction[]
+  >([]);
+  const [isCryptoLoading, setIsCryptoLoading] = useState(true);
 
   useEffect(() => {
     const fetchWallets = async () => {
@@ -912,6 +933,22 @@ const FulfillerDashboard: React.FC = () => {
 
     fetchTickets();
   }, [showAlert, currentPage, limit, sortField, sortDirection]);
+
+  useEffect(() => {
+    const fetchCryptoTransactions = async () => {
+      try {
+        const response = await walletService.getCryptoTransactions();
+        console.log("Fulfiller Dashboard crypto transactions", response);
+        setCryptoTransactions(response);
+      } catch (error) {
+        console.error("Error fetching crypto transactions:", error);
+      } finally {
+        setIsCryptoLoading(false);
+      }
+    };
+
+    fetchCryptoTransactions();
+  }, []);
 
   const sortTickets = (
     ticketsToSort: Ticket[],
@@ -1186,7 +1223,7 @@ const FulfillerDashboard: React.FC = () => {
             path="/payment"
             element={
               <PaymentSection
-                transactions={transactions}
+                // transactions={transactions}
                 balance={balance}
                 onConnectWallet={handleConnectWallet}
                 onWithdraw={handleWithdraw}
@@ -1196,6 +1233,8 @@ const FulfillerDashboard: React.FC = () => {
                 onWalletSelect={handleWalletSelect}
                 showWalletDropdown={showWalletDropdown}
                 setShowWalletDropdown={setShowWalletDropdown}
+                cryptoTransactions={cryptoTransactions}
+                isCryptoLoading={isCryptoLoading}
               />
             }
           />

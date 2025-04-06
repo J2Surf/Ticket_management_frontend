@@ -14,6 +14,18 @@ export interface Wallet {
   token_type?: TokenType;
 }
 
+export interface CryptoTransaction {
+  id: number;
+  transaction_type: string;
+  amount: number;
+  description?: string;
+  reference_id?: string;
+  created_at: string;
+  status: string;
+  token_type: string;
+  transaction_hash?: string;
+}
+
 export interface ConnectWalletDto {
   type: WalletType;
   tokenType: TokenType;
@@ -187,6 +199,11 @@ export const walletService = {
       "/wallet/withdraw",
       cryptoTransactionData
     );
+    return response.data;
+  },
+
+  async getCryptoTransactions(): Promise<CryptoTransaction[]> {
+    const response = await api.get<CryptoTransaction[]>("/wallet/transactions");
     return response.data;
   },
 };
