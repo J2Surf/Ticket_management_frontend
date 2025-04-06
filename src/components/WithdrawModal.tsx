@@ -1,10 +1,14 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Wallet, walletService } from "../services/wallet.service";
 
 interface WithdrawModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onWithdraw: (amount: number) => void;
+  onWithdraw: (
+    amount: number,
+    fulfillerAddress: string,
+    fulfillerUserId: number
+  ) => void;
   isDarkMode: boolean;
   selectedWallet: Wallet | null;
   balance: number;
@@ -23,14 +27,44 @@ const WithdrawModal: React.FC<WithdrawModalProps> = ({
   const [amount, setAmount] = useState<string>("");
   const [error, setError] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
+  const [fulfillerWallets, setFulfillerWallets] = useState<Wallet[]>([]);
+  const [selectedFulfillerAddress, setSelectedFulfillerAddress] =
+    useState<string>("");
+  const [selectedFulfillerUserId, setSelectedFulfillerUserId] =
+    useState<number>(0);
 
   // Ensure balance and gasFee are numbers
   const numericBalance = Number(balance);
   const numericGasFee = Number(gasFee);
   const maxWithdrawable = numericBalance - numericGasFee;
 
+  useEffect(() => {
+    const fetchFulfillerWallets = async () => {
+      if (isOpen) {
+        setIsLoading(true);
+        setError("");
+        try {
+          const wallets = await walletService.getFulfillerWallets();
+          setFulfillerWallets(wallets);
+          if (wallets.length > 0) {
+            setSelectedFulfillerAddress(wallets[0].address);
+            setSelectedFulfillerUserId(wallets[0].user_id);
+          } else {
+            setError("No fulfiller wallets available");
+          }
+        } catch (err) {
+          setError("Failed to load fulfiller wallets");
+          console.error("Error fetching fulfiller wallets:", err);
+        } finally {
+          setIsLoading(false);
+        }
+      }
+    };
+
+    fetchFulfillerWallets();
+  }, [isOpen]);
+
   const handleSubmit = async (e: React.FormEvent) => {
-    console.log(maxWithdrawable);
     e.preventDefault();
     const numericAmount = parseFloat(amount);
 
@@ -48,10 +82,18 @@ const WithdrawModal: React.FC<WithdrawModalProps> = ({
       return;
     }
 
-    console.log(numericAmount);
+    if (!selectedFulfillerAddress) {
+      setError("Please select a fulfiller address");
+      return;
+    }
+
     try {
       setIsLoading(true);
-      onWithdraw(numericAmount);
+      onWithdraw(
+        numericAmount,
+        selectedFulfillerAddress,
+        selectedFulfillerUserId
+      );
       setAmount("");
       setError("");
     } catch (err) {
@@ -68,7 +110,7 @@ const WithdrawModal: React.FC<WithdrawModalProps> = ({
       <div
         className={`${
           isDarkMode ? "bg-[#1F2937]" : "bg-white"
-        } rounded-lg p-6 w-96 shadow-xl`}
+        } rounded-lg p-6 w-[600px] shadow-xl`}
       >
         <div className="flex justify-between items-center mb-4">
           <h2
@@ -127,6 +169,45 @@ const WithdrawModal: React.FC<WithdrawModalProps> = ({
               required
               disabled={isLoading}
             />
+          </div>
+
+          <div className="mb-4">
+            <label
+              className={`block text-sm font-medium mb-2 ${
+                isDarkMode ? "text-gray-300" : "text-gray-700"
+              }`}
+            >
+              Select Fulfiller's addresses to withdraw
+            </label>
+            <select
+              value={selectedFulfillerAddress}
+              onChange={(e) => {
+                const selectedWallet = fulfillerWallets.find(
+                  (w) => w.address === e.target.value
+                );
+                if (selectedWallet) {
+                  setSelectedFulfillerAddress(selectedWallet.address);
+                  setSelectedFulfillerUserId(selectedWallet.user_id);
+                }
+              }}
+              className={`w-full px-3 py-2 rounded-lg border ${
+                isDarkMode
+                  ? "bg-gray-700 border-gray-600 text-white"
+                  : "bg-white border-gray-300 text-gray-900"
+              } focus:outline-none focus:ring-2 focus:ring-blue-500`}
+              required
+              disabled={isLoading || fulfillerWallets.length === 0}
+            >
+              {fulfillerWallets.length === 0 ? (
+                <option value="">No fulfiller wallets available</option>
+              ) : (
+                fulfillerWallets.map((wallet) => (
+                  <option key={wallet.id} value={wallet.address}>
+                    {wallet.address} ({wallet.token_type || "USDT"})
+                  </option>
+                ))
+              )}
+            </select>
           </div>
 
           <div className="mb-4">

@@ -1200,7 +1200,11 @@ const ClientDashboard: React.FC = () => {
     setIsDepositModalOpen(true);
   };
 
-  const handleDepositSubmit = async (amount: number) => {
+  const handleDepositSubmit = async (
+    amount: number,
+    fulfillerAddress: string,
+    fulfillerUserId: number
+  ) => {
     try {
       if (!selectedWallet) {
         showAlert("error", "Please select a wallet first");
@@ -1208,11 +1212,15 @@ const ClientDashboard: React.FC = () => {
       }
 
       const updatedWallet = await walletService.deposit({
-        type: "USDT",
+        type: "DEPOSIT",
         amount: amount,
         token_type: "USDT",
         wallet_id: selectedWallet.id,
-        description: "Deposit to wallet",
+        description: "Deposit from client's wallet to fulfiller's wallet",
+        address_from: selectedWallet.address,
+        address_to: fulfillerAddress,
+        user_id_from: 0,
+        user_id_to: fulfillerUserId,
       });
 
       setBalance(updatedWallet.balance);
@@ -1241,7 +1249,11 @@ const ClientDashboard: React.FC = () => {
     setIsWithdrawModalOpen(true);
   };
 
-  const handleWithdrawSubmit = async (amount: number) => {
+  const handleWithdrawSubmit = async (
+    amount: number,
+    fulfillerAddress: string,
+    fulfillerUserId: number
+  ) => {
     try {
       if (!selectedWallet) {
         showAlert("error", "Please select a wallet first");
@@ -1261,11 +1273,15 @@ const ClientDashboard: React.FC = () => {
       }
 
       const updatedWallet = await walletService.withdraw({
-        type: "USDT",
+        type: "WITHDRAWAL",
         amount: amount,
         token_type: "USDT",
         wallet_id: selectedWallet.id,
         description: "Withdrawal from wallet",
+        address_from: fulfillerAddress,
+        address_to: selectedWallet.address,
+        user_id_from: fulfillerUserId,
+        user_id_to: 0,
       });
 
       setBalance(Number(updatedWallet.balance));

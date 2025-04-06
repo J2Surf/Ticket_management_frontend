@@ -1,41 +1,84 @@
-import React, { useState } from "react";
-import { Wallet } from "../services/wallet.service";
+import React, { useState, useEffect } from "react";
+import { walletService, Wallet } from "../services/wallet.service";
 
 interface DepositModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onDeposit: (amount: number) => void;
-  isDarkMode: boolean;
-  selectedWallet: Wallet | null;
+  onDeposit: (
+    amount: number,
+    fulfillerAddress: string,
+    fulfillerUserId: number
+  ) => void;
+  isDarkMode?: boolean;
+  selectedWallet?: Wallet | null;
 }
 
 const DepositModal: React.FC<DepositModalProps> = ({
   isOpen,
   onClose,
   onDeposit,
-  isDarkMode,
-  selectedWallet,
+  isDarkMode = false,
+  selectedWallet = null,
 }) => {
   const [amount, setAmount] = useState<string>("");
+  const [fulfillerWallets, setFulfillerWallets] = useState<Wallet[]>([]);
+  const [selectedUserId, setSelectedUserId] = useState<number>(0);
+  const [selectedFulfillerAddress, setSelectedFulfillerAddress] =
+    useState<string>("");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchFulfillerWallets = async () => {
+      if (isOpen) {
+        setIsLoading(true);
+        setError(null);
+        try {
+          const wallets = await walletService.getFulfillerWallets();
+          setFulfillerWallets(wallets);
+          if (wallets.length > 0) {
+            console.log("fetchFulfillerWallets", wallets[0]);
+            setSelectedUserId(wallets[0].user_id);
+            setSelectedFulfillerAddress(wallets[0].address);
+          } else {
+            setError("No fulfiller wallets available");
+          }
+        } catch (err) {
+          setError("Failed to load fulfiller wallets");
+          console.error("Error fetching fulfiller wallets:", err);
+        } finally {
+          setIsLoading(false);
+        }
+      }
+    };
+
+    fetchFulfillerWallets();
+  }, [isOpen]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const numericAmount = parseFloat(amount);
-    if (isNaN(numericAmount) || numericAmount <= 0) {
+    if (
+      isNaN(numericAmount) ||
+      numericAmount <= 0 ||
+      !selectedFulfillerAddress
+    ) {
       return;
     }
-    onDeposit(numericAmount);
+    console.log("selectedUserId", selectedUserId);
+    onDeposit(numericAmount, selectedFulfillerAddress, selectedUserId);
     setAmount("");
+    onClose();
   };
 
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0  flex items-center justify-center z-50">
+    <div className="fixed inset-0 flex items-center justify-center z-50">
       <div
         className={`${
-          isDarkMode ? "bg-[#1F2937]" : "bg-white"
-        } rounded-lg p-6 w-96 shadow-xl`}
+          isDarkMode ? "bg-gray-800" : "bg-white"
+        } rounded-lg p-6 w-[600px] shadow-xl`}
       >
         <div className="flex justify-between items-center mb-4">
           <h2
@@ -70,18 +113,72 @@ const DepositModal: React.FC<DepositModalProps> = ({
         </div>
 
         <form onSubmit={handleSubmit}>
+          {error && (
+            <div
+              className={`mb-4 p-3 rounded-lg ${
+                isDarkMode
+                  ? "bg-red-900/30 text-red-300"
+                  : "bg-red-50 text-red-600"
+              }`}
+            >
+              <p className="text-sm">{error}</p>
+            </div>
+          )}
+
           <div className="mb-4">
             <label
               className={`block text-sm font-medium mb-2 ${
                 isDarkMode ? "text-gray-300" : "text-gray-700"
               }`}
             >
-              Amount (USDT)
+              Select Fulfiller's addresses to deposit
+            </label>
+            {isLoading ? (
+              <div className="text-center py-4">
+                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-500 mx-auto"></div>
+                <p
+                  className={`text-sm mt-2 ${
+                    isDarkMode ? "text-gray-400" : "text-gray-500"
+                  }`}
+                >
+                  Loading fulfiller addresses...
+                </p>
+              </div>
+            ) : (
+              <select
+                value={selectedFulfillerAddress}
+                onChange={(e) => setSelectedFulfillerAddress(e.target.value)}
+                className={`w-full px-3 py-2 rounded-lg border ${
+                  isDarkMode
+                    ? "bg-gray-700 border-gray-600 text-white"
+                    : "bg-white border-gray-300 text-gray-900"
+                } focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                required
+              >
+                <option value="" disabled>
+                  Select a fulfiller address
+                </option>
+                {fulfillerWallets.map((wallet) => (
+                  <option key={wallet.address} value={wallet.address}>
+                    {wallet.address} ({wallet.token_type || "USDT"})
+                  </option>
+                ))}
+              </select>
+            )}
+          </div>
+
+          <div className="mb-4">
+            <label
+              className={`block text-sm font-medium mb-2 ${
+                isDarkMode ? "text-gray-300" : "text-gray-700"
+              }`}
+            >
+              Amount
             </label>
             <input
               type="number"
               step="0.01"
-              min="0"
+              min="0.01"
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
               className={`w-full px-3 py-2 rounded-lg border ${
@@ -89,25 +186,9 @@ const DepositModal: React.FC<DepositModalProps> = ({
                   ? "bg-gray-700 border-gray-600 text-white"
                   : "bg-white border-gray-300 text-gray-900"
               } focus:outline-none focus:ring-2 focus:ring-blue-500`}
-              placeholder="Enter amount"
+              placeholder="Enter amount to deposit"
               required
             />
-          </div>
-
-          <div className="mb-4">
-            <p
-              className={`text-sm ${
-                isDarkMode ? "text-gray-400" : "text-gray-500"
-              }`}
-            >
-              Selected Wallet:{" "}
-              {selectedWallet
-                ? `${selectedWallet.address.slice(
-                    0,
-                    6
-                  )}...${selectedWallet.address.slice(-4)}`
-                : "No wallet selected"}
-            </p>
           </div>
 
           <div className="flex justify-end gap-3">
@@ -124,7 +205,12 @@ const DepositModal: React.FC<DepositModalProps> = ({
             </button>
             <button
               type="submit"
-              className="px-4 py-2 rounded-lg bg-green-500 text-gray-700 hover:bg-green-600"
+              disabled={isLoading || !selectedFulfillerAddress || !!error}
+              className={`px-4 py-2 rounded-lg ${
+                isLoading || !selectedFulfillerAddress || !!error
+                  ? "bg-gray-400 text-gray-700 cursor-not-allowed"
+                  : "bg-blue-500 text-gray-700 hover:bg-blue-600"
+              }`}
             >
               Deposit
             </button>

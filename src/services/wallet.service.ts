@@ -48,7 +48,7 @@ export interface Transaction {
 }
 
 export interface TransactionDto {
-  type: "USDT" | "BTC";
+  type: "DEPOSIT" | "WITHDRAWAL";
   amount: number;
   token_type: TokenType;
   wallet_id?: number;
@@ -64,7 +64,12 @@ export interface TransactionDto {
 
 export const walletService = {
   async getWallets(): Promise<Wallet[]> {
-    const response = await api.get<Wallet[]>("/wallet");
+    const response = await api.get<Wallet[]>("/wallet/wallets");
+    return response.data;
+  },
+
+  async getFulfillerWallets(): Promise<Wallet[]> {
+    const response = await api.get<Wallet[]>("/wallet/wallets/fulfiller");
     return response.data;
   },
 

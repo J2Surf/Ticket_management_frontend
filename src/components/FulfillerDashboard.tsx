@@ -1096,7 +1096,11 @@ const FulfillerDashboard: React.FC = () => {
     setIsWithdrawModalOpen(true);
   };
 
-  const handleWithdrawSubmit = async (amount: number) => {
+  const handleWithdrawSubmit = async (
+    amount: number,
+    fulfillerAddress: string,
+    fulfillerUserId: number
+  ) => {
     try {
       if (!selectedWallet) {
         showAlert("error", "Please select a wallet first");
@@ -1116,11 +1120,13 @@ const FulfillerDashboard: React.FC = () => {
       }
 
       const updatedWallet = await walletService.withdraw({
-        type: "USDT",
+        type: "WITHDRAWAL",
         amount: amount,
         token_type: "USDT",
         wallet_id: selectedWallet.id,
         description: "Withdrawal from wallet",
+        address_to: fulfillerAddress,
+        user_id_to: fulfillerUserId,
       });
 
       setBalance(Number(updatedWallet.balance));
@@ -1272,15 +1278,17 @@ const FulfillerDashboard: React.FC = () => {
           />
         </Routes>
       </div>
-      <WithdrawModal
-        isOpen={isWithdrawModalOpen}
-        onClose={() => setIsWithdrawModalOpen(false)}
-        onWithdraw={handleWithdrawSubmit}
-        isDarkMode={isDarkMode}
-        selectedWallet={selectedWallet}
-        balance={Number(balance)}
-        gasFee={Number(gasFee)}
-      />
+      {isWithdrawModalOpen && (
+        <WithdrawModal
+          isOpen={isWithdrawModalOpen}
+          onClose={() => setIsWithdrawModalOpen(false)}
+          onWithdraw={handleWithdrawSubmit}
+          isDarkMode={isDarkMode}
+          selectedWallet={selectedWallet}
+          balance={balance}
+          gasFee={gasFee}
+        />
+      )}
     </div>
   );
 };
