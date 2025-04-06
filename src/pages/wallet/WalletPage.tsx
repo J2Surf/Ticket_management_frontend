@@ -47,6 +47,8 @@ export default function WalletPage() {
       wallet_id: customerWallet.id,
       amount: parseFloat(amount),
       type: transactionType,
+      token_type: "USDT",
+      description: `${transactionType} transaction`,
     });
   };
 

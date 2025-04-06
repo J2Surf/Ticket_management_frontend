@@ -64,7 +64,7 @@ const WithdrawModal: React.FC<WithdrawModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div className="fixed inset-0  flex items-center justify-center z-50">
       <div
         className={`${
           isDarkMode ? "bg-[#1F2937]" : "bg-white"

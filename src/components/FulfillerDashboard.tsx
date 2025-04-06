@@ -1118,6 +1118,9 @@ const FulfillerDashboard: React.FC = () => {
       const updatedWallet = await walletService.withdraw({
         type: "USDT",
         amount: amount,
+        token_type: "USDT",
+        wallet_id: selectedWallet.id,
+        description: "Withdrawal from wallet",
       });
 
       setBalance(Number(updatedWallet.balance));

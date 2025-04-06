@@ -50,6 +50,16 @@ export interface Transaction {
 export interface TransactionDto {
   type: "USDT" | "BTC";
   amount: number;
+  token_type: TokenType;
+  wallet_id?: number;
+  description?: string;
+  reference_id?: string;
+  status?: "PENDING" | "COMPLETED" | "FAILED";
+  user_id_from?: number;
+  user_id_to?: number;
+  address_from?: string;
+  address_to?: string;
+  transaction_hash?: string;
 }
 
 export const walletService = {
@@ -125,19 +135,53 @@ export const walletService = {
     wallet_id: number;
     amount: number;
     type: "DEPOSIT" | "WITHDRAWAL";
+    token_type?: TokenType;
+    description?: string;
   }): Promise<Transaction> {
-    const response = await api.post<Transaction>("/wallet/deposit", data);
+    const transactionData = {
+      ...data,
+      token_type: data.token_type || "USDT",
+      description: data.description || `${data.type} transaction`,
+      status: "PENDING",
+    };
+
+    // Use the appropriate endpoint based on the transaction type
+    const endpoint =
+      data.type === "DEPOSIT" ? "/wallet/deposit" : "/wallet/withdraw";
+    const response = await api.post<Transaction>(endpoint, transactionData);
     return response.data;
   },
 
   async deposit(data: TransactionDto): Promise<Wallet> {
-    const response = await api.post<Wallet>("/wallet/deposit", data);
+    // Ensure the data has the required fields for CryptoTransactionDto
+    const cryptoTransactionData = {
+      ...data,
+      token_type: data.token_type || "USDT",
+      description: data.description || "Deposit transaction",
+      status: data.status || "PENDING",
+    };
+
+    const response = await api.post<Wallet>(
+      "/wallet/deposit",
+      cryptoTransactionData
+    );
     return response.data;
   },
 
   async withdraw(data: TransactionDto): Promise<Wallet> {
-    console.log(data);
-    const response = await api.post<Wallet>("/wallet/withdraw", data);
+    // Ensure the data has the required fields for CryptoTransactionDto
+    const cryptoTransactionData = {
+      ...data,
+      token_type: data.token_type || "USDT",
+      description: data.description || "Withdrawal transaction",
+      status: data.status || "PENDING",
+    };
+
+    console.log("Withdraw data:", cryptoTransactionData);
+    const response = await api.post<Wallet>(
+      "/wallet/withdraw",
+      cryptoTransactionData
+    );
     return response.data;
   },
 };

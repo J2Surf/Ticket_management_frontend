@@ -1210,6 +1210,9 @@ const ClientDashboard: React.FC = () => {
       const updatedWallet = await walletService.deposit({
         type: "USDT",
         amount: amount,
+        token_type: "USDT",
+        wallet_id: selectedWallet.id,
+        description: "Deposit to wallet",
       });
 
       setBalance(updatedWallet.balance);
@@ -1260,6 +1263,9 @@ const ClientDashboard: React.FC = () => {
       const updatedWallet = await walletService.withdraw({
         type: "USDT",
         amount: amount,
+        token_type: "USDT",
+        wallet_id: selectedWallet.id,
+        description: "Withdrawal from wallet",
       });
 
       setBalance(Number(updatedWallet.balance));
