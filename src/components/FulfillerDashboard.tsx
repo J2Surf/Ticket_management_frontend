@@ -431,7 +431,8 @@ const TicketSection: React.FC<{
   onSort,
 }) => {
   const getTicketAction = (status: string): boolean => {
-    return status.toLowerCase() === "validated";
+    // return status.toLowerCase() === "validated";
+    return true;
   };
 
   const getCompletedAction = (status: string): boolean => {
@@ -482,358 +483,632 @@ const TicketSection: React.FC<{
           Last updated: {new Date().toLocaleTimeString()}
         </span>
       </div>
-
       <div
-        className={`${
-          isDarkMode ? "bg-[#1F2937]" : "bg-white"
-        } rounded-xl p-6 ${isDarkMode ? "" : "shadow-sm"}`}
+        className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4 mb-8`}
       >
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-2">
-            <svg
-              className={`w-5 h-5 ${
-                isDarkMode ? "text-gray-300" : "text-gray-600"
-              }`}
-              viewBox="0 0 20 20"
-              fill="currentColor"
-            >
-              <path
-                fillRule="evenodd"
-                d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z"
-                clipRule="evenodd"
-              />
-            </svg>
+        <div
+          className={`${
+            isDarkMode ? "bg-[#1F2937]" : "bg-white"
+          } p-6 rounded-xl ${isDarkMode ? "" : "shadow-sm"}`}
+        >
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <div
+                className={`p-2 rounded-lg ${
+                  isDarkMode ? "bg-green-500/10" : "bg-green-50"
+                }`}
+              >
+                <svg
+                  className="w-6 h-6 text-green-500"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                >
+                  <path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z" />
+                </svg>
+              </div>
+              <div>
+                <p
+                  className={`text-sm ${
+                    isDarkMode ? "text-gray-400" : "text-gray-500"
+                  }`}
+                >
+                  Current Balance
+                </p>
+                <p
+                  className={`text-xl font-semibold ${
+                    isDarkMode ? "text-white" : "text-gray-900"
+                  }`}
+                >
+                  $156
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          className={`${
+            isDarkMode ? "bg-[#1F2937]" : "bg-white"
+          } p-6 rounded-xl ${isDarkMode ? "" : "shadow-sm"}`}
+        >
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <div
+                className={`p-2 rounded-lg ${
+                  isDarkMode ? "bg-purple-500/10" : "bg-purple-50"
+                }`}
+              >
+                <svg
+                  className="w-6 h-6 text-purple-500"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                >
+                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.31-8.86c-1.77-.45-2.34-.94-2.34-1.67 0-.84.79-1.43 2.1-1.43 1.38 0 1.9.66 1.94 1.64h1.71c-.05-1.34-.87-2.57-2.49-2.97V5H10.9v1.69c-1.51.32-2.72 1.3-2.72 2.81 0 1.79 1.49 2.69 3.66 3.21 1.95.46 2.34 1.15 2.34 1.87 0 .53-.39 1.39-2.1 1.39-1.6 0-2.23-.72-2.32-1.64H8.04c.1 1.7 1.36 2.66 2.86 2.97V19h2.34v-1.67c1.52-.29 2.72-1.16 2.73-2.77-.01-2.2-1.9-2.96-3.66-3.42z" />
+                </svg>
+              </div>
+              <div>
+                <p
+                  className={`text-sm ${
+                    isDarkMode ? "text-gray-400" : "text-gray-500"
+                  }`}
+                >
+                  Holding Balance
+                </p>
+                <p
+                  className={`text-xl font-semibold ${
+                    isDarkMode ? "text-white" : "text-gray-900"
+                  }`}
+                >
+                  $1,200.00
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        className={`grid grid-cols-1 md:grid-cols-4 lg:grid-cols-4 gap-4 mb-8`}
+      >
+        <div
+          className={`${
+            isDarkMode ? "bg-[#1F2937]" : "bg-white"
+          } rounded-xl p-6 ${
+            isDarkMode ? "" : "shadow-sm"
+          } md:col-span-3 lg:col-span-3`}
+        >
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center gap-2">
+              <svg
+                className={`w-5 h-5 ${
+                  isDarkMode ? "text-gray-300" : "text-gray-600"
+                }`}
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z"
+                  clipRule="evenodd"
+                />
+              </svg>
+              <h2
+                className={`text-xl font-semibold ${
+                  isDarkMode ? "text-white" : "text-gray-900"
+                }`}
+              >
+                Recent Tickets
+              </h2>
+            </div>
+
+            {/* Pagination Controls */}
+            <div className="flex items-center space-x-2">
+              <button
+                onClick={() => onPageChange(1)}
+                disabled={currentPage === 1}
+                className={`px-3 py-1 rounded-md ${
+                  currentPage === 1
+                    ? isDarkMode
+                      ? "bg-gray-700 text-gray-500 cursor-not-allowed"
+                      : "bg-gray-200 text-gray-400 cursor-not-allowed"
+                    : isDarkMode
+                    ? "bg-gray-700 text-white hover:bg-gray-600"
+                    : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                }`}
+              >
+                First
+              </button>
+              <button
+                onClick={() => onPageChange(currentPage - 1)}
+                disabled={currentPage === 1}
+                className={`px-3 py-1 rounded-md ${
+                  currentPage === 1
+                    ? isDarkMode
+                      ? "bg-gray-700 text-gray-500 cursor-not-allowed"
+                      : "bg-gray-200 text-gray-400 cursor-not-allowed"
+                    : isDarkMode
+                    ? "bg-gray-700 text-white hover:bg-gray-600"
+                    : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                }`}
+              >
+                Previous
+              </button>
+              <span
+                className={`${isDarkMode ? "text-gray-300" : "text-gray-700"}`}
+              >
+                Page {currentPage} of {totalPages}
+              </span>
+              <button
+                onClick={() => onPageChange(currentPage + 1)}
+                disabled={currentPage === totalPages}
+                className={`px-3 py-1 rounded-md ${
+                  currentPage === totalPages
+                    ? isDarkMode
+                      ? "bg-gray-700 text-gray-500 cursor-not-allowed"
+                      : "bg-gray-200 text-gray-400 cursor-not-allowed"
+                    : isDarkMode
+                    ? "bg-gray-700 text-gray-700 hover:bg-gray-600"
+                    : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                }`}
+              >
+                Next
+              </button>
+              <button
+                onClick={() => onPageChange(totalPages)}
+                disabled={currentPage === totalPages}
+                className={`px-3 py-1 rounded-md ${
+                  currentPage === totalPages
+                    ? isDarkMode
+                      ? "bg-gray-700 text-gray-500 cursor-not-allowed"
+                      : "bg-gray-200 text-gray-400 cursor-not-allowed"
+                    : isDarkMode
+                    ? "bg-gray-700 text-gray-700 hover:bg-gray-600"
+                    : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                }`}
+              >
+                Last
+              </button>
+            </div>
+          </div>
+
+          <div className="overflow-x-auto">
+            {loading ? (
+              <div className="flex justify-center items-center py-8">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+              </div>
+            ) : tickets.length === 0 ? (
+              <div className="text-center py-8 text-gray-500">
+                No tickets found
+              </div>
+            ) : (
+              <table className="min-w-full">
+                <thead>
+                  <tr>
+                    <th
+                      className={`p-4 text-left ${
+                        isDarkMode ? "text-gray-400" : "text-gray-500"
+                      }`}
+                    >
+                      <button
+                        className="flex items-center focus:outline-none"
+                        onClick={() => onSort("ticket_id")}
+                      >
+                        TICKET ID {getSortIcon("ticket_id")}
+                      </button>
+                    </th>
+                    <th
+                      className={`p-4 text-left ${
+                        isDarkMode ? "text-gray-400" : "text-gray-500"
+                      }`}
+                    >
+                      <button
+                        className="flex items-center focus:outline-none"
+                        onClick={() => onSort("payment_method")}
+                      >
+                        Payment Method {getSortIcon("payment_method")}
+                      </button>
+                    </th>
+                    <th
+                      className={`p-4 text-left ${
+                        isDarkMode ? "text-gray-400" : "text-gray-500"
+                      }`}
+                    >
+                      <button
+                        className="flex items-center focus:outline-none"
+                        onClick={() => onSort("payment_tag")}
+                      >
+                        Payment Tag {getSortIcon("payment_tag")}
+                      </button>
+                    </th>
+                    <th
+                      className={`p-4 text-left ${
+                        isDarkMode ? "text-gray-400" : "text-gray-500"
+                      }`}
+                    >
+                      <button
+                        className="flex items-center focus:outline-none"
+                        onClick={() => onSort("account_name")}
+                      >
+                        Account Name {getSortIcon("account_name")}
+                      </button>
+                    </th>
+                    <th
+                      className={`p-4 text-left ${
+                        isDarkMode ? "text-gray-400" : "text-gray-500"
+                      }`}
+                    >
+                      <button
+                        className="flex items-center focus:outline-none"
+                        onClick={() => onSort("amount")}
+                      >
+                        AMOUNT {getSortIcon("amount")}
+                      </button>
+                    </th>
+                    <th
+                      className={`p-4 text-left ${
+                        isDarkMode ? "text-gray-400" : "text-gray-500"
+                      }`}
+                    >
+                      IMAGE
+                    </th>
+                    <th
+                      className={`p-4 text-left ${
+                        isDarkMode ? "text-gray-400" : "text-gray-500"
+                      }`}
+                    >
+                      Actions
+                    </th>
+                  </tr>
+                </thead>
+                <tbody
+                  className={`divide-y ${
+                    isDarkMode ? "divide-gray-700" : "divide-gray-100"
+                  }`}
+                >
+                  {tickets.map((ticket) => (
+                    <tr
+                      key={ticket.id}
+                      className={`${
+                        isDarkMode ? "hover:bg-gray-800" : "hover:bg-gray-50"
+                      }`}
+                    >
+                      <td
+                        className={`p-4 font-mono ${
+                          isDarkMode ? "text-gray-300" : "text-gray-900"
+                        }`}
+                      >
+                        {ticket.ticket_id}
+                      </td>
+                      <td
+                        className={`p-4 ${
+                          isDarkMode ? "text-gray-300" : "text-gray-900"
+                        }`}
+                      >
+                        {ticket.payment_method}
+                      </td>
+                      <td
+                        className={`p-4 ${
+                          isDarkMode ? "text-gray-300" : "text-gray-900"
+                        }`}
+                      >
+                        {ticket.payment_tag}
+                      </td>
+                      <td
+                        className={`p-4 ${
+                          isDarkMode ? "text-gray-300" : "text-gray-900"
+                        }`}
+                      >
+                        {ticket.account_name}
+                      </td>
+                      <td
+                        className={`p-4 font-medium ${
+                          isDarkMode ? "text-gray-300" : "text-gray-900"
+                        }`}
+                      >
+                        {ticket.amount} USDT
+                      </td>
+                      <td className="p-4">
+                        {ticket.image && (
+                          <button
+                            className={`p-2 rounded-lg ${
+                              isDarkMode
+                                ? "bg-gray-700 hover:bg-gray-600"
+                                : "bg-gray-100 hover:bg-gray-200"
+                            }`}
+                            onClick={() => window.open(ticket.image, "_blank")}
+                          >
+                            <svg
+                              className="w-5 h-5"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                              />
+                            </svg>
+                          </button>
+                        )}
+                      </td>
+                      <td className="p-4">
+                        {getTicketAction(ticket.status) ? (
+                          <div className="flex gap-2">
+                            {/* <button
+                              onClick={() => onAction("validate", ticket.id)}
+                              className={`font-medium ${
+                                isDarkMode
+                                  ? "text-green-400 hover:text-green-300"
+                                  : "text-green-600 hover:text-green-700"
+                              } hover:underline transition-colors`}
+                            >
+                              Validate
+                            </button>
+                            <button
+                              onClick={() => onAction("decline", ticket.id)}
+                              className={`font-medium ${
+                                isDarkMode
+                                  ? "text-red-400 hover:text-red-300"
+                                  : "text-red-600 hover:text-red-700"
+                              } hover:underline transition-colors`}
+                            >
+                              Decline
+                            </button> */}
+                            <button
+                              onClick={() => onAction("process", ticket.id)}
+                              className={`font-medium ${
+                                isDarkMode
+                                  ? "text-blue-400 hover:text-blue-300"
+                                  : "text-blue-600 hover:text-blue-700"
+                              } hover:underline transition-colors`}
+                            >
+                              Process
+                            </button>
+                          </div>
+                        ) : getCompletedAction(ticket.status) ? (
+                          <button
+                            onClick={() => onAction("complete", ticket.id)}
+                            className={`font-medium ${
+                              isDarkMode
+                                ? "text-blue-400 hover:text-blue-300"
+                                : "text-blue-600 hover:text-blue-700"
+                            } hover:underline transition-colors`}
+                          >
+                            Complete
+                          </button>
+                        ) : null}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
+          </div>
+        </div>
+        <div
+          className={`${
+            isDarkMode ? "bg-[#1F2937]" : "bg-white"
+          } rounded-xl p-6 ${isDarkMode ? "" : "shadow-sm"}`}
+        >
+          <div className="flex flex-col h-full">
             <h2
-              className={`text-xl font-semibold ${
+              className={`text-xl font-semibold mb-2 ${
                 isDarkMode ? "text-white" : "text-gray-900"
               }`}
             >
-              Recent Tickets
+              Incoming Tickets
             </h2>
-          </div>
+            <p
+              className={`text-sm ${
+                isDarkMode ? "text-gray-400" : "text-gray-500"
+              } mb-6`}
+            >
+              New tickets arrive every 20 seconds
+            </p>
 
-          {/* Pagination Controls */}
-          <div className="flex items-center space-x-2">
-            <button
-              onClick={() => onPageChange(1)}
-              disabled={currentPage === 1}
-              className={`px-3 py-1 rounded-md ${
-                currentPage === 1
-                  ? isDarkMode
-                    ? "bg-gray-700 text-gray-500 cursor-not-allowed"
-                    : "bg-gray-200 text-gray-400 cursor-not-allowed"
-                  : isDarkMode
-                  ? "bg-gray-700 text-white hover:bg-gray-600"
-                  : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-              }`}
-            >
-              First
-            </button>
-            <button
-              onClick={() => onPageChange(currentPage - 1)}
-              disabled={currentPage === 1}
-              className={`px-3 py-1 rounded-md ${
-                currentPage === 1
-                  ? isDarkMode
-                    ? "bg-gray-700 text-gray-500 cursor-not-allowed"
-                    : "bg-gray-200 text-gray-400 cursor-not-allowed"
-                  : isDarkMode
-                  ? "bg-gray-700 text-white hover:bg-gray-600"
-                  : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-              }`}
-            >
-              Previous
-            </button>
-            <span
-              className={`${isDarkMode ? "text-gray-300" : "text-gray-700"}`}
-            >
-              Page {currentPage} of {totalPages}
-            </span>
-            <button
-              onClick={() => onPageChange(currentPage + 1)}
-              disabled={currentPage === totalPages}
-              className={`px-3 py-1 rounded-md ${
-                currentPage === totalPages
-                  ? isDarkMode
-                    ? "bg-gray-700 text-gray-500 cursor-not-allowed"
-                    : "bg-gray-200 text-gray-400 cursor-not-allowed"
-                  : isDarkMode
-                  ? "bg-gray-700 text-gray-700 hover:bg-gray-600"
-                  : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-              }`}
-            >
-              Next
-            </button>
-            <button
-              onClick={() => onPageChange(totalPages)}
-              disabled={currentPage === totalPages}
-              className={`px-3 py-1 rounded-md ${
-                currentPage === totalPages
-                  ? isDarkMode
-                    ? "bg-gray-700 text-gray-500 cursor-not-allowed"
-                    : "bg-gray-200 text-gray-400 cursor-not-allowed"
-                  : isDarkMode
-                  ? "bg-gray-700 text-gray-700 hover:bg-gray-600"
-                  : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-              }`}
-            >
-              Last
-            </button>
-          </div>
-        </div>
+            <div className="space-y-4">
+              {/* Incoming Ticket Item */}
+              <div className="flex items-center justify-between bg-white/5 p-4 rounded-lg">
+                <div className="flex items-center gap-3">
+                  <div className="w-1 h-12 bg-black rounded-full"></div>
+                  <div>
+                    <p
+                      className={`font-medium ${
+                        isDarkMode ? "text-white" : "text-gray-900"
+                      }`}
+                    >
+                      1SH5KJ
+                    </p>
+                    <p
+                      className={`text-sm ${
+                        isDarkMode ? "text-gray-400" : "text-gray-500"
+                      }`}
+                    >
+                      Apple Pay
+                    </p>
+                  </div>
+                </div>
+                <button className="px-3 py-1 text-sm bg-blue-100 text-blue-700 rounded-md hover:bg-blue-200">
+                  Add
+                </button>
+              </div>
 
-        <div className="overflow-x-auto">
-          {loading ? (
-            <div className="flex justify-center items-center py-8">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+              <div className="flex items-center justify-between bg-white/5 p-4 rounded-lg">
+                <div className="flex items-center gap-3">
+                  <div className="w-1 h-12 bg-green-500 rounded-full"></div>
+                  <div>
+                    <p
+                      className={`font-medium ${
+                        isDarkMode ? "text-white" : "text-gray-900"
+                      }`}
+                    >
+                      BRCWNX
+                    </p>
+                    <p
+                      className={`text-sm ${
+                        isDarkMode ? "text-gray-400" : "text-gray-500"
+                      }`}
+                    >
+                      CashApp
+                    </p>
+                  </div>
+                </div>
+                <button className="px-3 py-1 text-sm bg-blue-100 text-blue-700 rounded-md hover:bg-blue-200">
+                  Add
+                </button>
+              </div>
+
+              <div className="flex items-center justify-between bg-white/5 p-4 rounded-lg">
+                <div className="flex items-center gap-3">
+                  <div className="w-1 h-12 bg-blue-500 rounded-full"></div>
+                  <div>
+                    <p
+                      className={`font-medium ${
+                        isDarkMode ? "text-white" : "text-gray-900"
+                      }`}
+                    >
+                      QFRK64
+                    </p>
+                    <p
+                      className={`text-sm ${
+                        isDarkMode ? "text-gray-400" : "text-gray-500"
+                      }`}
+                    >
+                      Venmo
+                    </p>
+                  </div>
+                </div>
+                <button className="px-3 py-1 text-sm bg-blue-100 text-blue-700 rounded-md hover:bg-blue-200">
+                  Add
+                </button>
+              </div>
+
+              <div className="flex items-center justify-between bg-white/5 p-4 rounded-lg">
+                <div className="flex items-center gap-3">
+                  <div className="w-1 h-12 bg-green-500 rounded-full"></div>
+                  <div>
+                    <p
+                      className={`font-medium ${
+                        isDarkMode ? "text-white" : "text-gray-900"
+                      }`}
+                    >
+                      KAE2XO
+                    </p>
+                    <p
+                      className={`text-sm ${
+                        isDarkMode ? "text-gray-400" : "text-gray-500"
+                      }`}
+                    >
+                      CashApp
+                    </p>
+                  </div>
+                </div>
+                <button className="px-3 py-1 text-sm bg-blue-100 text-blue-700 rounded-md hover:bg-blue-200">
+                  Add
+                </button>
+              </div>
+
+              <div className="flex items-center justify-between bg-white/5 p-4 rounded-lg">
+                <div className="flex items-center gap-3">
+                  <div className="w-1 h-12 bg-black rounded-full"></div>
+                  <div>
+                    <p
+                      className={`font-medium ${
+                        isDarkMode ? "text-white" : "text-gray-900"
+                      }`}
+                    >
+                      IJJYL
+                    </p>
+                    <p
+                      className={`text-sm ${
+                        isDarkMode ? "text-gray-400" : "text-gray-500"
+                      }`}
+                    >
+                      Apple Pay
+                    </p>
+                  </div>
+                </div>
+                <button className="px-3 py-1 text-sm bg-blue-100 text-blue-700 rounded-md hover:bg-blue-200">
+                  Add
+                </button>
+              </div>
+
+              <div className="flex items-center justify-between bg-white/5 p-4 rounded-lg">
+                <div className="flex items-center gap-3">
+                  <div className="w-1 h-12 bg-blue-500 rounded-full"></div>
+                  <div>
+                    <p
+                      className={`font-medium ${
+                        isDarkMode ? "text-white" : "text-gray-900"
+                      }`}
+                    >
+                      PULKSR
+                    </p>
+                    <p
+                      className={`text-sm ${
+                        isDarkMode ? "text-gray-400" : "text-gray-500"
+                      }`}
+                    >
+                      Venmo
+                    </p>
+                  </div>
+                </div>
+                <button className="px-3 py-1 text-sm bg-blue-100 text-blue-700 rounded-md hover:bg-blue-200">
+                  Add
+                </button>
+              </div>
+
+              <div className="flex items-center justify-between bg-white/5 p-4 rounded-lg">
+                <div className="flex items-center gap-3">
+                  <div className="w-1 h-12 bg-black rounded-full"></div>
+                  <div>
+                    <p
+                      className={`font-medium ${
+                        isDarkMode ? "text-white" : "text-gray-900"
+                      }`}
+                    >
+                      3GSDNC
+                    </p>
+                    <p
+                      className={`text-sm ${
+                        isDarkMode ? "text-gray-400" : "text-gray-500"
+                      }`}
+                    >
+                      Apple Pay
+                    </p>
+                  </div>
+                </div>
+                <button className="px-3 py-1 text-sm bg-blue-100 text-blue-700 rounded-md hover:bg-blue-200">
+                  Add
+                </button>
+              </div>
+
+              <div className="flex items-center justify-between bg-white/5 p-4 rounded-lg">
+                <div className="flex items-center gap-3">
+                  <div className="w-1 h-12 bg-green-500 rounded-full"></div>
+                  <div>
+                    <p
+                      className={`font-medium ${
+                        isDarkMode ? "text-white" : "text-gray-900"
+                      }`}
+                    >
+                      PT4OGL
+                    </p>
+                    <p
+                      className={`text-sm ${
+                        isDarkMode ? "text-gray-400" : "text-gray-500"
+                      }`}
+                    >
+                      CashApp
+                    </p>
+                  </div>
+                </div>
+                <button className="px-3 py-1 text-sm bg-blue-100 text-blue-700 rounded-md hover:bg-blue-200">
+                  Add
+                </button>
+              </div>
             </div>
-          ) : tickets.length === 0 ? (
-            <div className="text-center py-8 text-gray-500">
-              No tickets found
-            </div>
-          ) : (
-            <table className="min-w-full">
-              <thead>
-                <tr>
-                  <th
-                    className={`p-4 text-left ${
-                      isDarkMode ? "text-gray-400" : "text-gray-500"
-                    }`}
-                  >
-                    <button
-                      className="flex items-center focus:outline-none"
-                      onClick={() => onSort("id")}
-                    >
-                      ID {getSortIcon("id")}
-                    </button>
-                  </th>
-                  <th
-                    className={`p-4 text-left ${
-                      isDarkMode ? "text-gray-400" : "text-gray-500"
-                    }`}
-                  >
-                    <button
-                      className="flex items-center focus:outline-none"
-                      onClick={() => onSort("ticket_id")}
-                    >
-                      TICKET ID {getSortIcon("ticket_id")}
-                    </button>
-                  </th>
-                  <th
-                    className={`p-4 text-left ${
-                      isDarkMode ? "text-gray-400" : "text-gray-500"
-                    }`}
-                  >
-                    <button
-                      className="flex items-center focus:outline-none"
-                      onClick={() => onSort("payment_method")}
-                    >
-                      Payment Method {getSortIcon("payment_method")}
-                    </button>
-                  </th>
-                  <th
-                    className={`p-4 text-left ${
-                      isDarkMode ? "text-gray-400" : "text-gray-500"
-                    }`}
-                  >
-                    <button
-                      className="flex items-center focus:outline-none"
-                      onClick={() => onSort("payment_tag")}
-                    >
-                      Payment Tag {getSortIcon("payment_tag")}
-                    </button>
-                  </th>
-                  <th
-                    className={`p-4 text-left ${
-                      isDarkMode ? "text-gray-400" : "text-gray-500"
-                    }`}
-                  >
-                    <button
-                      className="flex items-center focus:outline-none"
-                      onClick={() => onSort("account_name")}
-                    >
-                      Account Name {getSortIcon("account_name")}
-                    </button>
-                  </th>
-                  <th
-                    className={`p-4 text-left ${
-                      isDarkMode ? "text-gray-400" : "text-gray-500"
-                    }`}
-                  >
-                    <button
-                      className="flex items-center focus:outline-none"
-                      onClick={() => onSort("amount")}
-                    >
-                      AMOUNT {getSortIcon("amount")}
-                    </button>
-                  </th>
-                  <th
-                    className={`p-4 text-left ${
-                      isDarkMode ? "text-gray-400" : "text-gray-500"
-                    }`}
-                  >
-                    <button
-                      className="flex items-center focus:outline-none"
-                      onClick={() => onSort("status")}
-                    >
-                      STATUS {getSortIcon("status")}
-                    </button>
-                  </th>
-                  <th
-                    className={`p-4 text-left ${
-                      isDarkMode ? "text-gray-400" : "text-gray-500"
-                    }`}
-                  >
-                    IMAGE
-                  </th>
-                  <th
-                    className={`p-4 text-left ${
-                      isDarkMode ? "text-gray-400" : "text-gray-500"
-                    }`}
-                  >
-                    Actions
-                  </th>
-                </tr>
-              </thead>
-              <tbody
-                className={`divide-y ${
-                  isDarkMode ? "divide-gray-700" : "divide-gray-100"
-                }`}
-              >
-                {tickets.map((ticket) => (
-                  <tr
-                    key={ticket.id}
-                    className={`${
-                      isDarkMode ? "hover:bg-gray-800" : "hover:bg-gray-50"
-                    }`}
-                  >
-                    <td
-                      className={`p-4 font-mono ${
-                        isDarkMode ? "text-gray-300" : "text-gray-900"
-                      }`}
-                    >
-                      {ticket.id}
-                    </td>
-                    <td
-                      className={`p-4 font-mono ${
-                        isDarkMode ? "text-gray-300" : "text-gray-900"
-                      }`}
-                    >
-                      {ticket.ticket_id}
-                    </td>
-                    <td
-                      className={`p-4 ${
-                        isDarkMode ? "text-gray-300" : "text-gray-900"
-                      }`}
-                    >
-                      {ticket.payment_method}
-                    </td>
-                    <td
-                      className={`p-4 ${
-                        isDarkMode ? "text-gray-300" : "text-gray-900"
-                      }`}
-                    >
-                      {ticket.payment_tag}
-                    </td>
-                    <td
-                      className={`p-4 ${
-                        isDarkMode ? "text-gray-300" : "text-gray-900"
-                      }`}
-                    >
-                      {ticket.account_name}
-                    </td>
-                    <td
-                      className={`p-4 font-medium ${
-                        isDarkMode ? "text-gray-300" : "text-gray-900"
-                      }`}
-                    >
-                      {ticket.amount} USDT
-                    </td>
-                    <td className="p-4">
-                      <span
-                        className={`px-3 py-1 rounded-full text-sm font-medium ${
-                          ticket.status.toLowerCase() === "completed"
-                            ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400"
-                            : ticket.status.toLowerCase() === "new"
-                            ? "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400"
-                            : ticket.status.toLowerCase() === "validated"
-                            ? "bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400"
-                            : ticket.status.toLowerCase() === "declined"
-                            ? "bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400"
-                            : "bg-gray-100 text-gray-700 dark:bg-gray-900/30 dark:text-gray-400"
-                        }`}
-                      >
-                        {ticket.status}
-                      </span>
-                    </td>
-                    <td className="p-4">
-                      {ticket.image && (
-                        <button
-                          className={`p-2 rounded-lg ${
-                            isDarkMode
-                              ? "bg-gray-700 hover:bg-gray-600"
-                              : "bg-gray-100 hover:bg-gray-200"
-                          }`}
-                          onClick={() => window.open(ticket.image, "_blank")}
-                        >
-                          <svg
-                            className="w-5 h-5"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-                            />
-                          </svg>
-                        </button>
-                      )}
-                    </td>
-                    <td className="p-4">
-                      {getTicketAction(ticket.status) ? (
-                        <div className="flex gap-2">
-                          <button
-                            onClick={() => onAction("validate", ticket.id)}
-                            className={`font-medium ${
-                              isDarkMode
-                                ? "text-green-400 hover:text-green-300"
-                                : "text-green-600 hover:text-green-700"
-                            } hover:underline transition-colors`}
-                          >
-                            Validate
-                          </button>
-                          <button
-                            onClick={() => onAction("decline", ticket.id)}
-                            className={`font-medium ${
-                              isDarkMode
-                                ? "text-red-400 hover:text-red-300"
-                                : "text-red-600 hover:text-red-700"
-                            } hover:underline transition-colors`}
-                          >
-                            Decline
-                          </button>
-                        </div>
-                      ) : getCompletedAction(ticket.status) ? (
-                        <button
-                          onClick={() => onAction("complete", ticket.id)}
-                          className={`font-medium ${
-                            isDarkMode
-                              ? "text-blue-400 hover:text-blue-300"
-                              : "text-blue-600 hover:text-blue-700"
-                          } hover:underline transition-colors`}
-                        >
-                          Complete
-                        </button>
-                      ) : null}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          )}
+          </div>
         </div>
       </div>
     </div>
