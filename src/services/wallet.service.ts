@@ -54,13 +54,13 @@ export interface Transaction {
   id: number;
   wallet_id: number;
   amount: number;
-  type: "DEPOSIT" | "WITHDRAWAL";
+  type: "DEPOSIT" | "WITHDRAW";
   status: "PENDING" | "COMPLETED" | "FAILED";
   created_at: string;
 }
 
 export interface TransactionDto {
-  type: "DEPOSIT" | "WITHDRAWAL";
+  type: "DEPOSIT" | "WITHDRAW";
   amount: number;
   token_type: TokenType;
   wallet_id?: number;
@@ -122,7 +122,6 @@ export const walletService = {
   },
 
   async connectWallet(data: ConnectWalletDto): Promise<Wallet> {
-    console.log("connectWallet data", data);
     try {
       const response = await api.post<Wallet>("/wallet/connect", data);
       return response.data;
@@ -156,7 +155,7 @@ export const walletService = {
   async createTransaction(data: {
     wallet_id: number;
     amount: number;
-    type: "DEPOSIT" | "WITHDRAWAL";
+    type: "DEPOSIT" | "WITHDRAW";
     token_type?: TokenType;
     description?: string;
   }): Promise<Transaction> {
@@ -183,7 +182,6 @@ export const walletService = {
       status: data.status || "PENDING",
     };
 
-    console.log("Deposit data:", cryptoTransactionData);
     const response = await api.post<Wallet>(
       "/wallet/deposit",
       cryptoTransactionData
@@ -200,7 +198,6 @@ export const walletService = {
       status: data.status || "PENDING",
     };
 
-    console.log("Withdraw data:", cryptoTransactionData);
     const response = await api.post<Wallet>(
       "/wallet/withdraw",
       cryptoTransactionData

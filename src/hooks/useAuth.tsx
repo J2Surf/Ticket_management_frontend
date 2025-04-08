@@ -58,7 +58,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const register = async (data: RegisterDto) => {
     try {
       const response = await authService.register(data);
-      console.log("Register response in useAuth:", response);
 
       if (!response || !response.accessToken) {
         throw new Error("Invalid response from server");

@@ -49,9 +49,6 @@ function AppRoutes() {
   const { user } = useAuth();
   const userRole = (user?.roles?.[0]?.name as UserRole) || "user";
 
-  console.log("AppRoutes user:", user);
-  console.log("AppRoutes userRole:", userRole);
-
   return (
     <Routes>
       {/* Public routes */}

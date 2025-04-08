@@ -1157,9 +1157,7 @@ const FulfillerDashboard: React.FC = () => {
     const fetchWallets = async () => {
       try {
         const fetchedWallets = await walletService.getWallets();
-        console.log("Fulfiller Dashboard fetchedWallets", fetchedWallets);
         setWallets(fetchedWallets);
-        console.log("Fulfiller Dashboard wallets", wallets);
       } catch (error) {
         showAlert("error", "Failed to fetch wallets");
         console.error("Error fetching wallets:", error);
@@ -1213,7 +1211,6 @@ const FulfillerDashboard: React.FC = () => {
     const fetchCryptoTransactions = async () => {
       try {
         const response = await walletService.getCryptoTransactions();
-        console.log("Fulfiller Dashboard crypto transactions", response);
         setCryptoTransactions(response);
       } catch (error) {
         console.error("Error fetching crypto transactions:", error);
@@ -1372,7 +1369,7 @@ const FulfillerDashboard: React.FC = () => {
       }
 
       const updatedWallet = await walletService.withdraw({
-        type: "WITHDRAWAL",
+        type: "WITHDRAW",
         amount: amount,
         token_type: "USDT",
         wallet_id: selectedWallet.id,

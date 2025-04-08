@@ -36,7 +36,6 @@ const DepositModal: React.FC<DepositModalProps> = ({
           const wallets = await walletService.getAdminWallets();
           setAdminWallets(wallets);
           if (wallets.length > 0) {
-            console.log("fetchAdminWallets", wallets[0]);
             setSelectedUserId(wallets[0].userId);
             setSelectedAdminAddress(wallets[0].address);
           } else {
@@ -60,7 +59,6 @@ const DepositModal: React.FC<DepositModalProps> = ({
     if (isNaN(numericAmount) || numericAmount <= 0 || !selectedAdminAddress) {
       return;
     }
-    console.log("selectedUserId", selectedUserId);
     onDeposit(numericAmount, selectedAdminAddress, selectedUserId);
     setAmount("");
     onClose();

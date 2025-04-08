@@ -12,7 +12,7 @@ export default function WalletPage() {
   const queryClient = useQueryClient();
   const [amount, setAmount] = useState("");
   const [transactionType, setTransactionType] = useState<
-    "DEPOSIT" | "WITHDRAWAL"
+    "DEPOSIT" | "WITHDRAW"
   >("DEPOSIT");
 
   const { data: wallets, isLoading: isLoadingWallets } = useQuery({
@@ -110,12 +110,12 @@ export default function WalletPage() {
                 id="transactionType"
                 value={transactionType}
                 onChange={(e) =>
-                  setTransactionType(e.target.value as "DEPOSIT" | "WITHDRAWAL")
+                  setTransactionType(e.target.value as "DEPOSIT" | "WITHDRAW")
                 }
                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
               >
                 <option value="DEPOSIT">Deposit</option>
-                <option value="WITHDRAWAL">Withdrawal</option>
+                <option value="WITHDRAW">Withdraw</option>
               </select>
             </div>
 

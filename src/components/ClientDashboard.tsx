@@ -815,7 +815,6 @@ const ClientDashboard: React.FC = () => {
     const fetchCryptoTransactions = async () => {
       try {
         const response = await walletService.getCryptoTransactions();
-        console.log("Client Dashboard crypto transactions", response);
         setCryptoTransactions(response);
       } catch (error) {
         console.error("Error fetching crypto transactions:", error);
@@ -902,7 +901,6 @@ const ClientDashboard: React.FC = () => {
           tokenType: "USDT",
           walletAddress: selectedWallet.address,
         });
-        console.log("connectedWallet 2", connectedWallet);
         setBalance(connectedWallet.balance);
         showAlert("success", "Wallet connected successfully");
       }
@@ -922,7 +920,6 @@ const ClientDashboard: React.FC = () => {
         walletAddress: wallet.address,
       });
 
-      console.log("connectedWallet 3", connectedWallet);
       setBalance(connectedWallet.balance);
       showAlert("success", "Wallet connected successfully");
     } catch (error) {
@@ -944,7 +941,6 @@ const ClientDashboard: React.FC = () => {
     adminAddress: string,
     adminUserId: number
   ) => {
-    console.log("handleDepositSubmit adminUserId:", adminUserId);
     try {
       if (!selectedWallet) {
         showAlert("error", "Please select a wallet first");
@@ -991,8 +987,8 @@ const ClientDashboard: React.FC = () => {
 
   const handleWithdrawSubmit = async (
     amount: number,
-    fulfillerAddress: string,
-    fulfillerUserId: number
+    adminAddress: string,
+    adminUserId: number
   ) => {
     try {
       if (!selectedWallet) {
@@ -1013,15 +1009,15 @@ const ClientDashboard: React.FC = () => {
       }
 
       const updatedWallet = await walletService.withdraw({
-        type: "WITHDRAWAL",
+        type: "WITHDRAW",
         amount: amount,
         token_type: "USDT",
         wallet_id: selectedWallet.id,
         description: "Withdrawal from wallet",
-        address_from: fulfillerAddress,
+        address_from: adminAddress,
         address_to: selectedWallet.address,
-        user_id_from: fulfillerUserId,
-        user_id_to: 0,
+        user_id_from: adminUserId,
+        user_id_to: selectedWallet.userId,
       });
 
       setBalance(Number(updatedWallet.balance));
