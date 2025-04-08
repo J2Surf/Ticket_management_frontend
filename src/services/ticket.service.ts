@@ -60,12 +60,12 @@ export const ticketService = {
   },
 
   async validateTicket(id: string): Promise<Ticket> {
-    const response = await api.post<Ticket>(`/tickets/${id}/validate`);
+    const response = await api.put<Ticket>(`/tickets/${id}/validate`);
     return response.data;
   },
 
   async declineTicket(id: string): Promise<Ticket> {
-    const response = await api.post<Ticket>(`/tickets/${id}/decline`);
+    const response = await api.put<Ticket>(`/tickets/${id}/decline`);
     return response.data;
   },
 

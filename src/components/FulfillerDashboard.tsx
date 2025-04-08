@@ -151,6 +151,7 @@ const PaymentSection: React.FC<{
                       >
                         {wallet.token_type || wallet.type} -{" "}
                         {wallet.address.substring(0, 6)}...
+                        {wallet.address.substring(wallet.address.length - 4)}
                       </button>
                     </div>
                   ))

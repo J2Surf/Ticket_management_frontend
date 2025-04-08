@@ -601,7 +601,7 @@ const TicketSection: React.FC<{
                       className="flex items-center focus:outline-none"
                       onClick={() => onSort("name")}
                     >
-                      NAME {getSortIcon("name")}
+                      Name {getSortIcon("name")}
                     </button>
                   </th>
                   <th
@@ -613,7 +613,7 @@ const TicketSection: React.FC<{
                       className="flex items-center focus:outline-none"
                       onClick={() => onSort("amount")}
                     >
-                      AMOUNT {getSortIcon("amount")}
+                      Amount {getSortIcon("amount")}
                     </button>
                   </th>
                   <th
@@ -625,7 +625,7 @@ const TicketSection: React.FC<{
                       className="flex items-center focus:outline-none"
                       onClick={() => onSort("status")}
                     >
-                      STATUS {getSortIcon("status")}
+                      Status {getSortIcon("status")}
                     </button>
                   </th>
                   <th
@@ -633,7 +633,7 @@ const TicketSection: React.FC<{
                       isDarkMode ? "text-gray-400" : "text-gray-500"
                     }`}
                   >
-                    ACTION
+                    Action
                   </th>
                 </tr>
               </thead>
@@ -670,7 +670,7 @@ const TicketSection: React.FC<{
                     >
                       {ticket.amount} USDT
                     </td>
-                    <td className="p-4">
+                    <td className="p-4 text-left">
                       <span
                         className={`px-3 py-1 rounded-lg text-sm font-medium ${
                           ticket.status.toLowerCase() === "completed"
@@ -687,7 +687,7 @@ const TicketSection: React.FC<{
                         {ticket.status}
                       </span>
                     </td>
-                    <td className="p-4">
+                    <td className="p-4 text-left">
                       {getTicketAction(ticket.status) ? (
                         <div className="flex gap-2">
                           <button
