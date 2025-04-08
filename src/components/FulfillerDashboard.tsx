@@ -288,35 +288,35 @@ const PaymentSection: React.FC<{
               <thead>
                 <tr>
                   <th
-                    className={`p-4 text-left ${
+                    className={`p-4 text-center ${
                       isDarkMode ? "text-gray-400" : "text-gray-500"
                     }`}
                   >
                     Date
                   </th>
                   <th
-                    className={`p-4 text-left ${
+                    className={`p-4 text-center ${
                       isDarkMode ? "text-gray-400" : "text-gray-500"
                     }`}
                   >
                     Type
                   </th>
                   <th
-                    className={`p-4 text-left ${
+                    className={`p-4 text-center ${
                       isDarkMode ? "text-gray-400" : "text-gray-500"
                     }`}
                   >
                     Amount
                   </th>
                   <th
-                    className={`p-4 text-left ${
+                    className={`p-4 text-center ${
                       isDarkMode ? "text-gray-400" : "text-gray-500"
                     }`}
                   >
                     Description
                   </th>
                   <th
-                    className={`p-4 text-left ${
+                    className={`p-4 text-center ${
                       isDarkMode ? "text-gray-400" : "text-gray-500"
                     }`}
                   >
