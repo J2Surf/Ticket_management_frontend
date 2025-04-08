@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useTheme } from "../../contexts/ThemeContext";
 import { useAuth } from "../../hooks/useAuth";
+import { LegacyButton } from "../common/LegacyButton";
 
 const Header: React.FC = () => {
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
@@ -28,7 +29,7 @@ const Header: React.FC = () => {
         isDarkMode ? "bg-[#111827] border-gray-800" : "bg-white border-gray-200"
       } border-b`}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Left side - Breadcrumb */}
           <div className="flex items-center">
@@ -93,16 +94,18 @@ const Header: React.FC = () => {
 
             {/* Profile */}
             <div className="relative">
-              <button
-                className="w-8 h-8 rounded-lg overflow-hidden"
-                onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
+              <LegacyButton
+                buttonType="circleBtn"
+                isDarkMode={isDarkMode}
+                isDisabled={false}
+                onClickAction={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
               >
                 <img
                   src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
                   alt="Profile"
                   className="w-full h-full object-cover"
                 />
-              </button>
+              </LegacyButton>
 
               {/* Profile Dropdown Menu */}
               {isProfileMenuOpen && (

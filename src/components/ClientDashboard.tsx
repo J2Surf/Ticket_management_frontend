@@ -12,6 +12,7 @@ import {
 import DepositModal from "./DepositModal";
 import WithdrawModal from "./WithdrawModal";
 import { format } from "date-fns";
+import { LegacyButton } from "./common/LegacyButton";
 
 interface Transaction {
   date: string;
@@ -70,8 +71,8 @@ const PaymentSection: React.FC<{
             onClick={() => setShowWalletDropdown(!showWalletDropdown)}
             className={`px-4 py-2 rounded-lg font-medium flex items-center gap-2 ${
               isDarkMode
-                ? "bg-[#1F2937] text-gray-700 hover:bg-gray-800"
-                : "bg-white text-gray-700 hover:bg-gray-50 border border-gray-200"
+                ? "bg-white text-gray-700 hover:bg-gray-50 border border-gray-200"
+                : "bg-[#1F2937] text-gray-200 hover:bg-gray-800"
             }`}
           >
             <svg
@@ -180,8 +181,8 @@ const PaymentSection: React.FC<{
           onClick={onWithdraw}
           className={`px-4 py-2 rounded-lg font-medium flex items-center gap-2 ${
             isDarkMode
-              ? "bg-red-600 text-gray-700 hover:bg-red-700"
-              : "bg-red-500 text-gray-700 hover:bg-red-600"
+              ? "bg-red-500 text-gray-700 hover:bg-red-600"
+              : "bg-red-400 text-gray-700 hover:bg-red-500"
           }`}
         >
           <svg className="w-5 h-5" viewBox="0 0 20 20" fill="currentColor">
@@ -526,71 +527,43 @@ const TicketSection: React.FC<{
 
           {/* Pagination Controls */}
           <div className="flex items-center space-x-2">
-            <button
-              onClick={() => onPageChange(1)}
-              disabled={currentPage === 1}
-              className={`px-3 py-1 rounded-md ${
-                currentPage === 1
-                  ? isDarkMode
-                    ? "bg-gray-700 text-gray-500 cursor-not-allowed"
-                    : "bg-gray-200 text-gray-400 cursor-not-allowed"
-                  : isDarkMode
-                  ? "bg-gray-700 text-white hover:bg-gray-600"
-                  : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-              }`}
+            <LegacyButton
+              buttonType="commonBtn"
+              isDarkMode={isDarkMode}
+              isDisabled={currentPage === 1}
+              onClickAction={() => onPageChange(1)}
             >
               First
-            </button>
-            <button
-              onClick={() => onPageChange(currentPage - 1)}
-              disabled={currentPage === 1}
-              className={`px-3 py-1 rounded-md ${
-                currentPage === 1
-                  ? isDarkMode
-                    ? "bg-gray-700 text-gray-500 cursor-not-allowed"
-                    : "bg-gray-200 text-gray-400 cursor-not-allowed"
-                  : isDarkMode
-                  ? "bg-gray-700 text-white hover:bg-gray-600"
-                  : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-              }`}
+            </LegacyButton>
+            <LegacyButton
+              buttonType="commonBtn"
+              isDarkMode={isDarkMode}
+              isDisabled={currentPage === 1}
+              onClickAction={() => onPageChange(currentPage - 1)}
             >
               Previous
-            </button>
+            </LegacyButton>
             <span
               className={`${isDarkMode ? "text-gray-300" : "text-gray-700"}`}
             >
               Page {currentPage} of {totalPages}
             </span>
-            <button
-              onClick={() => onPageChange(currentPage + 1)}
-              disabled={currentPage === totalPages}
-              className={`px-3 py-1 rounded-md ${
-                currentPage === totalPages
-                  ? isDarkMode
-                    ? "bg-gray-700 text-gray-500 cursor-not-allowed"
-                    : "bg-gray-200 text-gray-400 cursor-not-allowed"
-                  : isDarkMode
-                  ? "bg-gray-700 text-gray-700 hover:bg-gray-600"
-                  : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-              }`}
+            <LegacyButton
+              buttonType="commonBtn"
+              isDarkMode={isDarkMode}
+              isDisabled={currentPage === totalPages}
+              onClickAction={() => onPageChange(currentPage + 1)}
             >
               Next
-            </button>
-            <button
-              onClick={() => onPageChange(totalPages)}
-              disabled={currentPage === totalPages}
-              className={`px-3 py-1 rounded-md ${
-                currentPage === totalPages
-                  ? isDarkMode
-                    ? "bg-gray-700 text-gray-500 cursor-not-allowed"
-                    : "bg-gray-200 text-gray-400 cursor-not-allowed"
-                  : isDarkMode
-                  ? "bg-gray-700 text-gray-700 hover:bg-gray-600"
-                  : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-              }`}
+            </LegacyButton>
+            <LegacyButton
+              buttonType="commonBtn"
+              isDarkMode={isDarkMode}
+              isDisabled={currentPage === totalPages}
+              onClickAction={() => onPageChange(totalPages)}
             >
               Last
-            </button>
+            </LegacyButton>
           </div>
         </div>
 
@@ -677,21 +650,21 @@ const TicketSection: React.FC<{
                     }`}
                   >
                     <td
-                      className={`p-4 font-mono ${
+                      className={`p-4 font-mono text-left ${
                         isDarkMode ? "text-gray-300" : "text-gray-900"
                       }`}
                     >
                       {ticket.id}
                     </td>
                     <td
-                      className={`p-4 ${
+                      className={`p-4 text-left ${
                         isDarkMode ? "text-gray-300" : "text-gray-900"
                       }`}
                     >
                       {ticket.name}
                     </td>
                     <td
-                      className={`p-4 font-medium ${
+                      className={`p-4 font-medium text-left ${
                         isDarkMode ? "text-gray-300" : "text-gray-900"
                       }`}
                     >
@@ -699,7 +672,7 @@ const TicketSection: React.FC<{
                     </td>
                     <td className="p-4">
                       <span
-                        className={`px-3 py-1 rounded-full text-sm font-medium ${
+                        className={`px-3 py-1 rounded-lg text-sm font-medium ${
                           ticket.status.toLowerCase() === "completed"
                             ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400"
                             : ticket.status.toLowerCase() === "new"
@@ -909,7 +882,7 @@ const ClientDashboard: React.FC = () => {
           id: newWallet.id,
           type: "CUSTOMER", // Default type
           balance: newWallet.balance,
-          user_id: 0, // This will be set by the backend
+          userId: 0, // This will be set by the backend
           address: newWallet.address,
           created_at: newWallet.createdAt,
           updated_at: newWallet.updatedAt,
@@ -968,9 +941,10 @@ const ClientDashboard: React.FC = () => {
 
   const handleDepositSubmit = async (
     amount: number,
-    fulfillerAddress: string,
-    fulfillerUserId: number
+    adminAddress: string,
+    adminUserId: number
   ) => {
+    console.log("handleDepositSubmit adminUserId:", adminUserId);
     try {
       if (!selectedWallet) {
         showAlert("error", "Please select a wallet first");
@@ -982,11 +956,11 @@ const ClientDashboard: React.FC = () => {
         amount: amount,
         token_type: "USDT",
         wallet_id: selectedWallet.id,
-        description: "Deposit from client's wallet to fulfiller's wallet",
+        description: "Deposit from client's wallet to admin's wallet",
         address_from: selectedWallet.address,
-        address_to: fulfillerAddress,
-        user_id_from: 0,
-        user_id_to: fulfillerUserId,
+        address_to: adminAddress,
+        user_id_from: selectedWallet.userId,
+        user_id_to: adminUserId,
       });
 
       setBalance(updatedWallet.balance);
@@ -1146,7 +1120,7 @@ const ClientDashboard: React.FC = () => {
       }`}
     >
       <Panel items={panelItems} />
-      <div className="flex-1 p-8 w-[1200px] h-[800px] overflow-auto">
+      <div className="flex-1 p-8 overflow-auto">
         <Routes>
           <Route
             path="/payment"

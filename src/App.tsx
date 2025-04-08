@@ -162,7 +162,7 @@ function App() {
       <ThemeProvider>
         <AuthProvider>
           <AlertProvider>
-            <div className="min-h-screen bg-gray-50 rounded-lg shadow-lg border border-gray-700 z-50">
+            <div className="min-h-screen bg-gray-50 z-50">
               <BrowserRouter>
                 <AppRoutes />
               </BrowserRouter>

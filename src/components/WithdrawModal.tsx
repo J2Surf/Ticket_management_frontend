@@ -48,7 +48,7 @@ const WithdrawModal: React.FC<WithdrawModalProps> = ({
           setFulfillerWallets(wallets);
           if (wallets.length > 0) {
             setSelectedFulfillerAddress(wallets[0].address);
-            setSelectedFulfillerUserId(wallets[0].user_id);
+            setSelectedFulfillerUserId(wallets[0].userId);
           } else {
             setError("No fulfiller wallets available");
           }
@@ -187,7 +187,7 @@ const WithdrawModal: React.FC<WithdrawModalProps> = ({
                 );
                 if (selectedWallet) {
                   setSelectedFulfillerAddress(selectedWallet.address);
-                  setSelectedFulfillerUserId(selectedWallet.user_id);
+                  setSelectedFulfillerUserId(selectedWallet.userId);
                 }
               }}
               className={`w-full px-3 py-2 rounded-lg border ${

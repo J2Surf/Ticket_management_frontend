@@ -61,8 +61,8 @@ export default function Register() {
   };
 
   return (
-    <div className="w-[1200px] h-[800px] overflow-auto flex items-center justify-center bg-gray-50 p-4 sm:p-6 lg:p-8">
-      <div className="w-full max-w-sm sm:max-w-md space-y-6 sm:space-y-8">
+    <div className="h-[100vh] overflow-auto flex items-center justify-center bg-gray-50 p-4 sm:p-6 lg:p-8">
+      <div className="w-full min-w-[500px] rounded-[14px] max-w-sm sm:max-w-md space-y-6 sm:space-y-8 border border-gray-400 p-16">
         <div>
           <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900 text-center">
             Create your account

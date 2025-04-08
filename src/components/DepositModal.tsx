@@ -6,8 +6,8 @@ interface DepositModalProps {
   onClose: () => void;
   onDeposit: (
     amount: number,
-    fulfillerAddress: string,
-    fulfillerUserId: number
+    adminAddress: string,
+    adminUserId: number
   ) => void;
   isDarkMode?: boolean;
   selectedWallet?: Wallet | null;
@@ -21,52 +21,47 @@ const DepositModal: React.FC<DepositModalProps> = ({
   selectedWallet = null,
 }) => {
   const [amount, setAmount] = useState<string>("");
-  const [fulfillerWallets, setFulfillerWallets] = useState<Wallet[]>([]);
+  const [adminWallets, setAdminWallets] = useState<Wallet[]>([]);
   const [selectedUserId, setSelectedUserId] = useState<number>(0);
-  const [selectedFulfillerAddress, setSelectedFulfillerAddress] =
-    useState<string>("");
+  const [selectedAdminAddress, setSelectedAdminAddress] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchFulfillerWallets = async () => {
+    const fetchAdminWallets = async () => {
       if (isOpen) {
         setIsLoading(true);
         setError(null);
         try {
-          const wallets = await walletService.getFulfillerWallets();
-          setFulfillerWallets(wallets);
+          const wallets = await walletService.getAdminWallets();
+          setAdminWallets(wallets);
           if (wallets.length > 0) {
-            console.log("fetchFulfillerWallets", wallets[0]);
-            setSelectedUserId(wallets[0].user_id);
-            setSelectedFulfillerAddress(wallets[0].address);
+            console.log("fetchAdminWallets", wallets[0]);
+            setSelectedUserId(wallets[0].userId);
+            setSelectedAdminAddress(wallets[0].address);
           } else {
-            setError("No fulfiller wallets available");
+            setError("No admin wallets available");
           }
         } catch (err) {
-          setError("Failed to load fulfiller wallets");
-          console.error("Error fetching fulfiller wallets:", err);
+          setError("Failed to load admin wallets");
+          console.error("Error fetching admin wallets:", err);
         } finally {
           setIsLoading(false);
         }
       }
     };
 
-    fetchFulfillerWallets();
+    fetchAdminWallets();
   }, [isOpen]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const numericAmount = parseFloat(amount);
-    if (
-      isNaN(numericAmount) ||
-      numericAmount <= 0 ||
-      !selectedFulfillerAddress
-    ) {
+    if (isNaN(numericAmount) || numericAmount <= 0 || !selectedAdminAddress) {
       return;
     }
     console.log("selectedUserId", selectedUserId);
-    onDeposit(numericAmount, selectedFulfillerAddress, selectedUserId);
+    onDeposit(numericAmount, selectedAdminAddress, selectedUserId);
     setAmount("");
     onClose();
   };
@@ -131,7 +126,7 @@ const DepositModal: React.FC<DepositModalProps> = ({
                 isDarkMode ? "text-gray-300" : "text-gray-700"
               }`}
             >
-              Select Fulfiller's addresses to deposit
+              Select Admin's address to deposit
             </label>
             {isLoading ? (
               <div className="text-center py-4">
@@ -141,13 +136,13 @@ const DepositModal: React.FC<DepositModalProps> = ({
                     isDarkMode ? "text-gray-400" : "text-gray-500"
                   }`}
                 >
-                  Loading fulfiller addresses...
+                  Loading admin address...
                 </p>
               </div>
             ) : (
               <select
-                value={selectedFulfillerAddress}
-                onChange={(e) => setSelectedFulfillerAddress(e.target.value)}
+                value={selectedAdminAddress}
+                onChange={(e) => setSelectedAdminAddress(e.target.value)}
                 className={`w-full px-3 py-2 rounded-lg border ${
                   isDarkMode
                     ? "bg-gray-700 border-gray-600 text-white"
@@ -156,9 +151,9 @@ const DepositModal: React.FC<DepositModalProps> = ({
                 required
               >
                 <option value="" disabled>
-                  Select a fulfiller address
+                  Select a admin address
                 </option>
-                {fulfillerWallets.map((wallet) => (
+                {adminWallets.map((wallet) => (
                   <option key={wallet.address} value={wallet.address}>
                     {wallet.address} ({wallet.token_type || "USDT"})
                   </option>
@@ -205,9 +200,9 @@ const DepositModal: React.FC<DepositModalProps> = ({
             </button>
             <button
               type="submit"
-              disabled={isLoading || !selectedFulfillerAddress || !!error}
+              disabled={isLoading || !selectedAdminAddress || !!error}
               className={`px-4 py-2 rounded-lg ${
-                isLoading || !selectedFulfillerAddress || !!error
+                isLoading || !selectedAdminAddress || !!error
                   ? "bg-gray-400 text-gray-700 cursor-not-allowed"
                   : "bg-blue-500 text-gray-700 hover:bg-blue-600"
               }`}

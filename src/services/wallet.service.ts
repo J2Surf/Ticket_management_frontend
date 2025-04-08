@@ -7,7 +7,7 @@ export interface Wallet {
   id: number;
   type: "CUSTOMER" | "FULFILLER";
   balance: number;
-  user_id: number;
+  userId: number;
   address: string;
   created_at: string;
   updated_at: string;
@@ -77,6 +77,11 @@ export interface TransactionDto {
 export const walletService = {
   async getWallets(): Promise<Wallet[]> {
     const response = await api.get<Wallet[]>("/wallet/wallets");
+    return response.data;
+  },
+
+  async getAdminWallets(): Promise<Wallet[]> {
+    const response = await api.get<Wallet[]>("/wallet/wallets/admin");
     return response.data;
   },
 
@@ -178,6 +183,7 @@ export const walletService = {
       status: data.status || "PENDING",
     };
 
+    console.log("Deposit data:", cryptoTransactionData);
     const response = await api.post<Wallet>(
       "/wallet/deposit",
       cryptoTransactionData

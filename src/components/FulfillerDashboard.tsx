@@ -73,8 +73,8 @@ const PaymentSection: React.FC<{
             onClick={() => setShowWalletDropdown(!showWalletDropdown)}
             className={`px-4 py-2 rounded-lg font-medium flex items-center gap-2 ${
               isDarkMode
-                ? "bg-[#1F2937] text-gray-700 hover:bg-gray-800"
-                : "bg-white text-gray-700 hover:bg-gray-50 border border-gray-200"
+                ? "bg-white text-gray-700 hover:bg-gray-50 border border-gray-200"
+                : "bg-[#1F2937] text-gray-700 hover:bg-gray-800"
             }`}
           >
             <svg
@@ -164,8 +164,8 @@ const PaymentSection: React.FC<{
           onClick={onWithdraw}
           className={`px-4 py-2 rounded-lg font-medium flex items-center gap-2 ${
             isDarkMode
-              ? "bg-red-600 text-gray-700 hover:bg-red-700"
-              : "bg-red-500 text-gray-700 hover:bg-red-600"
+              ? "bg-red-500 text-gray-700 hover:bg-red-600"
+              : "bg-red-400 text-gray-700 hover:bg-red-500"
           }`}
         >
           <svg className="w-5 h-5" viewBox="0 0 20 20" fill="currentColor">
@@ -1280,7 +1280,7 @@ const FulfillerDashboard: React.FC = () => {
           id: newWallet.id,
           type: "FULFILLER", // Use the correct wallet type from the frontend interface
           balance: newWallet.balance,
-          user_id: 0, // This will be set by the backend
+          userId: 0, // This will be set by the backend
           address: newWallet.address,
           created_at: newWallet.createdAt,
           updated_at: newWallet.updatedAt,
@@ -1492,7 +1492,7 @@ const FulfillerDashboard: React.FC = () => {
       }`}
     >
       <Panel items={panelItems} />
-      <div className="flex-1 p-8 w-[1200px] h-[800px] overflow-auto">
+      <div className="flex-1 p-8 overflow-auto">
         <Routes>
           <Route
             path="/payment"
