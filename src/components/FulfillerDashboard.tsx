@@ -1371,6 +1371,7 @@ const FulfillerDashboard: React.FC = () => {
       console.error("Error processing withdrawal:", error);
     }
 
+    console.log("Processing modal open");
     setIsProcessingModalOpen(true);
   };
 
@@ -1533,7 +1534,7 @@ const FulfillerDashboard: React.FC = () => {
           onClose={() => setIsProcessingModalOpen(false)}
           isDarkMode={isDarkMode}
           onComplete={() => {
-            setIsProcessingModalOpen(false);
+            // setIsProcessingModalOpen(false);
             setLoading(true);
             // Refresh tickets after processing
             ticketService

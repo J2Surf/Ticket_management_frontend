@@ -24,6 +24,10 @@ export interface CryptoTransaction {
   status: string;
   token_type: string;
   transaction_hash?: string;
+  user_id_from?: number;
+  user_id_to?: number;
+  address_from?: string;
+  address_to?: string;
 }
 
 export interface ConnectWalletDto {
@@ -212,6 +216,31 @@ export const walletService = {
 
   async processCryptoTransactions(): Promise<CryptoTransaction[]> {
     const response = await api.get<CryptoTransaction[]>("/wallet/transactions");
+    return response.data;
+  },
+
+  async updateTransaction(
+    id: number,
+    data: Partial<CryptoTransaction>
+  ): Promise<CryptoTransaction> {
+    const response = await api.patch<CryptoTransaction>(
+      `/wallet/transactions/${id}`,
+      data
+    );
+    return response.data;
+  },
+
+  async sendTransaction(data: {
+    from_wallet_id: number;
+    to_address: string;
+    amount: number;
+    token_type: TokenType;
+    description?: string;
+  }): Promise<{ transaction_hash: string; status: string }> {
+    const response = await api.post<{
+      transaction_hash: string;
+      status: string;
+    }>("/wallet/send", data);
     return response.data;
   },
 };
