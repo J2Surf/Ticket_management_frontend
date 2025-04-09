@@ -35,6 +35,19 @@ interface Ticket {
   action?: string;
 }
 
+// Helper function to convert API ticket to UI ticket
+const convertApiTicketToUiTicket = (apiTicket: ApiTicket): Ticket => ({
+  id: apiTicket.id,
+  ticket_id: apiTicket.ticket_id || `TICKET-${apiTicket.id}`,
+  time: apiTicket.created_at || new Date().toISOString(),
+  amount: apiTicket.amount,
+  status: apiTicket.status,
+  payment_method: apiTicket.payment_method || "N/A",
+  payment_tag: apiTicket.payment_tag || "N/A",
+  account_name: apiTicket.account_name || "N/A",
+  image: apiTicket.image || "",
+});
+
 const PaymentSection: React.FC<{
   // transactions: Transaction[];
   balance: number;
@@ -410,7 +423,7 @@ const PaymentSection: React.FC<{
 };
 
 const TicketSection: React.FC<{
-  tickets: Ticket[];
+  // tickets: Ticket[];
   onAction: (action: string, ticketId: number) => void;
   isDarkMode: boolean;
   loading?: boolean;
@@ -421,7 +434,7 @@ const TicketSection: React.FC<{
   sortDirection: "asc" | "desc";
   onSort: (field: string) => void;
 }> = ({
-  tickets,
+  // tickets,
   onAction,
   isDarkMode,
   loading = false,
@@ -432,6 +445,218 @@ const TicketSection: React.FC<{
   sortDirection,
   onSort,
 }) => {
+  const [tickets, setTickets] = useState<Ticket[]>([]);
+  const [incomingTickets, setIncomingTickets] = useState<Ticket[]>([]);
+  const [refreshInterval, setRefreshInterval] = useState<number | null>(null);
+  const [processInterval, setProcessInterval] = useState<number | null>(null);
+  const [acceptedTickets, setAcceptedTickets] = useState<Ticket[]>([]);
+
+  // Create new tickets every 20 seconds
+  useEffect(() => {
+    const createNewTicket = async () => {
+      try {
+        // Generate random ticket data
+        const paymentMethods = ["Apple Pay", "CashApp", "PayPal", "Venmo"];
+        const randomPaymentMethod =
+          paymentMethods[Math.floor(Math.random() * paymentMethods.length)];
+        const randomAmount = Math.floor(Math.random() * 1000) + 50; // Random amount between 50 and 1050
+
+        // Create a new ticket using the API
+        const newTicket = await ticketService.createTicket({
+          facebook_name: `User-${Math.floor(Math.random() * 1000)}`,
+          amount: randomAmount,
+          game: "Random Game",
+          game_id: `GAME-${Math.floor(Math.random() * 1000)}`,
+          payment_method: randomPaymentMethod,
+          payment_tag: `TAG-${Math.floor(Math.random() * 1000)}`,
+          account_name: `User-${Math.floor(Math.random() * 1000)}`,
+          payment_qr_code: "https://example.com/qr-code.png",
+        });
+
+        const validateTicket = await ticketService.validateTicket(
+          newTicket.id.toString()
+        );
+
+        // Convert API ticket to UI ticket and add to incoming tickets
+        const uiTicket = convertApiTicketToUiTicket(validateTicket);
+        setIncomingTickets((prev) => [...prev, uiTicket]);
+
+        console.log("Created new ticket:", uiTicket);
+      } catch (error) {
+        console.error("Error creating new ticket:", error);
+      }
+    };
+
+    // Initial creation
+    createNewTicket();
+
+    // Set up interval for subsequent creations
+    const interval = window.setInterval(createNewTicket, 20000);
+    setRefreshInterval(interval);
+
+    // Cleanup
+    return () => {
+      if (refreshInterval) {
+        window.clearInterval(refreshInterval);
+      }
+    };
+  }, []);
+
+  // Process oldest tickets every 30 seconds
+  useEffect(() => {
+    const processOldestTicket = async () => {
+      try {
+        if (incomingTickets.length > 0) {
+          // Sort tickets by time (oldest first)
+          const sortedTickets = [...incomingTickets].sort(
+            (a, b) => new Date(a.time).getTime() - new Date(b.time).getTime()
+          );
+
+          // Get the oldest ticket
+          const oldestTicket = sortedTickets[0];
+
+          // Process the oldest ticket
+          await handleProcessTicket(oldestTicket);
+
+          console.log("Processed oldest ticket:", oldestTicket);
+        }
+      } catch (error) {
+        console.error("Error processing oldest ticket:", error);
+      }
+    };
+
+    // Set up interval for processing oldest tickets
+    const interval = window.setInterval(processOldestTicket, 30000);
+    setProcessInterval(interval);
+
+    // Cleanup
+    return () => {
+      if (processInterval) {
+        window.clearInterval(processInterval);
+      }
+    };
+  }, [incomingTickets]);
+
+  // Show all tickets
+  // useEffect(() => {
+  //   const fetchTickets = async () => {
+  //     try {
+  //       const response = await ticketService.getTickets(
+  //         undefined,
+  //         currentPage,
+  //         limit
+  //       );
+  //       const formattedTickets = response.data.map((ticket: ApiTicket) => ({
+  //         id: ticket.id,
+  //         ticket_id: ticket.ticket_id || `TICKET-${ticket.id}`,
+  //         time: ticket.created_at || new Date().toISOString(),
+  //         amount: ticket.amount,
+  //         status: mapTicketStatus(ticket.status),
+  //         payment_method: ticket.payment_method || "N/A",
+  //         payment_tag: ticket.payment_tag || "N/A",
+  //         account_name: ticket.account_name || "N/A",
+  //         image: ticket.image || "",
+  //       }));
+
+  //       // Sort tickets based on current sort field and direction
+  //       const sortedTickets = sortTickets(
+  //         formattedTickets,
+  //         sortField,
+  //         sortDirection
+  //       );
+
+  //       setTickets(sortedTickets);
+  //       setTotalPages(response.meta.totalPages);
+  //     } catch (error) {
+  //       showAlert("error", "Failed to fetch tickets");
+  //       console.error("Error fetching tickets:", error);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
+
+  //   fetchTickets();
+  // }, [showAlert, currentPage, limit, sortField, sortDirection]);
+
+  // Show accepted tickets
+  useEffect(() => {
+    // Sort tickets based on current sort field and direction
+    const sortedTickets = sortTickets(
+      acceptedTickets,
+      sortField,
+      sortDirection
+    );
+
+    setTickets(sortedTickets);
+  }, []);
+
+  const sortTickets = (
+    ticketsToSort: Ticket[],
+    field: string,
+    direction: "asc" | "desc"
+  ): Ticket[] => {
+    return [...ticketsToSort].sort((a, b) => {
+      let valueA: any = a[field as keyof Ticket];
+      let valueB: any = b[field as keyof Ticket];
+
+      // Handle numeric values
+      if (field === "id" || field === "amount") {
+        valueA = Number(valueA);
+        valueB = Number(valueB);
+      }
+
+      // Handle string values
+      if (typeof valueA === "string") {
+        valueA = valueA.toLowerCase();
+        valueB = valueB.toLowerCase();
+      }
+
+      if (direction === "asc") {
+        return valueA > valueB ? 1 : -1;
+      } else {
+        return valueA < valueB ? 1 : -1;
+      }
+    });
+  };
+
+  const handleAddTicket = async (ticket: Ticket) => {
+    if (acceptedTickets.length >= 5) {
+      return;
+    }
+
+    try {
+      // Remove the ticket from incoming tickets
+      setIncomingTickets((prev) => prev.filter((t) => t.id !== ticket.id));
+
+      setAcceptedTickets((prev) => [...prev, ticket]);
+
+      // Update the ticket status to "pending" in the API
+      // await ticketService.updateTicketStatus(ticket.id, "pending");
+
+      // Refresh the main tickets table
+      // onAction("refresh", 0);
+    } catch (error) {
+      console.error("Error adding ticket:", error);
+      // Add the ticket back to incoming tickets if there's an error
+      setIncomingTickets((prev) => [...prev, ticket]);
+    }
+  };
+
+  const handleProcessTicket = async (ticket: Ticket) => {
+    try {
+      // Remove the ticket from incoming tickets
+      setIncomingTickets((prev) => prev.filter((t) => t.id !== ticket.id));
+
+      // Update the ticket status to "completed" in the API
+      await ticketService.updateTicketStatus(ticket.id, "completed");
+
+      // Refresh the main tickets table
+      onAction("refresh", 0);
+    } catch (error) {
+      console.error("Error processing ticket:", error);
+    }
+  };
+
   const getTicketAction = (status: string): boolean => {
     // return status.toLowerCase() === "validated";
     return true;
@@ -597,7 +822,7 @@ const TicketSection: React.FC<{
                   isDarkMode ? "text-white" : "text-gray-900"
                 }`}
               >
-                Recent Tickets
+                Accepted Tickets
               </h2>
             </div>
 
@@ -647,7 +872,7 @@ const TicketSection: React.FC<{
                       ? "bg-gray-700 text-gray-500 cursor-not-allowed"
                       : "bg-gray-200 text-gray-400 cursor-not-allowed"
                     : isDarkMode
-                    ? "bg-gray-700 text-gray-700 hover:bg-gray-600"
+                    ? "bg-gray-700 text-white hover:bg-gray-600"
                     : "bg-gray-200 text-gray-700 hover:bg-gray-300"
                 }`}
               >
@@ -662,7 +887,7 @@ const TicketSection: React.FC<{
                       ? "bg-gray-700 text-gray-500 cursor-not-allowed"
                       : "bg-gray-200 text-gray-400 cursor-not-allowed"
                     : isDarkMode
-                    ? "bg-gray-700 text-gray-700 hover:bg-gray-600"
+                    ? "bg-gray-700 text-white hover:bg-gray-600"
                     : "bg-gray-200 text-gray-700 hover:bg-gray-300"
                 }`}
               >
@@ -676,7 +901,7 @@ const TicketSection: React.FC<{
               <div className="flex justify-center items-center py-8">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
               </div>
-            ) : tickets.length === 0 ? (
+            ) : acceptedTickets.length === 0 ? (
               <div className="text-center py-8 text-gray-500">
                 No tickets found
               </div>
@@ -693,7 +918,7 @@ const TicketSection: React.FC<{
                         className="flex items-center focus:outline-none"
                         onClick={() => onSort("ticket_id")}
                       >
-                        TICKET ID {getSortIcon("ticket_id")}
+                        Ticket ID {getSortIcon("ticket_id")}
                       </button>
                     </th>
                     <th
@@ -741,7 +966,7 @@ const TicketSection: React.FC<{
                         className="flex items-center focus:outline-none"
                         onClick={() => onSort("amount")}
                       >
-                        AMOUNT {getSortIcon("amount")}
+                        Amount {getSortIcon("amount")}
                       </button>
                     </th>
                     <th
@@ -749,7 +974,7 @@ const TicketSection: React.FC<{
                         isDarkMode ? "text-gray-400" : "text-gray-500"
                       }`}
                     >
-                      IMAGE
+                      Image
                     </th>
                     <th
                       className={`p-4 text-left ${
@@ -765,7 +990,7 @@ const TicketSection: React.FC<{
                     isDarkMode ? "divide-gray-700" : "divide-gray-100"
                   }`}
                 >
-                  {tickets.map((ticket) => (
+                  {acceptedTickets.map((ticket) => (
                     <tr
                       key={ticket.id}
                       className={`${
@@ -836,28 +1061,8 @@ const TicketSection: React.FC<{
                       <td className="p-4">
                         {getTicketAction(ticket.status) ? (
                           <div className="flex gap-2">
-                            {/* <button
-                              onClick={() => onAction("validate", ticket.id)}
-                              className={`font-medium ${
-                                isDarkMode
-                                  ? "text-green-400 hover:text-green-300"
-                                  : "text-green-600 hover:text-green-700"
-                              } hover:underline transition-colors`}
-                            >
-                              Validate
-                            </button>
                             <button
-                              onClick={() => onAction("decline", ticket.id)}
-                              className={`font-medium ${
-                                isDarkMode
-                                  ? "text-red-400 hover:text-red-300"
-                                  : "text-red-600 hover:text-red-700"
-                              } hover:underline transition-colors`}
-                            >
-                              Decline
-                            </button> */}
-                            <button
-                              onClick={() => onAction("process", ticket.id)}
+                              onClick={() => handleProcessTicket(ticket)}
                               className={`font-medium ${
                                 isDarkMode
                                   ? "text-blue-400 hover:text-blue-300"
@@ -909,206 +1114,48 @@ const TicketSection: React.FC<{
             </p>
 
             <div className="space-y-4">
-              {/* Incoming Ticket Item */}
-              <div className="flex items-center justify-between bg-white/5 p-4 rounded-lg">
-                <div className="flex items-center gap-3">
-                  <div className="w-1 h-12 bg-black rounded-full"></div>
-                  <div>
-                    <p
-                      className={`font-medium ${
-                        isDarkMode ? "text-white" : "text-gray-900"
-                      }`}
-                    >
-                      1SH5KJ
-                    </p>
-                    <p
-                      className={`text-sm ${
-                        isDarkMode ? "text-gray-400" : "text-gray-500"
-                      }`}
-                    >
-                      Apple Pay
-                    </p>
+              {incomingTickets.map((ticket) => (
+                <div
+                  key={ticket.id}
+                  className="flex items-center justify-between bg-white/5 p-4 rounded-lg"
+                >
+                  <div className="flex items-center gap-3">
+                    <div
+                      className={`w-1 h-12 ${
+                        ticket.payment_method === "Apple Pay"
+                          ? "bg-black"
+                          : ticket.payment_method === "CashApp"
+                          ? "bg-green-500"
+                          : ticket.payment_method === "PayPal"
+                          ? "bg-fuchsia-500"
+                          : "bg-blue-500"
+                      } rounded-full`}
+                    ></div>
+                    <div>
+                      <p
+                        className={`font-medium ${
+                          isDarkMode ? "text-white" : "text-gray-900"
+                        }`}
+                      >
+                        {ticket.ticket_id}
+                      </p>
+                      <p
+                        className={`text-sm ${
+                          isDarkMode ? "text-gray-400" : "text-gray-500"
+                        }`}
+                      >
+                        {ticket.payment_method}
+                      </p>
+                    </div>
                   </div>
+                  <button
+                    onClick={() => handleAddTicket(ticket)}
+                    className="px-3 py-1 text-sm bg-blue-100 text-blue-700 rounded-md hover:bg-blue-200"
+                  >
+                    Add
+                  </button>
                 </div>
-                <button className="px-3 py-1 text-sm bg-blue-100 text-blue-700 rounded-md hover:bg-blue-200">
-                  Add
-                </button>
-              </div>
-
-              <div className="flex items-center justify-between bg-white/5 p-4 rounded-lg">
-                <div className="flex items-center gap-3">
-                  <div className="w-1 h-12 bg-green-500 rounded-full"></div>
-                  <div>
-                    <p
-                      className={`font-medium ${
-                        isDarkMode ? "text-white" : "text-gray-900"
-                      }`}
-                    >
-                      BRCWNX
-                    </p>
-                    <p
-                      className={`text-sm ${
-                        isDarkMode ? "text-gray-400" : "text-gray-500"
-                      }`}
-                    >
-                      CashApp
-                    </p>
-                  </div>
-                </div>
-                <button className="px-3 py-1 text-sm bg-blue-100 text-blue-700 rounded-md hover:bg-blue-200">
-                  Add
-                </button>
-              </div>
-
-              <div className="flex items-center justify-between bg-white/5 p-4 rounded-lg">
-                <div className="flex items-center gap-3">
-                  <div className="w-1 h-12 bg-blue-500 rounded-full"></div>
-                  <div>
-                    <p
-                      className={`font-medium ${
-                        isDarkMode ? "text-white" : "text-gray-900"
-                      }`}
-                    >
-                      QFRK64
-                    </p>
-                    <p
-                      className={`text-sm ${
-                        isDarkMode ? "text-gray-400" : "text-gray-500"
-                      }`}
-                    >
-                      Venmo
-                    </p>
-                  </div>
-                </div>
-                <button className="px-3 py-1 text-sm bg-blue-100 text-blue-700 rounded-md hover:bg-blue-200">
-                  Add
-                </button>
-              </div>
-
-              <div className="flex items-center justify-between bg-white/5 p-4 rounded-lg">
-                <div className="flex items-center gap-3">
-                  <div className="w-1 h-12 bg-green-500 rounded-full"></div>
-                  <div>
-                    <p
-                      className={`font-medium ${
-                        isDarkMode ? "text-white" : "text-gray-900"
-                      }`}
-                    >
-                      KAE2XO
-                    </p>
-                    <p
-                      className={`text-sm ${
-                        isDarkMode ? "text-gray-400" : "text-gray-500"
-                      }`}
-                    >
-                      CashApp
-                    </p>
-                  </div>
-                </div>
-                <button className="px-3 py-1 text-sm bg-blue-100 text-blue-700 rounded-md hover:bg-blue-200">
-                  Add
-                </button>
-              </div>
-
-              <div className="flex items-center justify-between bg-white/5 p-4 rounded-lg">
-                <div className="flex items-center gap-3">
-                  <div className="w-1 h-12 bg-black rounded-full"></div>
-                  <div>
-                    <p
-                      className={`font-medium ${
-                        isDarkMode ? "text-white" : "text-gray-900"
-                      }`}
-                    >
-                      IJJYL
-                    </p>
-                    <p
-                      className={`text-sm ${
-                        isDarkMode ? "text-gray-400" : "text-gray-500"
-                      }`}
-                    >
-                      Apple Pay
-                    </p>
-                  </div>
-                </div>
-                <button className="px-3 py-1 text-sm bg-blue-100 text-blue-700 rounded-md hover:bg-blue-200">
-                  Add
-                </button>
-              </div>
-
-              <div className="flex items-center justify-between bg-white/5 p-4 rounded-lg">
-                <div className="flex items-center gap-3">
-                  <div className="w-1 h-12 bg-blue-500 rounded-full"></div>
-                  <div>
-                    <p
-                      className={`font-medium ${
-                        isDarkMode ? "text-white" : "text-gray-900"
-                      }`}
-                    >
-                      PULKSR
-                    </p>
-                    <p
-                      className={`text-sm ${
-                        isDarkMode ? "text-gray-400" : "text-gray-500"
-                      }`}
-                    >
-                      Venmo
-                    </p>
-                  </div>
-                </div>
-                <button className="px-3 py-1 text-sm bg-blue-100 text-blue-700 rounded-md hover:bg-blue-200">
-                  Add
-                </button>
-              </div>
-
-              <div className="flex items-center justify-between bg-white/5 p-4 rounded-lg">
-                <div className="flex items-center gap-3">
-                  <div className="w-1 h-12 bg-black rounded-full"></div>
-                  <div>
-                    <p
-                      className={`font-medium ${
-                        isDarkMode ? "text-white" : "text-gray-900"
-                      }`}
-                    >
-                      3GSDNC
-                    </p>
-                    <p
-                      className={`text-sm ${
-                        isDarkMode ? "text-gray-400" : "text-gray-500"
-                      }`}
-                    >
-                      Apple Pay
-                    </p>
-                  </div>
-                </div>
-                <button className="px-3 py-1 text-sm bg-blue-100 text-blue-700 rounded-md hover:bg-blue-200">
-                  Add
-                </button>
-              </div>
-
-              <div className="flex items-center justify-between bg-white/5 p-4 rounded-lg">
-                <div className="flex items-center gap-3">
-                  <div className="w-1 h-12 bg-green-500 rounded-full"></div>
-                  <div>
-                    <p
-                      className={`font-medium ${
-                        isDarkMode ? "text-white" : "text-gray-900"
-                      }`}
-                    >
-                      PT4OGL
-                    </p>
-                    <p
-                      className={`text-sm ${
-                        isDarkMode ? "text-gray-400" : "text-gray-500"
-                      }`}
-                    >
-                      CashApp
-                    </p>
-                  </div>
-                </div>
-                <button className="px-3 py-1 text-sm bg-blue-100 text-blue-700 rounded-md hover:bg-blue-200">
-                  Add
-                </button>
-              </div>
+              ))}
             </div>
           </div>
         </div>
@@ -1138,8 +1185,7 @@ const FulfillerDashboard: React.FC = () => {
     },
   ]);
 
-  const [tickets, setTickets] = useState<Ticket[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [limit] = useState(10);
@@ -1171,46 +1217,6 @@ const FulfillerDashboard: React.FC = () => {
   }, [showAlert]);
 
   useEffect(() => {
-    const fetchTickets = async () => {
-      try {
-        const response = await ticketService.getTickets(
-          undefined,
-          currentPage,
-          limit
-        );
-        const formattedTickets = response.data.map((ticket: ApiTicket) => ({
-          id: ticket.id,
-          ticket_id: ticket.ticket_id || `TICKET-${ticket.id}`,
-          time: ticket.created_at || new Date().toISOString(),
-          amount: ticket.amount,
-          status: mapTicketStatus(ticket.status),
-          payment_method: ticket.payment_method || "N/A",
-          payment_tag: ticket.payment_tag || "N/A",
-          account_name: ticket.account_name || "N/A",
-          image: ticket.image || "",
-        }));
-
-        // Sort tickets based on current sort field and direction
-        const sortedTickets = sortTickets(
-          formattedTickets,
-          sortField,
-          sortDirection
-        );
-
-        setTickets(sortedTickets);
-        setTotalPages(response.meta.totalPages);
-      } catch (error) {
-        showAlert("error", "Failed to fetch tickets");
-        console.error("Error fetching tickets:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchTickets();
-  }, [showAlert, currentPage, limit, sortField, sortDirection]);
-
-  useEffect(() => {
     const fetchCryptoTransactions = async () => {
       try {
         const response = await walletService.getCryptoTransactions();
@@ -1224,35 +1230,6 @@ const FulfillerDashboard: React.FC = () => {
 
     fetchCryptoTransactions();
   }, []);
-
-  const sortTickets = (
-    ticketsToSort: Ticket[],
-    field: string,
-    direction: "asc" | "desc"
-  ): Ticket[] => {
-    return [...ticketsToSort].sort((a, b) => {
-      let valueA: any = a[field as keyof Ticket];
-      let valueB: any = b[field as keyof Ticket];
-
-      // Handle numeric values
-      if (field === "id" || field === "amount") {
-        valueA = Number(valueA);
-        valueB = Number(valueB);
-      }
-
-      // Handle string values
-      if (typeof valueA === "string") {
-        valueA = valueA.toLowerCase();
-        valueB = valueB.toLowerCase();
-      }
-
-      if (direction === "asc") {
-        return valueA > valueB ? 1 : -1;
-      } else {
-        return valueA < valueB ? 1 : -1;
-      }
-    });
-  };
 
   const handleSort = (field: string) => {
     if (sortField === field) {
@@ -1502,7 +1479,7 @@ const FulfillerDashboard: React.FC = () => {
             path="/ticket"
             element={
               <TicketSection
-                tickets={tickets}
+                // tickets={tickets}
                 onAction={handleTicketAction}
                 isDarkMode={isDarkMode}
                 loading={loading}

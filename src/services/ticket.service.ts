@@ -1,4 +1,5 @@
 import { api } from "./api";
+import axios from "axios";
 
 export interface Ticket {
   id: number;
@@ -71,14 +72,58 @@ export const ticketService = {
 
   async completeTicket(
     id: string,
-    data: { paymentImageUrl: string; transactionId: string; user_id: number }
-  ): Promise<any> {
-    const response = await api.put(`/tickets/${id}/complete`, data);
+    fulfillerId: number,
+    paymentImageUrl: string,
+    transactionId: string,
+    userId: number
+  ): Promise<Ticket> {
+    const response = await api.put(`/tickets/${id}/complete`, {
+      fulfiller_id: fulfillerId,
+      payment_image_url: paymentImageUrl,
+      transaction_id: transactionId,
+      user_id: userId,
+    });
     return response.data;
   },
 
   async getTicketsByStatus(status: string): Promise<Ticket[]> {
     const response = await api.get<Ticket[]>(`/tickets/status/${status}`);
     return response.data;
+  },
+
+  async updateTicketStatus(
+    id: string,
+    action: "validated" | "declined" | "completed",
+    data?: {
+      fulfillerId?: number;
+      paymentImageUrl?: string;
+      transactionId?: string;
+      userId?: number;
+    }
+  ): Promise<Ticket> {
+    switch (action) {
+      case "validated":
+        return this.validateTicket(id);
+      case "declined":
+        return this.declineTicket(id);
+      case "completed":
+        if (
+          !data?.fulfillerId ||
+          !data?.paymentImageUrl ||
+          !data?.transactionId ||
+          !data?.userId
+        ) {
+          throw new Error("Missing required data for completing ticket");
+        }
+        return this.completeTicket(
+          id,
+          data.fulfillerId,
+          data.paymentImageUrl,
+          data.transactionId,
+          data.userId
+        );
+      default:
+        throw new Error("Invalid ticket status update action");
+    }
   },
 };
