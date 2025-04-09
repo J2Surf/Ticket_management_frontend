@@ -14,6 +14,11 @@ import ProcessingModal from "./ProcessingModal";
 import { useAuth } from "../hooks/useAuth";
 import { format } from "date-fns";
 
+interface User {
+  id: number;
+  // Add other user properties as needed
+}
+
 interface Transaction {
   date: string;
   income?: number;
@@ -433,6 +438,7 @@ const TicketSection: React.FC<{
   sortField: string;
   sortDirection: "asc" | "desc";
   onSort: (field: string) => void;
+  user: User | null;
 }> = ({
   // tickets,
   onAction,
@@ -444,16 +450,23 @@ const TicketSection: React.FC<{
   sortField,
   sortDirection,
   onSort,
+  user,
 }) => {
+  const { showAlert } = useAlert();
   const [tickets, setTickets] = useState<Ticket[]>([]);
   const [incomingTickets, setIncomingTickets] = useState<Ticket[]>([]);
   const [refreshInterval, setRefreshInterval] = useState<number | null>(null);
   const [processInterval, setProcessInterval] = useState<number | null>(null);
   const [acceptedTickets, setAcceptedTickets] = useState<Ticket[]>([]);
+  const [holdingBalance, setHoldingBalance] = useState<number>(0);
+  const [currentBalance, setCurrentBalance] = useState<number>(0);
 
   // Create new tickets every 20 seconds
   useEffect(() => {
+    let isMounted = true;
     const createNewTicket = async () => {
+      if (!isMounted) return;
+
       try {
         // Generate random ticket data
         const paymentMethods = ["Apple Pay", "CashApp", "PayPal", "Venmo"];
@@ -496,6 +509,7 @@ const TicketSection: React.FC<{
 
     // Cleanup
     return () => {
+      isMounted = false;
       if (refreshInterval) {
         window.clearInterval(refreshInterval);
       }
@@ -516,7 +530,7 @@ const TicketSection: React.FC<{
           const oldestTicket = sortedTickets[0];
 
           // Process the oldest ticket
-          await handleProcessTicket(oldestTicket);
+          await handleProcessTicket(oldestTicket, user);
 
           console.log("Processed oldest ticket:", oldestTicket);
         }
@@ -628,6 +642,9 @@ const TicketSection: React.FC<{
       // Remove the ticket from incoming tickets
       setIncomingTickets((prev) => prev.filter((t) => t.id !== ticket.id));
 
+      setHoldingBalance(
+        (prevBalance) => Number(prevBalance) + Number(ticket.amount)
+      );
       setAcceptedTickets((prev) => [...prev, ticket]);
 
       // Update the ticket status to "pending" in the API
@@ -642,13 +659,26 @@ const TicketSection: React.FC<{
     }
   };
 
-  const handleProcessTicket = async (ticket: Ticket) => {
+  const handleProcessTicket = async (ticket: Ticket, user: User | null) => {
     try {
       // Remove the ticket from incoming tickets
-      setIncomingTickets((prev) => prev.filter((t) => t.id !== ticket.id));
+      setAcceptedTickets((prev) => prev.filter((t) => t.id !== ticket.id));
+
+      setCurrentBalance(
+        (prevBalance) => Number(prevBalance) + Number(ticket.amount)
+      );
 
       // Update the ticket status to "completed" in the API
-      await ticketService.updateTicketStatus(ticket.id, "completed");
+      if (!user) {
+        showAlert("error", "User not authenticated");
+        return;
+      }
+
+      await ticketService.completeTicket(
+        ticket.id.toString(),
+        user.id,
+        "http://example.com/image.png"
+      );
 
       // Refresh the main tickets table
       onAction("refresh", 0);
@@ -746,7 +776,7 @@ const TicketSection: React.FC<{
                     isDarkMode ? "text-white" : "text-gray-900"
                   }`}
                 >
-                  $156
+                  ${currentBalance.toFixed(2)}
                 </p>
               </div>
             </div>
@@ -785,7 +815,7 @@ const TicketSection: React.FC<{
                     isDarkMode ? "text-white" : "text-gray-900"
                   }`}
                 >
-                  $1,200.00
+                  ${holdingBalance.toFixed(2)}
                 </p>
               </div>
             </div>
@@ -1062,7 +1092,7 @@ const TicketSection: React.FC<{
                         {getTicketAction(ticket.status) ? (
                           <div className="flex gap-2">
                             <button
-                              onClick={() => handleProcessTicket(ticket)}
+                              onClick={() => handleProcessTicket(ticket, user)}
                               className={`font-medium ${
                                 isDarkMode
                                   ? "text-blue-400 hover:text-blue-300"
@@ -1168,7 +1198,7 @@ const FulfillerDashboard: React.FC = () => {
   const location = useLocation();
   const { showAlert } = useAlert();
   const { isDarkMode } = useTheme();
-  const { user } = useAuth();
+  const { user } = useAuth() as { user: User | null };
   const [balance, setBalance] = useState<number>(0);
   const [transactions] = useState<Transaction[]>([
     {
@@ -1362,11 +1392,16 @@ const FulfillerDashboard: React.FC = () => {
         await ticketService.declineTicket(ticketId.toString());
         showAlert("success", `Ticket #${ticketId} has been declined`);
       } else if (action === "complete") {
-        await ticketService.completeTicket(ticketId.toString(), {
-          paymentImageUrl: "https://example.com/payment/123456.jpg",
-          transactionId: "TRX123456",
-          user_id: 1,
-        });
+        if (!user) {
+          showAlert("error", "User not authenticated");
+          return;
+        }
+
+        await ticketService.completeTicket(
+          ticketId.toString(),
+          user.id,
+          "https://example.com/payment/123456.jpg"
+        );
         showAlert("success", `Ticket #${ticketId} has been completed`);
       }
       // Refresh tickets after action
@@ -1388,14 +1423,14 @@ const FulfillerDashboard: React.FC = () => {
       }));
 
       // Sort tickets based on current sort field and direction
-      const sortedTickets = sortTickets(
-        formattedTickets,
-        sortField,
-        sortDirection
-      );
+      // const sortedTickets = sortTickets(
+      //   formattedTickets,
+      //   sortField,
+      //   sortDirection
+      // );
 
-      setTickets(sortedTickets);
-      setTotalPages(response.meta.totalPages);
+      // setTickets(sortedTickets);
+      // setTotalPages(response.meta.totalPages);
     } catch (error) {
       showAlert("error", `Failed to ${action} ticket #${ticketId}`);
       console.error(`Error ${action}ing ticket:`, error);
@@ -1489,6 +1524,7 @@ const FulfillerDashboard: React.FC = () => {
                 sortField={sortField}
                 sortDirection={sortDirection}
                 onSort={handleSort}
+                user={user}
               />
             }
           />
@@ -1530,9 +1566,9 @@ const FulfillerDashboard: React.FC = () => {
                     image: ticket.image || "",
                   })
                 );
-                setTickets(
-                  sortTickets(formattedTickets, sortField, sortDirection)
-                );
+                // setTickets(
+                //   sortTickets(formattedTickets, sortField, sortDirection)
+                // );
                 setTotalPages(response.meta.totalPages);
                 setLoading(false);
               });

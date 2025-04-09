@@ -73,15 +73,11 @@ export const ticketService = {
   async completeTicket(
     id: string,
     fulfillerId: number,
-    paymentImageUrl: string,
-    transactionId: string,
-    userId: number
+    paymentImageUrl: string
   ): Promise<Ticket> {
     const response = await api.put(`/tickets/${id}/complete`, {
       fulfiller_id: fulfillerId,
-      payment_image_url: paymentImageUrl,
-      transaction_id: transactionId,
-      user_id: userId,
+      paymentImageUrl: paymentImageUrl,
     });
     return response.data;
   },
@@ -97,8 +93,6 @@ export const ticketService = {
     data?: {
       fulfillerId?: number;
       paymentImageUrl?: string;
-      transactionId?: string;
-      userId?: number;
     }
   ): Promise<Ticket> {
     switch (action) {
@@ -107,21 +101,10 @@ export const ticketService = {
       case "declined":
         return this.declineTicket(id);
       case "completed":
-        if (
-          !data?.fulfillerId ||
-          !data?.paymentImageUrl ||
-          !data?.transactionId ||
-          !data?.userId
-        ) {
+        if (!data?.fulfillerId || !data?.paymentImageUrl) {
           throw new Error("Missing required data for completing ticket");
         }
-        return this.completeTicket(
-          id,
-          data.fulfillerId,
-          data.paymentImageUrl,
-          data.transactionId,
-          data.userId
-        );
+        return this.completeTicket(id, data.fulfillerId, data.paymentImageUrl);
       default:
         throw new Error("Invalid ticket status update action");
     }
