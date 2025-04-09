@@ -429,7 +429,7 @@ const PaymentSection: React.FC<{
 
 const TicketSection: React.FC<{
   // tickets: Ticket[];
-  onAction: (action: string, ticketId: number) => void;
+  onAction: (action: string, ticketId: string) => void;
   isDarkMode: boolean;
   loading?: boolean;
   currentPage: number;
@@ -460,6 +460,7 @@ const TicketSection: React.FC<{
   const [acceptedTickets, setAcceptedTickets] = useState<Ticket[]>([]);
   const [holdingBalance, setHoldingBalance] = useState<number>(0);
   const [currentBalance, setCurrentBalance] = useState<number>(0);
+  const [ticketTimers, setTicketTimers] = useState<Record<number, number>>({});
 
   // Create new tickets every 20 seconds
   useEffect(() => {
@@ -550,6 +551,53 @@ const TicketSection: React.FC<{
       }
     };
   }, [incomingTickets]);
+
+  // Check for tickets that have been in the system for more than 1 hour
+  useEffect(() => {
+    const checkTicketTimers = () => {
+      const now = Date.now();
+      // const oneHourInMs = 60 * 60 * 1000; // 1 hour in milliseconds
+      const oneHourInMs = 10 * 1000; // 1 hour in milliseconds
+
+      // Check each accepted ticket
+      acceptedTickets.forEach((ticket) => {
+        // If we don't have a timer for this ticket yet, set it
+        if (!ticketTimers[ticket.id]) {
+          setTicketTimers((prev) => ({
+            ...prev,
+            [ticket.id]: now,
+          }));
+        } else {
+          // Calculate how long the ticket has been in the system
+          const ticketAge = now - ticketTimers[ticket.id];
+
+          // If the ticket has been in the system for more than 1 hour
+          if (ticketAge > oneHourInMs) {
+            // Show a warning alert
+            showAlert(
+              "warning",
+              `Ticket ${ticket.ticket_id} has been in your account for more than 1 hour. Please process it soon.`
+            );
+
+            // Update the timer to prevent showing the alert every second
+            setTicketTimers((prev) => ({
+              ...prev,
+              [ticket.id]: now - oneHourInMs + 1000, // Reset to just under 1 hour to show again in 1 minute
+            }));
+          }
+        }
+      });
+    };
+
+    // Run the check every minute
+    const interval = setInterval(checkTicketTimers, 1000);
+
+    // Run immediately on first render
+    checkTicketTimers();
+
+    // Cleanup
+    return () => clearInterval(interval);
+  }, [acceptedTickets, ticketTimers, showAlert]);
 
   // Show all tickets
   // useEffect(() => {
@@ -647,6 +695,12 @@ const TicketSection: React.FC<{
       );
       setAcceptedTickets((prev) => [...prev, ticket]);
 
+      // Set the timer for this ticket
+      setTicketTimers((prev) => ({
+        ...prev,
+        [ticket.id]: Date.now(),
+      }));
+
       // Update the ticket status to "pending" in the API
       // await ticketService.updateTicketStatus(ticket.id, "pending");
 
@@ -663,6 +717,13 @@ const TicketSection: React.FC<{
     try {
       // Remove the ticket from incoming tickets
       setAcceptedTickets((prev) => prev.filter((t) => t.id !== ticket.id));
+
+      // Remove the timer for this ticket
+      setTicketTimers((prev) => {
+        const newTimers = { ...prev };
+        delete newTimers[ticket.id];
+        return newTimers;
+      });
 
       setCurrentBalance(
         (prevBalance) => Number(prevBalance) + Number(ticket.amount)
@@ -681,7 +742,7 @@ const TicketSection: React.FC<{
       );
 
       // Refresh the main tickets table
-      onAction("refresh", 0);
+      onAction("refresh", ticket.ticket_id);
     } catch (error) {
       console.error("Error processing ticket:", error);
     }
@@ -1104,7 +1165,9 @@ const TicketSection: React.FC<{
                           </div>
                         ) : getCompletedAction(ticket.status) ? (
                           <button
-                            onClick={() => onAction("complete", ticket.id)}
+                            onClick={() =>
+                              onAction("complete", ticket.ticket_id)
+                            }
                             className={`font-medium ${
                               isDarkMode
                                 ? "text-blue-400 hover:text-blue-300"
@@ -1196,7 +1259,7 @@ const TicketSection: React.FC<{
 
 const FulfillerDashboard: React.FC = () => {
   const location = useLocation();
-  const { showAlert } = useAlert();
+  const { showAlert, removeAlert } = useAlert();
   const { isDarkMode } = useTheme();
   const { user } = useAuth() as { user: User | null };
   const [balance, setBalance] = useState<number>(0);
@@ -1382,14 +1445,14 @@ const FulfillerDashboard: React.FC = () => {
     setIsProcessingModalOpen(true);
   };
 
-  const handleTicketAction = async (action: string, ticketId: number) => {
+  const handleTicketAction = async (action: string, ticketId: string) => {
     try {
       setLoading(true);
       if (action === "validate") {
-        await ticketService.validateTicket(ticketId.toString());
+        await ticketService.validateTicket(ticketId);
         showAlert("success", `Ticket #${ticketId} has been validated`);
       } else if (action === "decline") {
-        await ticketService.declineTicket(ticketId.toString());
+        await ticketService.declineTicket(ticketId);
         showAlert("success", `Ticket #${ticketId} has been declined`);
       } else if (action === "complete") {
         if (!user) {
@@ -1398,7 +1461,7 @@ const FulfillerDashboard: React.FC = () => {
         }
 
         await ticketService.completeTicket(
-          ticketId.toString(),
+          ticketId,
           user.id,
           "https://example.com/payment/123456.jpg"
         );
@@ -1435,6 +1498,7 @@ const FulfillerDashboard: React.FC = () => {
       showAlert("error", `Failed to ${action} ticket #${ticketId}`);
       console.error(`Error ${action}ing ticket:`, error);
     } finally {
+      removeAlert();
       setLoading(false);
     }
   };

@@ -3,12 +3,14 @@ import Alert, { AlertType } from "../components/common/Alert";
 
 interface AlertContextType {
   showAlert: (type: AlertType, message: string) => void;
+  alerts: AlertMessage[];
+  removeAlert: () => void;
 }
 
 const AlertContext = createContext<AlertContextType | undefined>(undefined);
 
 interface AlertMessage {
-  id: number;
+  id: string;
   type: AlertType;
   message: string;
 }
@@ -19,25 +21,25 @@ export const AlertProvider: React.FC<{ children: React.ReactNode }> = ({
   const [alerts, setAlerts] = useState<AlertMessage[]>([]);
 
   const showAlert = (type: AlertType, message: string) => {
-    const id = Date.now();
+    const id = Date.now().toString();
     setAlerts((prev) => [...prev, { id, type, message }]);
   };
 
-  const removeAlert = (id: number) => {
-    setAlerts((prev) => prev.filter((alert) => alert.id !== id));
+  const removeAlert = () => {
+    setAlerts([]);
   };
 
   return (
-    <AlertContext.Provider value={{ showAlert }}>
+    <AlertContext.Provider value={{ showAlert, alerts, removeAlert }}>
       {children}
-      {alerts.map((alert) => (
+      {/* {alerts.map((alert) => (
         <Alert
           key={alert.id}
           type={alert.type}
           message={alert.message}
           onClose={() => removeAlert(alert.id)}
         />
-      ))}
+      ))} */}
     </AlertContext.Provider>
   );
 };

@@ -3,9 +3,11 @@ import { Link, useNavigate } from "react-router-dom";
 import { useTheme } from "../../contexts/ThemeContext";
 import { useAuth } from "../../hooks/useAuth";
 import { LegacyButton } from "../common/LegacyButton";
+import { useAlert } from "../../contexts/AlertContext";
 
 const Header: React.FC = () => {
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
+  const { alerts } = useAlert();
   const { isDarkMode, toggleTheme } = useTheme();
   const { user, logout } = useAuth();
   const userRole = user?.roles?.[0]?.name?.toLowerCase() || "user";
@@ -57,7 +59,12 @@ const Header: React.FC = () => {
               <svg className="w-5 h-5" viewBox="0 0 20 20" fill="currentColor">
                 <path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z" />
               </svg>
-              <div className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full"></div>
+              {alerts?.length > 0 ? (
+                <div
+                  className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full"
+                  title={alerts[0].message}
+                ></div>
+              ) : null}
             </button>
 
             {/* Dark Mode Toggle */}
