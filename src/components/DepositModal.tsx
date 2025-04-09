@@ -190,8 +190,8 @@ const DepositModal: React.FC<DepositModalProps> = ({
               onClick={onClose}
               className={`px-4 py-2 rounded-lg ${
                 isDarkMode
-                  ? "bg-gray-700 text-gray-700 hover:bg-gray-600"
-                  : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                  ? "bg-gray-700 text-white hover:bg-gray-600"
+                  : "bg-gray-200 text-white hover:bg-gray-300"
               }`}
             >
               Cancel
@@ -201,8 +201,8 @@ const DepositModal: React.FC<DepositModalProps> = ({
               disabled={isLoading || !selectedAdminAddress || !!error}
               className={`px-4 py-2 rounded-lg ${
                 isLoading || !selectedAdminAddress || !!error
-                  ? "bg-gray-400 text-gray-700 cursor-not-allowed"
-                  : "bg-blue-500 text-gray-700 hover:bg-blue-600"
+                  ? "bg-gray-400 text-white cursor-not-allowed"
+                  : "bg-blue-500 text-white hover:bg-blue-600"
               }`}
             >
               Deposit

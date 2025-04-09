@@ -974,14 +974,6 @@ const ClientDashboard: React.FC = () => {
       return;
     }
 
-    if (balance <= gasFee) {
-      showAlert(
-        "error",
-        `Insufficient balance. Minimum required: ${gasFee} USDT for gas fee`
-      );
-      return;
-    }
-
     setIsWithdrawModalOpen(true);
   };
 
@@ -993,18 +985,6 @@ const ClientDashboard: React.FC = () => {
     try {
       if (!selectedWallet) {
         showAlert("error", "Please select a wallet first");
-        return;
-      }
-
-      const maxWithdrawable = balance - gasFee;
-
-      if (amount > maxWithdrawable) {
-        showAlert(
-          "error",
-          `Maximum withdrawable amount is ${maxWithdrawable.toFixed(
-            2
-          )} USDT (balance - gas fee)`
-        );
         return;
       }
 

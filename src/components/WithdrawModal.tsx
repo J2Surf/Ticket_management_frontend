@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Wallet, walletService } from "../services/wallet.service";
+import { useAlert } from "../contexts/AlertContext";
 
 interface WithdrawModalProps {
   isOpen: boolean;
@@ -24,7 +25,9 @@ const WithdrawModal: React.FC<WithdrawModalProps> = ({
   balance,
   gasFee,
 }) => {
+  const { showAlert } = useAlert();
   const [amount, setAmount] = useState<string>("");
+  const [adminBalance, setAdminBalance] = useState<number>(0);
   const [error, setError] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
   const [adminWallets, setAdminWallets] = useState<Wallet[]>([]);
@@ -32,9 +35,7 @@ const WithdrawModal: React.FC<WithdrawModalProps> = ({
   const [selectedAdminUserId, setSelectedAdminUserId] = useState<number>(0);
 
   // Ensure balance and gasFee are numbers
-  const numericBalance = Number(balance);
   const numericGasFee = Number(gasFee);
-  const maxWithdrawable = numericBalance - numericGasFee;
 
   useEffect(() => {
     const fetchAdminWallets = async () => {
@@ -47,6 +48,7 @@ const WithdrawModal: React.FC<WithdrawModalProps> = ({
           if (wallets.length > 0) {
             setSelectedAdminAddress(wallets[0].address);
             setSelectedAdminUserId(wallets[0].userId);
+            setAdminBalance(wallets[0].balance);
           } else {
             setError("No admin wallets available");
           }
@@ -66,22 +68,31 @@ const WithdrawModal: React.FC<WithdrawModalProps> = ({
     e.preventDefault();
     const numericAmount = parseFloat(amount);
 
+    if (!selectedAdminAddress) {
+      setError("Please select a admin address");
+      return;
+    }
+
     if (isNaN(numericAmount) || numericAmount <= 0) {
       setError("Please enter a valid amount");
       return;
     }
 
+    if (adminBalance <= gasFee) {
+      showAlert(
+        "error",
+        `Insufficient balance. Minimum required: ${gasFee} USDT for gas fee`
+      );
+      return;
+    }
+
+    const maxWithdrawable = adminBalance - gasFee;
     if (numericAmount > maxWithdrawable) {
       setError(
         `Maximum withdrawable amount is ${maxWithdrawable.toFixed(
           2
         )} USDT (balance - gas fee)`
       );
-      return;
-    }
-
-    if (!selectedAdminAddress) {
-      setError("Please select a admin address");
       return;
     }
 
@@ -189,7 +200,7 @@ const WithdrawModal: React.FC<WithdrawModalProps> = ({
               type="number"
               step="0.01"
               min="0"
-              max={maxWithdrawable}
+              max={adminBalance - numericGasFee}
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
               className={`w-full px-3 py-2 rounded-lg border ${
@@ -209,7 +220,7 @@ const WithdrawModal: React.FC<WithdrawModalProps> = ({
                 isDarkMode ? "text-gray-400" : "text-gray-500"
               }`}
             >
-              Available Balance: {numericBalance.toFixed(2)} USDT
+              Available Balance: {adminBalance} USDT
             </p>
             <p
               className={`text-sm ${
@@ -223,7 +234,7 @@ const WithdrawModal: React.FC<WithdrawModalProps> = ({
                 isDarkMode ? "text-gray-400" : "text-gray-500"
               }`}
             >
-              Maximum Withdrawable: {maxWithdrawable.toFixed(2)} USDT
+              Maximum Withdrawable: {adminBalance - numericGasFee} USDT
             </p>
           </div>
 
@@ -235,8 +246,8 @@ const WithdrawModal: React.FC<WithdrawModalProps> = ({
               onClick={onClose}
               className={`mr-2 px-4 py-2 rounded-lg ${
                 isDarkMode
-                  ? "bg-gray-700 text-gray-700 hover:bg-gray-600"
-                  : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                  ? "bg-gray-700 text-white hover:bg-gray-600"
+                  : "bg-gray-200 text-white hover:bg-gray-300"
               }`}
               disabled={isLoading}
             >
@@ -246,8 +257,8 @@ const WithdrawModal: React.FC<WithdrawModalProps> = ({
               type="submit"
               className={`px-4 py-2 rounded-lg ${
                 isDarkMode
-                  ? "bg-blue-600 text-gray-700 hover:bg-blue-700"
-                  : "bg-blue-500 text-gray-700 hover:bg-blue-600"
+                  ? "bg-blue-600 text-white hover:bg-blue-700"
+                  : "bg-blue-500 text-white hover:bg-blue-600"
               } ${isLoading ? "opacity-50 cursor-not-allowed" : ""}`}
               disabled={isLoading}
             >

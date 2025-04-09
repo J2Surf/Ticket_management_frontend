@@ -10,6 +10,7 @@ import {
   CryptoTransaction,
 } from "../services/wallet.service";
 import WithdrawModal from "./WithdrawModal";
+import ProcessingModal from "./ProcessingModal";
 import { useAuth } from "../hooks/useAuth";
 import { format } from "date-fns";
 
@@ -1148,6 +1149,7 @@ const FulfillerDashboard: React.FC = () => {
   const [selectedWallet, setSelectedWallet] = useState<Wallet | null>(null);
   const [showWalletDropdown, setShowWalletDropdown] = useState(false);
   const [isWithdrawModalOpen, setIsWithdrawModalOpen] = useState(false);
+  const [isProcessingModalOpen, setIsProcessingModalOpen] = useState(false);
   const [gasFee] = useState<number>(5); // Fixed gas fee of 5 USDT for withdrawals
   const [cryptoTransactions, setCryptoTransactions] = useState<
     CryptoTransaction[]
@@ -1335,37 +1337,17 @@ const FulfillerDashboard: React.FC = () => {
       return;
     }
 
-    if (balance <= gasFee) {
-      showAlert(
-        "error",
-        `Insufficient balance. Minimum required: ${gasFee} USDT for gas fee`
-      );
-      return;
-    }
-
     setIsWithdrawModalOpen(true);
   };
 
   const handleWithdrawSubmit = async (
     amount: number,
-    fulfillerAddress: string,
-    fulfillerUserId: number
+    adminAddress: string,
+    adminUserId: number
   ) => {
     try {
       if (!selectedWallet) {
         showAlert("error", "Please select a wallet first");
-        return;
-      }
-
-      const maxWithdrawable = balance - gasFee;
-
-      if (amount > maxWithdrawable) {
-        showAlert(
-          "error",
-          `Maximum withdrawable amount is ${maxWithdrawable.toFixed(
-            2
-          )} USDT (balance - gas fee)`
-        );
         return;
       }
 
@@ -1375,8 +1357,10 @@ const FulfillerDashboard: React.FC = () => {
         token_type: "USDT",
         wallet_id: selectedWallet.id,
         description: "Withdrawal from wallet",
-        address_to: fulfillerAddress,
-        user_id_to: fulfillerUserId,
+        address_from: adminAddress,
+        address_to: selectedWallet.address,
+        user_id_from: adminUserId,
+        user_id_to: selectedWallet.userId,
       });
 
       setBalance(Number(updatedWallet.balance));
@@ -1386,6 +1370,8 @@ const FulfillerDashboard: React.FC = () => {
       showAlert("error", "Failed to process withdrawal");
       console.error("Error processing withdrawal:", error);
     }
+
+    setIsProcessingModalOpen(true);
   };
 
   const handleTicketAction = async (action: string, ticketId: number) => {
@@ -1539,6 +1525,40 @@ const FulfillerDashboard: React.FC = () => {
           selectedWallet={selectedWallet}
           balance={balance}
           gasFee={gasFee}
+        />
+      )}
+      {isProcessingModalOpen && (
+        <ProcessingModal
+          isOpen={isProcessingModalOpen}
+          onClose={() => setIsProcessingModalOpen(false)}
+          isDarkMode={isDarkMode}
+          onComplete={() => {
+            setIsProcessingModalOpen(false);
+            setLoading(true);
+            // Refresh tickets after processing
+            ticketService
+              .getTickets(undefined, currentPage, limit)
+              .then((response) => {
+                const formattedTickets = response.data.map(
+                  (ticket: ApiTicket) => ({
+                    id: ticket.id,
+                    ticket_id: ticket.ticket_id || `TICKET-${ticket.id}`,
+                    time: ticket.created_at || new Date().toISOString(),
+                    amount: ticket.amount,
+                    status: mapTicketStatus(ticket.status),
+                    payment_method: ticket.payment_method || "N/A",
+                    payment_tag: ticket.payment_tag || "N/A",
+                    account_name: ticket.account_name || "N/A",
+                    image: ticket.image || "",
+                  })
+                );
+                setTickets(
+                  sortTickets(formattedTickets, sortField, sortDirection)
+                );
+                setTotalPages(response.meta.totalPages);
+                setLoading(false);
+              });
+          }}
         />
       )}
     </div>

@@ -209,4 +209,9 @@ export const walletService = {
     const response = await api.get<CryptoTransaction[]>("/wallet/transactions");
     return response.data;
   },
+
+  async processCryptoTransactions(): Promise<CryptoTransaction[]> {
+    const response = await api.get<CryptoTransaction[]>("/wallet/transactions");
+    return response.data;
+  },
 };
