@@ -4,6 +4,7 @@ import { useTheme } from "../contexts/ThemeContext";
 
 interface PanelProps {
   items: {
+    category: string;
     name: string;
     path: string;
     isActive?: boolean;
@@ -44,6 +45,13 @@ const Panel: React.FC<PanelProps> = ({ items }) => {
 
       <div className="p-4">
         <div className="mb-8">
+          <div
+            className={`text-xl font-medium text-left px-4 ${
+              isDarkMode ? "text-gray-300" : "text-gray-400"
+            } mb-4`}
+          >
+            {items[0].category}
+          </div>
           <nav className="space-y-1">
             {items.map((item) => (
               <Link
@@ -54,12 +62,16 @@ const Panel: React.FC<PanelProps> = ({ items }) => {
                     ? "text-gray-300 hover:text-white hover:bg-gray-800"
                     : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
                 } py-2 px-3 rounded-lg ${
-                  item.isActive ? "bg-gray-100 dark:bg-gray-800" : ""
+                  item.isActive
+                    ? isDarkMode
+                      ? "bg-gray-800"
+                      : "bg-gray-100 text-gray-900"
+                    : ""
                 }`}
                 title={item.description || item.name}
               >
                 {item.icon}
-                <span className="text-sm">{item.name}</span>
+                <span className="text-lg">{item.name}</span>
                 {item.badge && (
                   <span className="ml-auto bg-blue-500 text-white text-xs px-2 py-0.5 rounded-full">
                     {item.badge}

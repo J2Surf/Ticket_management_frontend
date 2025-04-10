@@ -1076,12 +1076,14 @@ const ClientDashboard: React.FC = () => {
 
   const panelItems = [
     {
+      category: "User",
       name: "Payments",
       path: "/client/payment",
       icon: <PaymentIcon />,
       isActive: location.pathname.includes("/payment"),
     },
     {
+      category: "User",
       name: "Tickets",
       path: "/client/ticket",
       icon: <TicketIcon />,

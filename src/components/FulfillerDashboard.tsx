@@ -1533,12 +1533,14 @@ const FulfillerDashboard: React.FC = () => {
 
   const panelItems = [
     {
+      category: "Fulfiller",
       name: "Payments",
       path: "/fulfiller/payment",
       icon: <PaymentIcon />,
       isActive: location.pathname.includes("/payment"),
     },
     {
+      category: "Fulfiller",
       name: "Tickets",
       path: "/fulfiller/ticket",
       icon: <TicketIcon />,
