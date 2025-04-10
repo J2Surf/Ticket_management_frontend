@@ -123,15 +123,10 @@ const Header: React.FC = () => {
 
               {/* Profile Dropdown Menu */}
               {isProfileMenuOpen && (
-                <div className="absolute right-0 mt-2 w-56 bg-[#1F2937] rounded-lg shadow-lg border border-gray-700 z-50">
-                  <div className="p-4 border-b border-gray-700">
+                <div className="absolute right-0 mt-2 w-32 bg-[#1F2937] rounded-lg shadow-lg border border-gray-700 z-50">
+                  {/* <div className="p-4 border-b border-gray-700">
                     <div className="flex items-center gap-3">
-                      <FaUserCircle size={48} className="text-gray-400" />
-                      {/* <img
-                        src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                        alt="First Last Name"
-                        className="w-10 h-10 rounded-lg"
-                      /> */}
+                      <FaUserCircle size={48} className="text-gray-400" />                     
                       <div>
                         <div className="text-sm font-medium text-white">
                           {user?.username}
@@ -141,7 +136,7 @@ const Header: React.FC = () => {
                         </div>
                       </div>
                     </div>
-                  </div>
+                  </div> */}
 
                   <div className="p-2">
                     <a
