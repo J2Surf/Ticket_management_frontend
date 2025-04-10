@@ -61,17 +61,17 @@ export default function Register() {
   };
 
   return (
-    <div className="h-[100vh] overflow-auto flex items-center justify-center bg-gray-50 p-4 sm:p-6 lg:p-8">
-      <div className="w-full min-w-[500px] rounded-[14px] max-w-sm sm:max-w-md space-y-6 sm:space-y-8 border border-gray-400 p-16">
+    <div className="h-[100vh] overflow-auto flex items-center justify-center bg-gray-900 p-4 sm:p-6 lg:p-8">
+      <div className="w-full min-w-[500px] rounded-[14px] max-w-sm sm:max-w-md space-y-6 sm:space-y-8 border border-gray-700 p-16">
         <div>
-          <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900 text-center">
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-200 text-center">
             Create your account
           </h2>
-          <p className="mt-2 text-sm sm:text-base text-gray-600 text-center">
+          <p className="mt-2 text-sm sm:text-base text-gray-400 text-center">
             Or{" "}
             <Link
               to="/login"
-              className="font-medium text-primary-600 hover:text-primary-500"
+              className="font-medium text-primary-400 hover:text-primary-300"
             >
               sign in to your account
             </Link>
@@ -85,7 +85,7 @@ export default function Register() {
             <div>
               <label
                 htmlFor="username"
-                className="block text-sm font-medium text-gray-700 mb-1"
+                className="block text-sm font-medium text-gray-400 mb-1"
               >
                 Username
               </label>
@@ -94,7 +94,7 @@ export default function Register() {
                 name="username"
                 type="text"
                 required
-                className="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
+                className="appearance-none relative block w-full px-3 py-2 border border-gray-600 placeholder-gray-500 text-gray-200 rounded-md focus:outline-none focus:ring-primary-400 focus:border-primary-400 sm:text-sm"
                 placeholder="Enter your username"
                 value={formData.username}
                 onChange={handleChange}
@@ -103,7 +103,7 @@ export default function Register() {
             <div>
               <label
                 htmlFor="phone"
-                className="block text-sm font-medium text-gray-700 mb-1"
+                className="block text-sm font-medium text-gray-400 mb-1"
               >
                 Phone Number
               </label>
@@ -112,7 +112,7 @@ export default function Register() {
                 name="phone"
                 type="tel"
                 required
-                className="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
+                className="appearance-none relative block w-full px-3 py-2 border border-gray-600 placeholder-gray-500 text-gray-200 rounded-md focus:outline-none focus:ring-primary-400 focus:border-primary-400 sm:text-sm"
                 placeholder="Enter your phone number"
                 value={formData.phone}
                 onChange={handleChange}
@@ -121,7 +121,7 @@ export default function Register() {
             <div>
               <label
                 htmlFor="role"
-                className="block text-sm font-medium text-gray-700 mb-1"
+                className="block text-sm font-medium text-gray-400 mb-1"
               >
                 Role
               </label>
@@ -129,7 +129,7 @@ export default function Register() {
                 id="role"
                 name="role"
                 required
-                className="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
+                className="appearance-none relative block w-full px-3 py-2 border border-gray-600 placeholder-gray-500 text-gray-200 rounded-md focus:outline-none focus:ring-primary-400 focus:border-primary-400 sm:text-sm"
                 value={formData.role}
                 onChange={handleChange}
               >
@@ -143,7 +143,7 @@ export default function Register() {
             <div>
               <label
                 htmlFor="email"
-                className="block text-sm font-medium text-gray-700 mb-1"
+                className="block text-sm font-medium text-gray-400 mb-1"
               >
                 Email address
               </label>
@@ -152,7 +152,7 @@ export default function Register() {
                 name="email"
                 type="email"
                 required
-                className="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
+                className="appearance-none relative block w-full px-3 py-2 border border-gray-600 placeholder-gray-500 text-gray-200 rounded-md focus:outline-none focus:ring-primary-400 focus:border-primary-400 sm:text-sm"
                 placeholder="Enter your email"
                 value={formData.email}
                 onChange={handleChange}
@@ -161,7 +161,7 @@ export default function Register() {
             <div>
               <label
                 htmlFor="password"
-                className="block text-sm font-medium text-gray-700 mb-1"
+                className="block text-sm font-medium text-gray-400 mb-1"
               >
                 Password
               </label>
@@ -170,7 +170,7 @@ export default function Register() {
                 name="password"
                 type="password"
                 required
-                className="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
+                className="appearance-none relative block w-full px-3 py-2 border border-gray-600 placeholder-gray-500 text-gray-200 rounded-md focus:outline-none focus:ring-primary-400 focus:border-primary-400 sm:text-sm"
                 placeholder="Create a password"
                 value={formData.password}
                 onChange={handleChange}
@@ -179,7 +179,7 @@ export default function Register() {
             <div>
               <label
                 htmlFor="confirmPassword"
-                className="block text-sm font-medium text-gray-700 mb-1"
+                className="block text-sm font-medium text-gray-400 mb-1"
               >
                 Confirm Password
               </label>
@@ -188,7 +188,7 @@ export default function Register() {
                 name="confirmPassword"
                 type="password"
                 required
-                className="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
+                className="appearance-none relative block w-full px-3 py-2 border border-gray-600 placeholder-gray-500 text-gray-200 rounded-md focus:outline-none focus:ring-primary-400 focus:border-primary-400 sm:text-sm"
                 placeholder="Confirm your password"
                 value={formData.confirmPassword}
                 onChange={handleChange}
@@ -197,14 +197,14 @@ export default function Register() {
           </div>
 
           {error && (
-            <div className="text-red-500 text-sm text-center">{error}</div>
+            <div className="text-red-400 text-sm text-center">{error}</div>
           )}
 
           <div>
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full flex justify-center py-2.5 px-4 border border-transparent text-sm font-medium rounded-md text-gray-900 bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 transition-colors duration-200"
+              className="w-full flex justify-center py-2.5 px-4 border border-transparent text-sm font-medium rounded-md text-gray-200 bg-primary-400 hover:bg-primary-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-400 disabled:opacity-50 transition-colors duration-200"
             >
               {isLoading ? "Creating account..." : "Create account"}
             </button>
