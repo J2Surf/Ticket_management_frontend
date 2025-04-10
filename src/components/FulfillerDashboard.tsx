@@ -92,8 +92,8 @@ const PaymentSection: React.FC<{
             onClick={() => setShowWalletDropdown(!showWalletDropdown)}
             className={`px-4 py-2 rounded-lg font-medium flex items-center gap-2 ${
               isDarkMode
-                ? "bg-white text-gray-700 hover:bg-gray-50 border border-gray-200"
-                : "bg-[#1F2937] text-gray-700 hover:bg-gray-800"
+                ? "bg-[#1F2937] text-gray-200 hover:bg-gray-800"
+                : "bg-white text-gray-700 hover:bg-gray-50 border border-gray-200"
             }`}
           >
             <svg
