@@ -63,7 +63,7 @@ const PaymentSection: React.FC<{
     <div className="space-y-8">
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-2xl font-semibold">Payment Overview</h1>
-        <span className="text-sm text-gray-500">Last updated: 12:13:00 AM</span>
+        {/* <span className="text-sm text-gray-500">Last updated: 12:13:00 AM</span> */}
       </div>
       <div className="flex gap-4">
         <div className="relative">
@@ -287,7 +287,7 @@ const PaymentSection: React.FC<{
               isDarkMode ? "text-gray-400" : "text-gray-500"
             }`}
           >
-            This Month
+            {/* This Month */}
           </div>
         </div>
 
@@ -492,7 +492,7 @@ const TicketSection: React.FC<{
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-2xl font-semibold">Ticket Management</h1>
         <span className="text-sm text-gray-500">
-          Last updated: {new Date().toLocaleTimeString()}
+          {/* Last updated: {new Date().toLocaleTimeString()} */}
         </span>
       </div>
 

@@ -44,13 +44,6 @@ const Panel: React.FC<PanelProps> = ({ items }) => {
 
       <div className="p-4">
         <div className="mb-8">
-          <div
-            className={`text-xs font-medium ${
-              isDarkMode ? "text-gray-500" : "text-gray-400"
-            } mb-4`}
-          >
-            OVERVIEW
-          </div>
           <nav className="space-y-1">
             {items.map((item) => (
               <Link

@@ -74,7 +74,7 @@ const Header: React.FC = () => {
                   ? "text-gray-400 hover:text-white"
                   : "text-gray-500 hover:text-gray-900"
               }`}
-              onClick={toggleTheme}
+              // onClick={toggleTheme}
             >
               {!isDarkMode ? (
                 <svg
@@ -126,7 +126,7 @@ const Header: React.FC = () => {
                       />
                       <div>
                         <div className="text-sm font-medium text-white">
-                          First Last Name
+                          {user?.username}
                         </div>
                         <div className="text-xs text-gray-400">
                           {userRole === "fulfiller" ? "Fulfiller" : "User"}
