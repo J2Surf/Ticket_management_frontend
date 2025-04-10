@@ -4,6 +4,9 @@ import { useTheme } from "../../contexts/ThemeContext";
 import { useAuth } from "../../hooks/useAuth";
 import { LegacyButton } from "../common/LegacyButton";
 import { useAlert } from "../../contexts/AlertContext";
+import { FaUserCircle } from "react-icons/fa";
+import { IoIosMoon, IoMdNotificationsOutline, IoMdSunny } from "react-icons/io";
+import { HiBellAlert } from "react-icons/hi2";
 
 const Header: React.FC = () => {
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
@@ -56,9 +59,10 @@ const Header: React.FC = () => {
                   : "text-gray-500 hover:text-gray-900"
               } relative`}
             >
-              <svg className="w-5 h-5" viewBox="0 0 20 20" fill="currentColor">
+              <HiBellAlert size={24} className="text-gray-400" />
+              {/* <svg className="w-5 h-5" viewBox="0 0 20 20" fill="currentColor">
                 <path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z" />
-              </svg>
+              </svg> */}
               {alerts?.length > 0 ? (
                 <div
                   className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full"
@@ -77,25 +81,27 @@ const Header: React.FC = () => {
               // onClick={toggleTheme}
             >
               {!isDarkMode ? (
-                <svg
-                  className="w-5 h-5"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"
-                    clipRule="evenodd"
-                  />
-                </svg>
+                <IoMdSunny size={24} className="text-gray-400" />
               ) : (
-                <svg
-                  className="w-5 h-5"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                >
-                  <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" />
-                </svg>
+                // <svg
+                //   className="w-5 h-5"
+                //   viewBox="0 0 20 20"
+                //   fill="currentColor"
+                // >
+                //   <path
+                //     fillRule="evenodd"
+                //     d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"
+                //     clipRule="evenodd"
+                //   />
+                // </svg>
+                // <svg
+                //   className="w-5 h-5"
+                //   viewBox="0 0 20 20"
+                //   fill="currentColor"
+                // >
+                //   <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" />
+                // </svg>
+                <IoIosMoon size={24} className="text-gray-400" />
               )}
             </button>
 
@@ -107,11 +113,12 @@ const Header: React.FC = () => {
                 isDisabled={false}
                 onClickAction={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
               >
-                <img
+                <FaUserCircle size={24} className="text-gray-400" />
+                {/* <img
                   src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
                   alt="Profile"
                   className="w-full h-full object-cover"
-                />
+                /> */}
               </LegacyButton>
 
               {/* Profile Dropdown Menu */}
@@ -119,11 +126,12 @@ const Header: React.FC = () => {
                 <div className="absolute right-0 mt-2 w-56 bg-[#1F2937] rounded-lg shadow-lg border border-gray-700 z-50">
                   <div className="p-4 border-b border-gray-700">
                     <div className="flex items-center gap-3">
-                      <img
+                      <FaUserCircle size={48} className="text-gray-400" />
+                      {/* <img
                         src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
                         alt="First Last Name"
                         className="w-10 h-10 rounded-lg"
-                      />
+                      /> */}
                       <div>
                         <div className="text-sm font-medium text-white">
                           {user?.username}

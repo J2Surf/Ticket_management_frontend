@@ -83,7 +83,7 @@ const PaymentSection: React.FC<{
   return (
     <div className="space-y-8">
       <div className="flex justify-between items-center mb-8">
-        <h1 className="text-2xl font-semibold">Payment Overview</h1>
+        <h1 className="text-2xl font-semibold">Payments</h1>
         {/* <span className="text-sm text-gray-500">Last updated: 12:13:00 AM</span> */}
       </div>
       <div className="flex gap-4">
@@ -796,7 +796,7 @@ const TicketSection: React.FC<{
   return (
     <div className="space-y-8">
       <div className="flex justify-between items-center mb-8">
-        <h1 className="text-2xl font-semibold">Ticket Management</h1>
+        <h1 className="text-2xl font-semibold">Tickets</h1>
         <span className="text-sm text-gray-500">
           {/* Last updated: {new Date().toLocaleTimeString()} */}
         </span>
@@ -1533,13 +1533,13 @@ const FulfillerDashboard: React.FC = () => {
 
   const panelItems = [
     {
-      name: "Payment management",
+      name: "Payments",
       path: "/fulfiller/payment",
       icon: <PaymentIcon />,
       isActive: location.pathname.includes("/payment"),
     },
     {
-      name: "Ticket management",
+      name: "Tickets",
       path: "/fulfiller/ticket",
       icon: <TicketIcon />,
       isActive: location.pathname.includes("/ticket"),
