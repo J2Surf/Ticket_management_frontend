@@ -22,6 +22,7 @@ import ClientDashboard from "./components/ClientDashboard";
 import FulfillerDashboard from "./components/FulfillerDashboard";
 import "./App.css";
 import { Client } from "./pages";
+import { Fulfiller } from "./pages/Fulfiller";
 
 const queryClient = new QueryClient();
 
@@ -158,7 +159,7 @@ function AppRoutes() {
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
       <Route path="/client/*" element={<Client />} />
-      {/* <Route path="/fulfiller/*" element={<Fulfiller />} /> */}
+      <Route path="/fulfiller/*" element={<Fulfiller />} />
     </Routes>
   );
 }

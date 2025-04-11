@@ -18,8 +18,11 @@ export default function Login() {
     setIsLoading(true);
 
     try {
-      await login(formData.email, formData.password);
-      navigate("/");
+      const data = await login(formData.email, formData.password);
+      console.log(data);
+      if (data.roles[0].name === "user") navigate("/client/payment");
+      else if (data.roles[0].name === "fulfiller")
+        navigate("/fulfiller/payment");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Login failed");
     } finally {

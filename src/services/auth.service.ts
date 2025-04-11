@@ -31,7 +31,7 @@ export interface AuthResponse {
   failed_login_attempts: number;
   last_login_attempt: string;
   password_changed_at: string | null;
-  roles: string[];
+  roles: Role[];
   created_at: string;
   updated_at: string;
   deleted_at: string | null;
