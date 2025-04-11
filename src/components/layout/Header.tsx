@@ -14,8 +14,6 @@ const Header: React.FC = () => {
   const { isDarkMode, toggleTheme } = useTheme();
   const { user, logout } = useAuth();
   const userRole = user?.roles?.[0]?.name?.toLowerCase() || "user";
-  const dashboardTitle =
-    userRole === "fulfiller" ? "Fulfiller Dashboard" : "Client Dashboard";
   const navigate = useNavigate();
 
   const handleLogout = async (e: React.MouseEvent) => {
@@ -37,18 +35,18 @@ const Header: React.FC = () => {
       <div className="px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Left side - Breadcrumb */}
-          <div className="flex items-center">
-            <nav className="flex" aria-label="Breadcrumb">
-              <span
-                className={`text-xl font-medium ${
-                  isDarkMode ? "text-gray-300" : "text-gray-600"
-                }`}
-              >
-                {dashboardTitle}
-              </span>
-            </nav>
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 bg-green-500 rounded-lg flex items-center justify-center text-white">
+              <div className="w-4 h-4 bg-white/30 rounded-full"></div>
+            </div>
+            <span
+              className={`text-xl font-bold ${
+                isDarkMode ? "text-white" : "text-gray-900"
+              }`}
+            >
+              Tapsndr
+            </span>
           </div>
-
           {/* Right side - Icons */}
           <div className="flex items-center gap-3">
             {/* Alert Bell */}

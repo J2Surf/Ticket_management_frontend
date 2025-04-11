@@ -29,16 +29,13 @@ const Panel: React.FC<PanelProps> = ({ items }) => {
           isDarkMode ? "border-gray-800" : "border-gray-200"
         }`}
       >
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-green-500 rounded-lg flex items-center justify-center text-white">
-            <div className="w-4 h-4 bg-white/30 rounded-full"></div>
-          </div>
+        <div className="flex items-center gap-2 ml-3">
           <span
             className={`text-xl font-bold ${
-              isDarkMode ? "text-white" : "text-gray-900"
+              isDarkMode ? "text-gray-300" : "text-gray-900"
             }`}
           >
-            Tapsndr
+            {items[0].category}
           </span>
         </div>
       </div>
@@ -50,7 +47,7 @@ const Panel: React.FC<PanelProps> = ({ items }) => {
               isDarkMode ? "text-gray-300" : "text-gray-400"
             } mb-4`}
           >
-            {items[0].category}
+            {/* {items[0].category} */}
           </div>
           <nav className="space-y-1">
             {items.map((item) => (
@@ -71,7 +68,7 @@ const Panel: React.FC<PanelProps> = ({ items }) => {
                 title={item.description || item.name}
               >
                 {item.icon}
-                <span className="text-lg">{item.name}</span>
+                <span className="text-sm">{item.name}</span>
                 {item.badge && (
                   <span className="ml-auto bg-blue-500 text-white text-xs px-2 py-0.5 rounded-full">
                     {item.badge}

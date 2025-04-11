@@ -12,14 +12,14 @@ export const ClientLayout: React.FC<ClientLayoutProps> = ({ children }) => {
   const { isDarkMode } = useTheme();
   const panelItems = [
     {
-      category: "User",
+      category: "Client",
       name: "Payments",
       path: "/client/payment",
       icon: <IoCard size={24} className="mr-2" />,
       isActive: location.pathname.includes("/payment"),
     },
     {
-      category: "User",
+      category: "Client",
       name: "Tickets",
       path: "/client/ticket",
       icon: <HiDocumentDuplicate size={24} className="mr-2" />,

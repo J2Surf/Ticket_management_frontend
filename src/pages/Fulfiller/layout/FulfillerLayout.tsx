@@ -14,14 +14,14 @@ export const FulfillerLayout: React.FC<FulfillerLayoutProps> = ({
   const { isDarkMode } = useTheme();
   const panelItems = [
     {
-      category: "User",
+      category: "Fulfiller",
       name: "Payments",
       path: "/fulfiller/payment",
       icon: <IoCard size={24} className="mr-2" />,
       isActive: location.pathname.includes("/payment"),
     },
     {
-      category: "User",
+      category: "Fulfiller",
       name: "Tickets",
       path: "/fulfiller/ticket",
       icon: <HiDocumentDuplicate size={24} className="mr-2" />,
