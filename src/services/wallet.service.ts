@@ -30,6 +30,19 @@ export interface CryptoTransaction {
   address_to?: string;
 }
 
+export interface SendTransactionDto {
+  amount: number;
+  description?: string;
+  reference_id?: string;
+  status?: string;
+  token_type: string;
+  transaction_hash?: string;
+  user_id_from?: number;
+  user_id_to?: number;
+  address_from?: string;
+  address_to?: string;
+}
+
 export interface ConnectWalletDto {
   type: WalletType;
   tokenType: TokenType;
@@ -230,13 +243,9 @@ export const walletService = {
     return response.data;
   },
 
-  async sendTransaction(data: {
-    from_wallet_id: number;
-    to_address: string;
-    amount: number;
-    token_type: TokenType;
-    description?: string;
-  }): Promise<{ transaction_hash: string; status: string }> {
+  async sendTransaction(
+    data: SendTransactionDto
+  ): Promise<{ transaction_hash: string; status: string }> {
     const response = await api.post<{
       transaction_hash: string;
       status: string;

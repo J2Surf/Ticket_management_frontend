@@ -4,6 +4,7 @@ import {
   Wallet,
   CryptoTransaction,
   TokenType,
+  SendTransactionDto,
 } from "../services/wallet.service";
 
 interface ProcessingModalProps {
@@ -97,25 +98,24 @@ const ProcessingModal: React.FC<ProcessingModalProps> = ({
       for (const [_, group] of groupedTransactions) {
         try {
           // Create a single transaction for the group
-          const transactionData = {
-            from_wallet_id: group.user_id_from,
-            to_address: group.address_to,
+          const transactionData: SendTransactionDto = {
+            address_to: group.address_to,
             amount: group.total_amount,
             token_type: group.token_type as TokenType,
             description: `Batch transfer of ${group.total_amount} ${group.token_type}`,
           };
 
           // Process the transaction using Web3
-          const result = await walletService.sendTransaction(transactionData);
+          // const result = await walletService.sendTransaction(transactionData);
 
           // Update all original transactions with the new transaction hash
-          for (const transaction of group.transactions) {
-            await walletService.updateTransaction(transaction.id, {
-              ...transaction,
-              status: "COMPLETED",
-              transaction_hash: result.transaction_hash,
-            });
-          }
+          // for (const transaction of group.transactions) {
+          //   await walletService.updateTransaction(transaction.id, {
+          //     ...transaction,
+          //     status: "COMPLETED",
+          //     transaction_hash: result.transaction_hash,
+          //   });
+          // }
 
           processedCount++;
           setProgress((processedCount / totalGroups) * 100);
