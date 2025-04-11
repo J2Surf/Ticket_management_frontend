@@ -231,7 +231,7 @@ export const ClientTicket: React.FC = () => {
     <div className="flex-1 p-8 overflow-auto">
       <div className="space-y-8">
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-2xl font-semibold">Tickets</h1>
+          <h2 className="text-2xl font-semibold">Tickets</h2>
           <span className="text-sm text-gray-500">
             {/* Last updated: {new Date().toLocaleTimeString()} */}
           </span>
