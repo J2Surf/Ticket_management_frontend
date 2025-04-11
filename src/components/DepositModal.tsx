@@ -13,7 +13,7 @@ interface DepositModalProps {
   selectedWallet?: Wallet | null;
 }
 
-const DepositModal: React.FC<DepositModalProps> = ({
+export const DepositModal: React.FC<DepositModalProps> = ({
   isOpen,
   onClose,
   onDeposit,
@@ -213,5 +213,3 @@ const DepositModal: React.FC<DepositModalProps> = ({
     </div>
   );
 };
-
-export default DepositModal;

@@ -10,7 +10,7 @@ import {
   Wallet,
   CryptoTransaction,
 } from "../../../services/wallet.service";
-import { DepositModal } from "./DepositModal";
+import { DepositModal } from "../../../components/DepositModal";
 import WithdrawModal from "../../../components/WithdrawModal";
 import { format } from "date-fns";
 

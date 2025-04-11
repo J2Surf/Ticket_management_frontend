@@ -12,7 +12,7 @@ import {
   CryptoTransaction,
 } from "../../../services/wallet.service";
 import WithdrawModal from "../../../components/WithdrawModal";
-import ProcessingModal from "./ProcessingModal";
+import ProcessingModal from "../../../components/ProcessingModal";
 import { useAuth } from "../../../hooks/useAuth";
 import { format } from "date-fns";
 
