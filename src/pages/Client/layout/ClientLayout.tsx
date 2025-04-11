@@ -1,8 +1,8 @@
 import Panel from "../../../components/Panel";
 import { useTheme } from "../../../contexts/ThemeContext";
 import { BaseLayout } from "../../../layout/BaseLayout";
-import Payment from "../../../assets/svg/payment.svg";
-import Ticket from "../../../assets/svg/ticket.svg";
+import { IoCard } from "react-icons/io5";
+import { HiDocumentDuplicate } from "react-icons/hi2";
 
 interface ClientLayoutProps {
   children: React.ReactNode;
@@ -15,17 +15,18 @@ export const ClientLayout: React.FC<ClientLayoutProps> = ({ children }) => {
       category: "User",
       name: "Payments",
       path: "/client/payment",
-      icon: <img src={Payment} />,
+      icon: <IoCard size={24} className="mr-2" />,
       isActive: location.pathname.includes("/payment"),
     },
     {
       category: "User",
       name: "Tickets",
       path: "/client/ticket",
-      icon: <img src={Ticket} />,
+      icon: <HiDocumentDuplicate size={24} className="mr-2" />,
       isActive: location.pathname.includes("/ticket"),
     },
   ];
+
   return (
     <BaseLayout>
       <div
