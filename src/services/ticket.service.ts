@@ -4,7 +4,7 @@ import axios from "axios";
 export interface Ticket {
   id: number;
   ticket_id?: string;
-  created_at?: string;
+  created_at: string;
   facebook_name: string;
   amount: number;
   status: string;
