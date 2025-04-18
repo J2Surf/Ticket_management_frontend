@@ -53,8 +53,7 @@ export interface RegisterDto {
 }
 
 export class AuthService {
-  private apiUrl =
-    import.meta.env.VITE_API_URL || "https://tapsndr-ticket.ecmrare.com:3000";
+  private apiUrl = import.meta.env.VITE_API_URL || "http://localhost:3000";
 
   async login(credentials: LoginDto): Promise<AuthResponse> {
     const response = await axios.post<AuthResponse>(

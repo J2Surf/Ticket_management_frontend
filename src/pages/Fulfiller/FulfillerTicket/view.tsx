@@ -936,39 +936,6 @@ export const FulfillerTicket: React.FC = () => {
     setTicketID(ticket.ticket_id);
     setIsProcessTicketModalOpen(true);
     return;
-
-    try {
-      // Remove the ticket from incoming tickets
-      setAcceptedTickets((prev) => prev.filter((t) => t.id !== ticket.id));
-
-      // Remove the timer for this ticket
-      setTicketTimers((prev) => {
-        const newTimers = { ...prev };
-        delete newTimers[ticket.id];
-        return newTimers;
-      });
-
-      setCurrentBalance(
-        (prevBalance) => Number(prevBalance) + Number(ticket.amount)
-      );
-
-      // Update the ticket status to "completed" in the API
-      if (!user) {
-        showAlert("error", "User not authenticated");
-        return;
-      }
-
-      await ticketService.completeTicket(
-        ticket.id.toString(),
-        user.id,
-        "http://example.com/image.png"
-      );
-
-      // Refresh the main tickets table
-      handleTicketAction("refresh", ticket.ticket_id);
-    } catch (error) {
-      console.error("Error processing ticket:", error);
-    }
   };
 
   const getTicketAction = (status: string): boolean => {

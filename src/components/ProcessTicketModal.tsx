@@ -1,4 +1,6 @@
 import React, { useRef, useState } from "react";
+import { sendTelegramPhoto } from "../services/telegram.service";
+import { formDomains, TELEGRAM_BOT_TOKEN } from "../constants/FormDomain";
 
 interface ProcessTicketModalProps {
   isOpen: boolean;
@@ -42,7 +44,81 @@ const ProcessTicketModal: React.FC<ProcessTicketModalProps> = ({
   const ticketIdRef = useRef<HTMLInputElement | null>(null);
 
   const submitProcessTicket = async () => {
+    // try {
+    //   setAcceptedTickets((prev) => prev.filter((t) => t.id !== ticket.id));
+
+    //   setTicketTimers((prev) => {
+    //     const newTimers = { ...prev };
+    //     delete newTimers[ticket.id];
+    //     return newTimers;
+    //   });
+
+    //   setCurrentBalance(
+    //     (prevBalance) => Number(prevBalance) + Number(ticket.amount)
+    //   );
+
+    //   if (!user) {
+    //     showAlert("error", "User not authenticated");
+    //     return;
+    //   }
+
+    //   const userID: number = user.id;
+    //   if (!userID) {
+    //     showAlert("error", "User ID is not available");
+    //     return;
+    //   }
+
+    //   await ticketService.completeTicket(
+    //     ticket.id.toString(),
+    //     userID,
+    //     "http://example.com/image.png"
+    //   );
+
+    //   handleTicketAction("refresh", ticket.ticket_id);
+    // } catch (error) {
+    //   console.error("Error processing ticket:", error);
+    // }
+
     setIsProcessing(true);
+
+    // Create the message
+    const caption = `
+                    "✅ Ticket completed!\n\n" .
+                    "🎫 ID: {$ticket['ticket_id']}\n" .
+                    "💰 Amount: {$ticket['amount']}\n" .
+                    "👤 Facebook: {$ticket['facebook_name']}\n" .
+                    "🎮 Game: {$ticket['game']}\n" .
+                    "🆔 Game ID: {$ticket['game_id']}";
+                    `;
+
+    try {
+      const response = await sendTelegramPhoto(
+        formDomains[0].telegram_chat_id,
+        "http://file_path",
+        caption || null,
+        "HTML",
+        TELEGRAM_BOT_TOKEN
+      );
+
+      // setResult(response);
+
+      if (!response.ok) {
+        // setError(response.description || "Failed to send photo");
+      } else {
+        // Reset form on success
+        // setFile(null);
+        // setCaption("");
+        // if (fileInputRef.current) {
+        //   fileInputRef.current.value = "";
+        // }
+      }
+    } catch (err) {
+      // setError(
+      //   err instanceof Error ? err.message : "An unknown error occurred"
+      // );
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
   return (

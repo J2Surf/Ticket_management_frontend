@@ -1,7 +1,7 @@
 import axios from "axios";
 
 export const api = axios.create({
-  baseURL: "https://tapsndr-ticket.ecmrare.com:3000", // Update with your backend URL
+  baseURL: "http://localhost:3000", // Update with your backend URL
   headers: {
     "Content-Type": "application/json",
   },
