@@ -24,6 +24,3 @@ export const formDomains = [
     active: 1,
   },
 ];
-
-export const TELEGRAM_BOT_TOKEN =
-  "7958920210:AAFjG8oiAC6wJN7I9fx2ldeoOXHLKnpDwbU";

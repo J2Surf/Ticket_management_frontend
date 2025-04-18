@@ -1,6 +1,6 @@
 import React, { useRef, useState } from "react";
 import { sendTelegramPhoto } from "../services/telegram.service";
-import { formDomains, TELEGRAM_BOT_TOKEN } from "../constants/FormDomain";
+import { formDomains } from "../constants/FormDomain";
 import { Ticket } from "../pages/Fulfiller/FulfillerTicket/view";
 
 interface ProcessTicketModalProps {
@@ -92,33 +92,43 @@ const ProcessTicketModal: React.FC<ProcessTicketModalProps> = ({
 
     console.log("submitProcessTicket message:", message);
 
-    try {
-      const response = await sendTelegramPhoto(
-        formDomains[0].telegram_chat_id,
-        "http://file_path",
-        message || null,
-        "HTML",
-        TELEGRAM_BOT_TOKEN
-      );
+    // Ensure that TELEGRAM_BOT_TOKEN is defined and is a string
+    if (typeof process.env.TELEGRAM_BOT_TOKEN === "string") {
+      // Use the token
+      const botToken = process.env.TELEGRAM_BOT_TOKEN;
+      // Your code that uses the botToken
 
-      // setResult(response);
+      try {
+        const response = await sendTelegramPhoto(
+          formDomains[0].telegram_chat_id,
+          "http://file_path",
+          message || null,
+          "HTML",
+          botToken
+        );
 
-      if (!response.ok) {
-        // setError(response.description || "Failed to send photo");
-      } else {
-        // Reset form on success
-        // setFile(null);
-        // setCaption("");
-        // if (fileInputRef.current) {
-        //   fileInputRef.current.value = "";
-        // }
+        // setResult(response);
+
+        if (!response.ok) {
+          // setError(response.description || "Failed to send photo");
+        } else {
+          // Reset form on success
+          // setFile(null);
+          // setCaption("");
+          // if (fileInputRef.current) {
+          //   fileInputRef.current.value = "";
+          // }
+        }
+      } catch (err) {
+        // setError(
+        //   err instanceof Error ? err.message : "An unknown error occurred"
+        // );
+      } finally {
+        setIsProcessing(false);
       }
-    } catch (err) {
-      // setError(
-      //   err instanceof Error ? err.message : "An unknown error occurred"
-      // );
-    } finally {
-      setIsProcessing(false);
+    } else {
+      console.error("TELEGRAM_BOT_TOKEN is not defined or is not a string");
+      // Handle the case where the token is not available
     }
   };
 
