@@ -18,11 +18,14 @@ interface User {
   // Add other user properties as needed
 }
 
-interface Ticket {
+export interface Ticket {
   id: number;
   ticket_id: string;
   time: string;
   amount: number;
+  facebook_name: string;
+  game: string;
+  game_id: string;
   status: string;
   payment_method: string;
   payment_tag: string;
@@ -538,12 +541,15 @@ export const FulfillerTicket: React.FC = () => {
     id: apiTicket.id,
     ticket_id: apiTicket.ticket_id || `TICKET-${apiTicket.id}`,
     time: apiTicket.created_at || new Date().toISOString(),
+    facebook_name: apiTicket.facebook_name,
     amount: apiTicket.amount,
     status: apiTicket.status,
     payment_method: apiTicket.payment_method || "N/A",
     payment_tag: apiTicket.payment_tag || "N/A",
     account_name: apiTicket.account_name || "N/A",
     image: apiTicket.image || "",
+    game: apiTicket.game,
+    game_id: apiTicket.game_id,
   });
 
   const { showAlert, removeAlert } = useAlert();
@@ -676,7 +682,7 @@ export const FulfillerTicket: React.FC = () => {
   const [holdingBalance, setHoldingBalance] = useState<number>(0);
   const [currentBalance, setCurrentBalance] = useState<number>(0);
   const [ticketTimers, setTicketTimers] = useState<Record<number, number>>({});
-  const [ticketID, setTicketID] = useState<string>("");
+  const [ticket, setTicket] = useState<Ticket | null>(null);
   const [isProcessTicketModalOpen, setIsProcessTicketModalOpen] =
     useState(false);
 
@@ -933,7 +939,7 @@ export const FulfillerTicket: React.FC = () => {
 
   const handleProcessTicket = async (ticket: Ticket, user: User | null) => {
     console.log("handleProcessTicket");
-    setTicketID(ticket.ticket_id);
+    setTicket(ticket);
     setIsProcessTicketModalOpen(true);
     return;
   };
@@ -1006,7 +1012,7 @@ export const FulfillerTicket: React.FC = () => {
       />
       <ProcessTicketModal
         isOpen={isProcessTicketModalOpen}
-        ticketID={ticketID}
+        ticket={ticket}
         isDarkMode={isDarkMode}
         onClose={() => setIsProcessTicketModalOpen(false)}
       />

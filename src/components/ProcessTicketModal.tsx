@@ -1,17 +1,18 @@
 import React, { useRef, useState } from "react";
 import { sendTelegramPhoto } from "../services/telegram.service";
 import { formDomains, TELEGRAM_BOT_TOKEN } from "../constants/FormDomain";
+import { Ticket } from "../pages/Fulfiller/FulfillerTicket/view";
 
 interface ProcessTicketModalProps {
   isOpen: boolean;
-  ticketID: string;
+  ticket: Ticket | null;
   isDarkMode: boolean;
   onClose: () => void;
 }
 
 const ProcessTicketModal: React.FC<ProcessTicketModalProps> = ({
   isOpen,
-  ticketID,
+  ticket,
   isDarkMode,
   onClose,
 }) => {
@@ -82,20 +83,20 @@ const ProcessTicketModal: React.FC<ProcessTicketModalProps> = ({
     setIsProcessing(true);
 
     // Create the message
-    const caption = `
-                    "✅ Ticket completed!\n\n" .
-                    "🎫 ID: {$ticket['ticket_id']}\n" .
-                    "💰 Amount: {$ticket['amount']}\n" .
-                    "👤 Facebook: {$ticket['facebook_name']}\n" .
-                    "🎮 Game: {$ticket['game']}\n" .
-                    "🆔 Game ID: {$ticket['game_id']}";
-                    `;
+    const message = `✅ Ticket completed!
+                    🎫 ID: ${ticket?.ticket_id}
+                    💰 Amount: ${ticket?.amount}
+                    👤 Facebook: ${ticket?.facebook_name}
+                    🎮 Game: ${ticket?.game}
+                    🆔 Game ID: ${ticket?.game_id}`;
+
+    console.log("submitProcessTicket message:", message);
 
     try {
       const response = await sendTelegramPhoto(
         formDomains[0].telegram_chat_id,
         "http://file_path",
-        caption || null,
+        message || null,
         "HTML",
         TELEGRAM_BOT_TOKEN
       );
@@ -169,7 +170,7 @@ const ProcessTicketModal: React.FC<ProcessTicketModalProps> = ({
               className="alert alert-primary mb-3 text-left"
               id="ticketIdDisplay"
             >
-              <strong>Ticket ID: {ticketID}</strong>{" "}
+              <strong>Ticket ID: {ticket?.ticket_id}</strong>{" "}
               <span id="displayTicketId"></span>
             </div>
             {/* Action Selection */}

@@ -59,6 +59,8 @@ export async function sendTelegramPhoto(
       formData.append("parse_mode", parseMode);
     }
 
+    console.log("sendTelegramPhoto fetch body:", formData);
+
     // Send the request
     const response = await fetch(url, {
       method: "POST",
