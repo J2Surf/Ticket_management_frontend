@@ -8,6 +8,7 @@ import {
   type ReactNode,
 } from "react";
 import { ethers } from "ethers";
+import { ERC20_ABI } from "../../config/erc20-abi";
 
 interface WalletContextType {
   account: string | null;
@@ -17,10 +18,19 @@ interface WalletContextType {
   error: string | null;
   connectWallet: () => Promise<void>;
   disconnectWallet: () => void;
+  sendUSDT: (to: string, amount: string) => Promise<any>;
+  refreshBalances: () => Promise<void>;
   isConnected: boolean;
 }
 
 const WalletContext = createContext<WalletContextType | undefined>(undefined);
+
+// USDT contract addresses for different networks
+const USDT_CONTRACT_ADDRESSES: { [chainId: number]: string } = {
+  1: "0xdAC17F958D2ee523a2206206994597C13D831ec7", // Mainnet
+  5: "0x509Ee0d083DdF8AC028f2a56731412edD63223B9", // Goerli
+  11155111: "0xbdCED8f4c393929a20356372b8A88a386693F353", // Sepolia
+};
 
 export function useWallet() {
   const context = useContext(WalletContext);
@@ -129,6 +139,77 @@ export function WalletProvider({ children }: WalletProviderProps) {
     window.location.reload();
   };
 
+  const getUSDTContract = (provider: ethers.BrowserProvider) => {
+    console.log("getUSDTContract chainId:", chainId);
+    if (!chainId || !USDT_CONTRACT_ADDRESSES[chainId]) {
+      throw new Error("USDT not supported on this network");
+    }
+    return new ethers.Contract(
+      USDT_CONTRACT_ADDRESSES[chainId],
+      ERC20_ABI,
+      provider
+    );
+  };
+
+  const updateBalances = async (
+    provider: ethers.BrowserProvider,
+    account: string
+  ) => {
+    try {
+      // Native balance
+      const nativeBalance = await provider.getBalance(account);
+      setBalance(ethers.formatEther(nativeBalance));
+
+      // USDT balance
+      if (chainId && USDT_CONTRACT_ADDRESSES[chainId]) {
+        const usdtContract = getUSDTContract(provider);
+        const balance = await usdtContract.balanceOf(account);
+        // setUsdtBalance(ethers.formatUnits(balance, 6)); // USDT uses 6 decimals
+      }
+    } catch (err) {
+      console.error("Error updating balances:", err);
+    }
+  };
+
+  const sendUSDT = async (to: string, amount: string): Promise<any> => {
+    if (!account || !chainId) {
+      throw new Error("Wallet not connected");
+    }
+
+    interface IERC20 extends ethers.BaseContract {
+      transfer(to: string, amount: ethers.BigNumberish): Promise<any>;
+    }
+
+    try {
+      const { ethereum } = window as any;
+      const provider = new ethers.BrowserProvider(ethereum);
+      const signer = await provider.getSigner();
+      const usdtContract = getUSDTContract(provider).connect(signer) as IERC20;
+
+      const tx = await usdtContract.transfer(
+        to,
+        ethers.parseUnits(amount, 18) // USDT uses 6 decimals
+      );
+
+      await tx.wait();
+      await refreshBalances(); // Refresh balances after successful transfer
+
+      return tx;
+    } catch (err: any) {
+      console.error("Error sending USDT:", err);
+      setError(err.message || "Failed to send USDT");
+      throw err;
+    }
+  };
+
+  const refreshBalances = async () => {
+    if (account) {
+      const { ethereum } = window as any;
+      const provider = new ethers.BrowserProvider(ethereum);
+      await updateBalances(provider, account);
+    }
+  };
+
   // Check for existing connection on component mount
   useEffect(() => {
     const checkConnection = async () => {
@@ -179,6 +260,8 @@ export function WalletProvider({ children }: WalletProviderProps) {
     error,
     connectWallet,
     disconnectWallet,
+    sendUSDT,
+    refreshBalances,
     isConnected: !!account,
   };
 

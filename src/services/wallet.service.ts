@@ -199,10 +199,7 @@ export const walletService = {
       status: data.status || "PENDING",
     };
 
-    const response = await api.post<Wallet>(
-      "/wallet/deposit",
-      cryptoTransactionData
-    );
+    const response = await api.post<Wallet>("/wallet/deposit", data);
     return response.data;
   },
 

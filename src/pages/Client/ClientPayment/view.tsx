@@ -236,7 +236,10 @@ const PaymentSection: React.FC<{
               isDarkMode ? "text-white" : "text-gray-900"
             }`}
           >
-            ${balance.toLocaleString()}
+            {/* ${balance.toLocaleString()} */}
+            {walletContext?.balance
+              ? `${Number.parseFloat(walletContext?.balance).toFixed(4)} ETH`
+              : "0"}
           </div>
         </div>
       </div>
@@ -628,31 +631,49 @@ export const ClientPayment: React.FC = () => {
     adminAddress: string,
     adminUserId: number
   ) => {
-    try {
-      if (!selectedWallet) {
-        showAlert("error", "Please select a wallet first");
-        return;
-      }
+    console.log("handleDepositSubmit address:", walletContext?.account, amount);
 
-      const updatedWallet = await walletService.deposit({
-        type: "DEPOSIT",
-        amount: amount,
-        token_type: "USDT",
-        wallet_id: selectedWallet.id,
-        description: "Deposit from client's wallet to admin's wallet",
-        address_from: selectedWallet.address,
-        address_to: adminAddress,
-        user_id_from: selectedWallet.userId,
-        user_id_to: adminUserId,
-      });
+    const tx = await walletContext.sendUSDT(adminAddress, amount.toString());
+    console.log("handleDepositSubmit tx", tx);
+    showAlert("success", "Deposit successful");
+    setIsDepositModalOpen(false);
 
-      setBalance(updatedWallet.balance);
-      showAlert("success", "Deposit successful");
-      setIsDepositModalOpen(false);
-    } catch (error) {
-      showAlert("error", "Failed to process deposit");
-      console.error("Error processing deposit:", error);
-    }
+    await walletService.deposit({
+      type: "DEPOSIT",
+      amount: amount,
+      token_type: "USDT",
+      description: "Deposit from client's wallet to admin's wallet",
+      user_id_to: adminUserId,
+      address_from: tx.from,
+      address_to: adminAddress,
+      transaction_hash: tx.hash,
+    });
+
+    // try {
+    //   if (!selectedWallet) {
+    //     showAlert("error", "Please select a wallet first");
+    //     return;
+    //   }
+
+    //   const updatedWallet = await walletService.deposit({
+    //     type: "DEPOSIT",
+    //     amount: amount,
+    //     token_type: "USDT",
+    //     wallet_id: selectedWallet.id,
+    //     description: "Deposit from client's wallet to admin's wallet",
+    //     address_from: selectedWallet.address,
+    //     address_to: adminAddress,
+    //     user_id_from: selectedWallet.userId,
+    //     user_id_to: adminUserId,
+    //   });
+
+    //   setBalance(updatedWallet.balance);
+    //   showAlert("success", "Deposit successful");
+    //   setIsDepositModalOpen(false);
+    // } catch (error) {
+    //   showAlert("error", "Failed to process deposit");
+    //   console.error("Error processing deposit:", error);
+    // }
   };
 
   const handleWithdraw = () => {
