@@ -1,3 +1,6 @@
+import axios from "axios";
+import path from "path";
+
 // Define constants and types
 const TELEGRAM_API = "https://api.telegram.org/bot"; // You'll need to add your bot token
 
@@ -24,7 +27,7 @@ export async function sendTelegramPhoto(
   photo: File | Blob | string,
   caption: string | null = null,
   parseMode: "HTML" | "MarkdownV2" | "Markdown" = "HTML",
-  botToken: string
+  botToken: string | undefined
 ): Promise<TelegramResponse> {
   const url = `${TELEGRAM_API}${botToken}/sendPhoto`;
 
@@ -86,5 +89,53 @@ export async function sendTelegramPhoto(
       ok: false,
       description: error instanceof Error ? error.message : "Unknown error",
     };
+  }
+}
+
+/**
+ * Sends a photo to a Telegram chat
+ * @param chatId - The Telegram chat ID
+ * @param caption - Optional caption for the photo
+ * @param botToken - Your Telegram bot token
+ * @returns Promise with the Telegram API response
+ */
+export async function sendTelegramMessage(
+  chatId: string | number,
+  caption: string | null = null,
+  botToken: string | undefined
+): Promise<number | null> {
+  const url = `${TELEGRAM_API}${botToken}/sendMessage`;
+
+  console.log(`Sending Message to chat ID: ${url}, ${chatId}`);
+
+  const data = {
+    chat_id: chatId,
+    text: caption,
+  };
+
+  try {
+    // Using fetch API (modern browsers and Node.js 18+)
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+
+    const responseData: TelegramResponse = await response.json();
+
+    console.log(`Telegram API Response: ${JSON.stringify(responseData)}`);
+
+    return responseData && responseData.result?.message_id
+      ? responseData.result.message_id
+      : null;
+  } catch (error) {
+    console.error(
+      `Error sending Telegram message: ${
+        error instanceof Error ? error.message : String(error)
+      }`
+    );
+    return null;
   }
 }

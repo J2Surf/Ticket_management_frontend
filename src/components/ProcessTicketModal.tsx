@@ -1,5 +1,8 @@
 import React, { useRef, useState } from "react";
-import { sendTelegramPhoto } from "../services/telegram.service";
+import {
+  sendTelegramPhoto,
+  sendTelegramMessage,
+} from "../services/telegram.service";
 import { formDomains } from "../constants/FormDomain";
 import { Ticket } from "../pages/Fulfiller/FulfillerTicket/view";
 
@@ -90,34 +93,59 @@ const ProcessTicketModal: React.FC<ProcessTicketModalProps> = ({
                     🎮 Game: ${ticket?.game}
                     🆔 Game ID: ${ticket?.game_id}`;
 
-    console.log("submitProcessTicket message:", message);
+    console.log(
+      "submitProcessTicket message:",
+      message,
+      process.env.TELEGRAM_BOT_TOKEN
+    );
 
     // Ensure that TELEGRAM_BOT_TOKEN is defined and is a string
-    if (typeof process.env.TELEGRAM_BOT_TOKEN === "string") {
+    if (process.env.TELEGRAM_BOT_TOKEN) {
+      console.log("!process.env.TELEGRAM_BOT_TOKEN");
       // Use the token
       const botToken = process.env.TELEGRAM_BOT_TOKEN;
       // Your code that uses the botToken
 
       try {
-        const response = await sendTelegramPhoto(
+        const response = await sendTelegramMessage(
           formDomains[0].telegram_chat_id,
-          "http://file_path",
           message || null,
-          "HTML",
           botToken
         );
 
         // setResult(response);
+        console.log("sendTelegramMessage response", response);
 
-        if (!response.ok) {
-          // setError(response.description || "Failed to send photo");
+        if (!response) {
+          try {
+            const response = await sendTelegramPhoto(
+              formDomains[0].telegram_chat_id,
+              "http://file_path",
+              message || null,
+              "HTML",
+              botToken
+            );
+
+            // setResult(response);
+
+            if (!response.ok) {
+              // setError(response.description || "Failed to send photo");
+            } else {
+              // Reset form on success
+              // setFile(null);
+              // setCaption("");
+              // if (fileInputRef.current) {
+              //   fileInputRef.current.value = "";
+              // }
+            }
+          } catch (err) {
+            // setError(
+            //   err instanceof Error ? err.message : "An unknown error occurred"
+            // );
+          } finally {
+            setIsProcessing(false);
+          }
         } else {
-          // Reset form on success
-          // setFile(null);
-          // setCaption("");
-          // if (fileInputRef.current) {
-          //   fileInputRef.current.value = "";
-          // }
         }
       } catch (err) {
         // setError(

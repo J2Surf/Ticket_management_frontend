@@ -223,6 +223,7 @@ export const walletService = {
   },
 
   async getCryptoTransactions(): Promise<CryptoTransaction[]> {
+    console.log("getCryptoTransactions");
     const response = await api.get<CryptoTransaction[]>("/wallet/transactions");
     return response.data;
   },

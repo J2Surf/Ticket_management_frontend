@@ -47,6 +47,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       localStorage.setItem("user", JSON.stringify(userData));
       return { ...userData, email: userData.email || "" };
     } catch (error) {
+      console.log(error);
       throw new Error("Invalid email or password");
     }
   };
