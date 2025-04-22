@@ -2,6 +2,7 @@ import React, { useRef, useState } from "react";
 import {
   sendTelegramPhoto,
   sendTelegramMessage,
+  uploadPhoto,
 } from "../services/telegram.service";
 import { formDomains } from "../constants/FormDomain";
 import { Ticket } from "../pages/Fulfiller/FulfillerTicket/view";
@@ -114,13 +115,15 @@ const ProcessTicketModal: React.FC<ProcessTicketModalProps> = ({
         );
 
         // setResult(response);
-        console.log("sendTelegramMessage response", response);
-
-        if (!response) {
+        if (completionFiles.length <= 0) {
+          return;
+        }
+        const file = await uploadPhoto(completionFiles[0]);
+        if (file.message) {
           try {
             const response = await sendTelegramPhoto(
               formDomains[0].telegram_chat_id,
-              "http://file_path",
+              file.fileUrl ?? "",
               message || null,
               "HTML",
               botToken
