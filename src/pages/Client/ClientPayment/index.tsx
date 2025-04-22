@@ -1,10 +1,16 @@
+import { WalletProvider } from "../../../components/wallet/wallet-provider";
+import { AlertProvider } from "../../../contexts/AlertContext";
 import { ClientLayout } from "../layout";
 import { ClientPayment } from "./view";
 
 export const ClientPaymentPage = () => {
   return (
     <ClientLayout>
-      <ClientPayment />
+      <AlertProvider>
+        <WalletProvider>
+          <ClientPayment />
+        </WalletProvider>
+      </AlertProvider>
     </ClientLayout>
   );
 };

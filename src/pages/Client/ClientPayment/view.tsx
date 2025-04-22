@@ -13,6 +13,9 @@ import {
 import { DepositModal } from "../../../components/DepositModal";
 import WithdrawModal from "../../../components/WithdrawModal";
 import { format } from "date-fns";
+import { useWallet } from "../../../components/wallet/wallet-provider";
+import { Loader2 } from "lucide-react";
+import { formatAddress } from "../../../utils/utils";
 
 interface Transaction {
   date: string;
@@ -44,6 +47,7 @@ const PaymentSection: React.FC<{
   setShowWalletDropdown: (show: boolean) => void;
   cryptoTransactions: CryptoTransaction[];
   isCryptoLoading: boolean;
+  walletContext: any;
 }> = ({
   transactions,
   balance,
@@ -58,6 +62,7 @@ const PaymentSection: React.FC<{
   setShowWalletDropdown,
   cryptoTransactions,
   isCryptoLoading,
+  walletContext,
 }) => {
   return (
     <div className="space-y-8">
@@ -67,95 +72,87 @@ const PaymentSection: React.FC<{
       </div>
       <div className="flex gap-4">
         <div className="relative">
-          <button
-            onClick={() => setShowWalletDropdown(!showWalletDropdown)}
-            className={`px-4 py-2 rounded-lg font-medium flex items-center gap-2 ${
-              isDarkMode
-                ? "bg-[#1F2937] text-gray-200 hover:bg-gray-800"
-                : "bg-white text-gray-700 hover:bg-gray-50 border border-gray-200"
-            }`}
-          >
-            <svg
-              className="w-5 h-5"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
+          {walletContext?.isConnected ? (
+            <button
+              onClick={walletContext?.disconnectWallet}
+              className={`px-4 py-2 rounded-lg font-medium flex items-center gap-2 ${
+                isDarkMode
+                  ? "bg-[#1F2937] text-gray-200 hover:bg-gray-800"
+                  : "bg-white text-gray-700 hover:bg-gray-50 border border-gray-200"
+              }`}
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"
-              />
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M22 8H2"
-              />
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M18 12h0"
-              />
-            </svg>
-            {selectedWallet
-              ? `Connected: ${selectedWallet.address.slice(
-                  0,
-                  6
-                )}...${selectedWallet.address.slice(-4)}`
-              : "Connect Wallet"}
-          </button>
-          {showWalletDropdown && (
-            <div
-              className={`absolute mt-2 w-44 rounded-md shadow-lg ${
-                isDarkMode ? "bg-[#1F2937]" : "bg-white"
-              } ring-1 ring-black ring-opacity-5 z-10`}
+              <svg
+                className="w-5 h-5"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"
+                />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M22 8H2"
+                />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M18 12h0"
+                />
+              </svg>
+              Disconnect Wallet
+              {formatAddress(walletContext?.account!)}
+            </button>
+          ) : (
+            <button
+              onClick={walletContext?.connectWallet}
+              disabled={walletContext?.isConnecting}
+              className={`px-4 py-2 rounded-lg font-medium flex items-center gap-2 ${
+                isDarkMode
+                  ? "bg-[#1F2937] text-gray-200 hover:bg-gray-800"
+                  : "bg-white text-gray-700 hover:bg-gray-50 border border-gray-200"
+              }`}
             >
-              <div className="py-1" role="menu" aria-orientation="vertical">
-                {wallets.length === 0 ? (
-                  <button
-                    onClick={() => {
-                      onConnectWallet();
-                      setShowWalletDropdown(false);
-                    }}
-                    className={`block w-full text-left px-4 py-2 text-sm ${
-                      isDarkMode
-                        ? "text-gray-700 hover:bg-gray-700"
-                        : "text-gray-700 hover:bg-gray-100"
-                    }`}
-                    role="menuitem"
-                  >
-                    Create Wallet
-                  </button>
-                ) : (
-                  wallets.map((wallet) => (
-                    <div
-                      key={wallet.id}
-                      className="flex justify-between items-center"
-                    >
-                      <button
-                        onClick={() => {
-                          onWalletSelect(wallet);
-                          setShowWalletDropdown(false);
-                        }}
-                        className={`block w-full text-left px-4 py-2 text-sm ${
-                          isDarkMode
-                            ? "text-gray-300 hover:bg-gray-700"
-                            : "text-gray-700 hover:bg-gray-100"
-                        }`}
-                        role="menuitem"
-                      >
-                        {wallet.token_type || wallet.type} -{" "}
-                        {wallet.address.substring(0, 6)}...
-                        {wallet.address.substring(wallet.address.length - 4)}
-                      </button>
-                    </div>
-                  ))
-                )}
-              </div>
-            </div>
+              <svg
+                className="w-5 h-5"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"
+                />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M22 8H2"
+                />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M18 12h0"
+                />
+              </svg>
+              {walletContext?.isConnecting ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Connecting...
+                </>
+              ) : (
+                "Connect MetaMask"
+              )}{" "}
+            </button>
           )}
         </div>
 
@@ -461,6 +458,8 @@ export const ClientPayment: React.FC = () => {
   >([]);
   const [isCryptoLoading, setIsCryptoLoading] = useState(true);
 
+  const walletContext = useWallet();
+
   useEffect(() => {
     const fetchWallets = async () => {
       try {
@@ -617,7 +616,7 @@ export const ClientPayment: React.FC = () => {
   };
 
   const handleDeposit = () => {
-    if (!selectedWallet) {
+    if (!walletContext?.isConnected) {
       showAlert("error", "Please select a wallet first");
       return;
     }
@@ -657,7 +656,7 @@ export const ClientPayment: React.FC = () => {
   };
 
   const handleWithdraw = () => {
-    if (!selectedWallet) {
+    if (!walletContext?.isConnected) {
       showAlert("error", "Please select a wallet first");
       return;
     }
@@ -713,6 +712,7 @@ export const ClientPayment: React.FC = () => {
         setShowWalletDropdown={setShowWalletDropdown}
         cryptoTransactions={cryptoTransactions}
         isCryptoLoading={isCryptoLoading}
+        walletContext={walletContext}
       />
       <DepositModal
         isOpen={isDepositModalOpen}

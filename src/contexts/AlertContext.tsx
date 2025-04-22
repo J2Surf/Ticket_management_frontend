@@ -32,14 +32,14 @@ export const AlertProvider: React.FC<{ children: React.ReactNode }> = ({
   return (
     <AlertContext.Provider value={{ showAlert, alerts, removeAlert }}>
       {children}
-      {/* {alerts.map((alert) => (
+      {alerts.map((alert) => (
         <Alert
           key={alert.id}
           type={alert.type}
           message={alert.message}
-          onClose={() => removeAlert(alert.id)}
+          onClose={() => removeAlert()}
         />
-      ))} */}
+      ))}
     </AlertContext.Provider>
   );
 };
