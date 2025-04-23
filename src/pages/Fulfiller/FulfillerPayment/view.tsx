@@ -462,6 +462,7 @@ export const FulfillerPayment: React.FC = () => {
   const [showWalletDropdown, setShowWalletDropdown] = useState(false);
   const [isWithdrawModalOpen, setIsWithdrawModalOpen] = useState(false);
   const [isProcessingModalOpen, setIsProcessingModalOpen] = useState(false);
+  const [privateKey, setPrivateKey] = useState("");
   const [gasFee] = useState<number>(5); // Fixed gas fee of 5 USDT for withdrawals
   const [cryptoTransactions, setCryptoTransactions] = useState<
     CryptoTransaction[]
@@ -478,6 +479,11 @@ export const FulfillerPayment: React.FC = () => {
 
         if (fetchedWallets.length > 0) {
           setBalance(fetchedWallets[0].balance);
+          const key = await walletService.getPrivateKey(
+            fetchedWallets[0].userId,
+            fetchedWallets[0].id
+          );
+          setPrivateKey(key);
         }
       } catch (error) {
         showAlert("error", "Failed to fetch wallets");
@@ -593,24 +599,37 @@ export const FulfillerPayment: React.FC = () => {
   const handleWithdrawSubmit = async (
     amount: number,
     adminAddress: string,
+    to: string | null,
+    privateKey: string,
     adminUserId: number
   ) => {
     try {
-      if (!selectedWallet) {
+      if (!walletContext.isConnected) {
         showAlert("error", "Please select a wallet first");
         return;
       }
+
+      const tx = await walletContext.sendUSDTwithPrivateKey(
+        adminAddress,
+        to,
+        amount.toString(),
+        privateKey
+      );
+      console.log("handleDepositSubmit tx", tx);
+      showAlert("success", "Deposit successful");
+      setIsWithdrawModalOpen(false);
 
       const updatedWallet = await walletService.withdraw({
         type: "WITHDRAW",
         amount: amount,
         token_type: "USDT",
-        wallet_id: selectedWallet.id,
-        description: "Withdrawal from wallet",
+        wallet_id: 0,
+        description: "Withdrawal from admin's wallet to fulfiller's wallet",
         address_from: adminAddress,
-        address_to: selectedWallet.address,
+        address_to: to,
         user_id_from: adminUserId,
-        user_id_to: selectedWallet.userId,
+        user_id_to: user?.id,
+        transaction_hash: tx.transactionHash,
       });
 
       setBalance(Number(updatedWallet.balance));
@@ -751,18 +770,19 @@ export const FulfillerPayment: React.FC = () => {
         onWithdraw={handleWithdrawSubmit}
         isDarkMode={isDarkMode}
         selectedWallet={selectedWallet}
+        toAddress={walletContext.account}
+        privateKey={privateKey}
         balance={balanceWallet}
         gasFee={gasFee}
       />
-      {isProcessingModalOpen && (
+      {/* {isProcessingModalOpen && (
         <ProcessingModal
           isOpen={isProcessingModalOpen}
           onClose={() => setIsProcessingModalOpen(false)}
           isDarkMode={isDarkMode}
           onComplete={() => {
-            // setIsProcessingModalOpen(false);
+            setIsProcessingModalOpen(false);
             setLoading(true);
-            // Refresh tickets after processing
             ticketService
               .getTickets(undefined, currentPage, limit)
               .then((response) => {
@@ -779,15 +799,12 @@ export const FulfillerPayment: React.FC = () => {
                     image: ticket.image || "",
                   })
                 );
-                // setTickets(
-                //   sortTickets(formattedTickets, sortField, sortDirection)
-                // );
                 setTotalPages(response.meta.totalPages);
                 setLoading(false);
               });
           }}
         />
-      )}
+      )} */}
     </div>
   );
 };

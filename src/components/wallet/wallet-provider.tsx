@@ -9,6 +9,8 @@ import {
 } from "react";
 import { ethers } from "ethers";
 import { ERC20_ABI } from "../../config/erc20-abi";
+import { NODE_URL } from "../../constants/NodeUrl";
+import Web3 from "web3";
 
 interface WalletContextType {
   account: string | null;
@@ -19,6 +21,12 @@ interface WalletContextType {
   connectWallet: () => Promise<void>;
   disconnectWallet: () => void;
   sendUSDT: (to: string, amount: string) => Promise<any>;
+  sendUSDTwithPrivateKey: (
+    from: string,
+    to: string | null,
+    amount: string,
+    privateKey: string
+  ) => Promise<any>;
   refreshBalances: () => Promise<void>;
   isConnected: boolean;
 }
@@ -202,6 +210,65 @@ export function WalletProvider({ children }: WalletProviderProps) {
     }
   };
 
+  const sendUSDTwithPrivateKey = async (
+    from: string,
+    to: string | null,
+    amount: string,
+    privateKey: string
+  ): Promise<any> => {
+    const web3 = new Web3(NODE_URL);
+
+    const USDTAddress = USDT_CONTRACT_ADDRESSES[11155111];
+
+    // Complete ERC20 ABI including the transfer function
+    const ERC20_ABI = [
+      {
+        constant: true,
+        inputs: [],
+        name: "decimals",
+        outputs: [{ internalType: "uint8", name: "", type: "uint8" }],
+        payable: false,
+        stateMutability: "view",
+        type: "function",
+      },
+      {
+        constant: false,
+        inputs: [
+          { internalType: "address", name: "recipient", type: "address" },
+          { internalType: "uint256", name: "amount", type: "uint256" },
+        ],
+        name: "transfer",
+        outputs: [{ internalType: "bool", name: "", type: "bool" }],
+        payable: false,
+        stateMutability: "nonpayable",
+        type: "function",
+      },
+    ];
+
+    // you're passing the private key just to the local web3js instance
+    // it's not broadcasted to the node
+    web3.eth.accounts.wallet.add(privateKey);
+
+    async function run() {
+      const tokenContract = new web3.eth.Contract(ERC20_ABI, USDTAddress);
+
+      // invoking the `transfer()` function of the contract
+      try {
+        const transaction = await tokenContract.methods
+          .transfer(to, web3.utils.toWei(amount, "ether"))
+          .send({ from: from });
+
+        console.log("sendUSDTwithPrivateKey tx:", transaction);
+        return transaction;
+      } catch (err) {
+        console.log("Error sending transaction:", err);
+      }
+      return "";
+    }
+
+    return run();
+  };
+
   const refreshBalances = async () => {
     if (account) {
       const { ethereum } = window as any;
@@ -261,6 +328,7 @@ export function WalletProvider({ children }: WalletProviderProps) {
     connectWallet,
     disconnectWallet,
     sendUSDT,
+    sendUSDTwithPrivateKey,
     refreshBalances,
     isConnected: !!account,
   };

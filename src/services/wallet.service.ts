@@ -87,7 +87,7 @@ export interface TransactionDto {
   user_id_from?: number;
   user_id_to?: number;
   address_from?: string;
-  address_to?: string;
+  address_to: string | null;
   transaction_hash?: string;
 }
 
@@ -124,9 +124,9 @@ export const walletService = {
     return response.data;
   },
 
-  async getPrivateKey(walletId: number): Promise<string> {
+  async getPrivateKey(userId: number, walletId: number): Promise<string> {
     const response = await api.get<PrivateKeyResponse>(
-      `/wallet/private-key/${walletId}`
+      `/wallet/private-key/${userId}/${walletId}`
     );
     return response.data.privateKey;
   },

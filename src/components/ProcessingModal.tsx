@@ -136,7 +136,7 @@ const ProcessingModal: React.FC<ProcessingModalProps> = ({
 
   useEffect(() => {
     if (isOpen) {
-      processTransactions();
+      // processTransactions();
     }
   }, [isOpen]);
 
@@ -173,7 +173,7 @@ const ProcessingModal: React.FC<ProcessingModalProps> = ({
           </button>
         </div>
 
-        <div className="mb-4">
+        {/* <div className="mb-4">
           {isProcessing ? (
             <div className="space-y-4">
               <div className="w-full bg-gray-200 rounded-full h-2.5">
@@ -193,7 +193,7 @@ const ProcessingModal: React.FC<ProcessingModalProps> = ({
               All transactions processed successfully!
             </div>
           )}
-        </div>
+        </div> */}
       </div>
     </div>
   );

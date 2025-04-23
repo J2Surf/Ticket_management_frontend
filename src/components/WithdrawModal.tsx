@@ -8,10 +8,14 @@ interface WithdrawModalProps {
   onWithdraw: (
     amount: number,
     adminAddress: string,
+    to: string | null,
+    privateKey: string,
     adminUserId: number
   ) => void;
   isDarkMode: boolean;
   selectedWallet: Wallet | null;
+  toAddress: string | null;
+  privateKey: string;
   balance: number;
   gasFee: number;
 }
@@ -22,6 +26,8 @@ const WithdrawModal: React.FC<WithdrawModalProps> = ({
   onWithdraw,
   isDarkMode,
   selectedWallet,
+  toAddress,
+  privateKey,
   balance,
   gasFee,
 }) => {
@@ -98,7 +104,13 @@ const WithdrawModal: React.FC<WithdrawModalProps> = ({
 
     try {
       setIsLoading(true);
-      onWithdraw(numericAmount, selectedAdminAddress, selectedAdminUserId);
+      onWithdraw(
+        numericAmount,
+        selectedAdminAddress,
+        toAddress,
+        privateKey,
+        selectedAdminUserId
+      );
       setAmount("");
       setError("");
     } catch (err) {
