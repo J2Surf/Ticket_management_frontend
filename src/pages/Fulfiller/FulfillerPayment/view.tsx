@@ -245,10 +245,7 @@ const PaymentSection: React.FC<{
               isDarkMode ? "text-white" : "text-gray-900"
             }`}
           >
-            {/* ${balanceDB.toLocaleString()} */}
-            {walletContext?.balance
-              ? `${Number.parseFloat(walletContext?.balance).toFixed(4)} ETH`
-              : "0"}
+            {balanceDB.toLocaleString()} USDT
           </div>
         </div>
       </div>
@@ -383,11 +380,11 @@ const PaymentSection: React.FC<{
                     >
                       {transaction.transaction_type === "deposit" ? (
                         <span className="text-green-500">
-                          +${transaction.amount.toLocaleString()}
+                          +{transaction.amount.toLocaleString()} USDT
                         </span>
                       ) : (
                         <span className="text-red-500">
-                          -${transaction.amount.toLocaleString()}
+                          -{transaction.amount.toLocaleString()} USDT
                         </span>
                       )}
                     </td>
@@ -478,6 +475,15 @@ export const FulfillerPayment: React.FC = () => {
       try {
         const fetchedWallets = await walletService.getWallets();
         setWallets(fetchedWallets);
+
+        if (fetchedWallets.length > 0) {
+          const connectedWallet = await walletService.connectWallet({
+            type: "ETH", // Default to USDT for now
+            tokenType: "USDT",
+            walletAddress: fetchedWallets[0].address,
+          });
+          setBalance(connectedWallet.balance);
+        }
       } catch (error) {
         showAlert("error", "Failed to fetch wallets");
         console.error("Error fetching wallets:", error);

@@ -173,24 +173,6 @@ const PaymentSection: React.FC<{
           </svg>
           Deposit
         </button>
-
-        <button
-          onClick={onWithdraw}
-          className={`px-4 py-2 rounded-lg font-medium flex items-center gap-2 ${
-            isDarkMode
-              ? "bg-red-500 text-gray-700 hover:bg-red-600"
-              : "bg-red-400 text-gray-700 hover:bg-red-500"
-          }`}
-        >
-          <svg className="w-5 h-5" viewBox="0 0 20 20" fill="currentColor">
-            <path
-              fillRule="evenodd"
-              d="M10 17a1 1 0 001-1V6.414l3.293 3.293a1 1 0 001.414-1.414l-4-4a1 1 0 00-1.414 0l-4 4a1 1 0 101.414 1.414L10 6.414V16a1 1 0 001 1z"
-              clipRule="evenodd"
-            />
-          </svg>
-          Withdraw
-        </button>
       </div>
 
       {/* Accounts Section */}
@@ -236,10 +218,7 @@ const PaymentSection: React.FC<{
               isDarkMode ? "text-white" : "text-gray-900"
             }`}
           >
-            {/* ${balance.toLocaleString()} */}
-            {walletContext?.balance
-              ? `${Number.parseFloat(walletContext?.balance).toFixed(4)} ETH`
-              : "0"}
+            {balance.toLocaleString()} USDT
           </div>
         </div>
       </div>
@@ -374,11 +353,11 @@ const PaymentSection: React.FC<{
                     >
                       {transaction.transaction_type === "deposit" ? (
                         <span className="text-green-500">
-                          +${transaction.amount.toLocaleString()}
+                          +{transaction.amount.toLocaleString()} USDT
                         </span>
                       ) : (
                         <span className="text-red-500">
-                          -${transaction.amount.toLocaleString()}
+                          -{transaction.amount.toLocaleString()} USDT
                         </span>
                       )}
                     </td>
@@ -468,8 +447,17 @@ export const ClientPayment: React.FC = () => {
       try {
         const fetchedWallets = await walletService.getWallets();
         setWallets(fetchedWallets);
+
+        if (fetchedWallets.length > 0) {
+          const connectedWallet = await walletService.connectWallet({
+            type: "ETH", // Default to USDT for now
+            tokenType: "USDT",
+            walletAddress: fetchedWallets[0].address,
+          });
+          setBalance(connectedWallet.balance);
+        }
       } catch (error) {
-        showAlert("error", "Failed to fetch wallets");
+        // showAlert("error", "Failed to fetch wallets");
         console.error("Error fetching wallets:", error);
       }
     };
@@ -741,15 +729,6 @@ export const ClientPayment: React.FC = () => {
         onDeposit={handleDepositSubmit}
         isDarkMode={isDarkMode}
         selectedWallet={selectedWallet}
-      />
-      <WithdrawModal
-        isOpen={isWithdrawModalOpen}
-        onClose={() => setIsWithdrawModalOpen(false)}
-        onWithdraw={handleWithdrawSubmit}
-        isDarkMode={isDarkMode}
-        selectedWallet={selectedWallet}
-        balance={Number(balance)}
-        gasFee={Number(gasFee)}
       />
     </div>
   );
