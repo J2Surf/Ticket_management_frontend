@@ -469,6 +469,8 @@ export const FulfillerPayment: React.FC = () => {
   >([]);
   const [isCryptoLoading, setIsCryptoLoading] = useState(true);
 
+  const [isCompletedWithdraw, setIsCompletedWithdraw] = useState<boolean>(true);
+
   const walletContext = useWallet();
 
   useEffect(() => {
@@ -506,8 +508,8 @@ export const FulfillerPayment: React.FC = () => {
       }
     };
 
-    fetchCryptoTransactions();
-  }, []);
+    isCompletedWithdraw && fetchCryptoTransactions();
+  }, [isCompletedWithdraw]);
 
   const handleSort = (field: string) => {
     if (sortField === field) {
@@ -603,6 +605,7 @@ export const FulfillerPayment: React.FC = () => {
     privateKey: string,
     adminUserId: number
   ) => {
+    setIsCompletedWithdraw(false);
     try {
       if (!walletContext.isConnected) {
         showAlert("error", "Please select a wallet first");
@@ -642,6 +645,7 @@ export const FulfillerPayment: React.FC = () => {
 
     console.log("Processing modal open");
     setIsProcessingModalOpen(true);
+    setIsCompletedWithdraw(true);
   };
 
   const handleTicketAction = async (action: string, ticketId: string) => {

@@ -439,6 +439,7 @@ export const ClientPayment: React.FC = () => {
     CryptoTransaction[]
   >([]);
   const [isCryptoLoading, setIsCryptoLoading] = useState(true);
+  const [isCompletedDeposit, setIsCompletedDeposit] = useState<boolean>(true);
 
   const walletContext = useWallet();
 
@@ -507,8 +508,8 @@ export const ClientPayment: React.FC = () => {
       }
     };
 
-    fetchCryptoTransactions();
-  }, []);
+    isCompletedDeposit && fetchCryptoTransactions();
+  }, [isCompletedDeposit]);
 
   const sortTickets = (
     ticketsToSort: Ticket[],
@@ -614,12 +615,12 @@ export const ClientPayment: React.FC = () => {
     adminAddress: string,
     adminUserId: number
   ) => {
+    setIsCompletedDeposit(false);
     console.log("handleDepositSubmit address:", walletContext?.account, amount);
 
     const tx = await walletContext.sendUSDT(adminAddress, amount.toString());
     console.log("handleDepositSubmit tx", tx);
     showAlert("success", "Deposit successful");
-    setIsDepositModalOpen(false);
 
     await walletService.deposit({
       type: "DEPOSIT",
@@ -632,31 +633,8 @@ export const ClientPayment: React.FC = () => {
       transaction_hash: tx.hash,
     });
 
-    // try {
-    //   if (!selectedWallet) {
-    //     showAlert("error", "Please select a wallet first");
-    //     return;
-    //   }
-
-    //   const updatedWallet = await walletService.deposit({
-    //     type: "DEPOSIT",
-    //     amount: amount,
-    //     token_type: "USDT",
-    //     wallet_id: selectedWallet.id,
-    //     description: "Deposit from client's wallet to admin's wallet",
-    //     address_from: selectedWallet.address,
-    //     address_to: adminAddress,
-    //     user_id_from: selectedWallet.userId,
-    //     user_id_to: adminUserId,
-    //   });
-
-    //   setBalance(updatedWallet.balance);
-    //   showAlert("success", "Deposit successful");
-    //   setIsDepositModalOpen(false);
-    // } catch (error) {
-    //   showAlert("error", "Failed to process deposit");
-    //   console.error("Error processing deposit:", error);
-    // }
+    setIsDepositModalOpen(false);
+    setIsCompletedDeposit(true);
   };
 
   const handleWithdraw = () => {

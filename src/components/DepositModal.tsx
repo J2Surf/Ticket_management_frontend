@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { walletService, Wallet } from "../services/wallet.service";
+import SpinnerIconSVG from "./common/SpinnerIconSVG";
 
 interface DepositModalProps {
   isOpen: boolean;
@@ -59,9 +60,10 @@ export const DepositModal: React.FC<DepositModalProps> = ({
     if (isNaN(numericAmount) || numericAmount <= 0 || !selectedAdminAddress) {
       return;
     }
+    setIsLoading(true);
+
     onDeposit(numericAmount, selectedAdminAddress, selectedUserId);
     setAmount("");
-    onClose();
   };
 
   if (!isOpen) return null;
@@ -88,6 +90,7 @@ export const DepositModal: React.FC<DepositModalProps> = ({
                 ? "text-gray-400 hover:text-gray-300"
                 : "text-gray-500 hover:text-gray-700"
             }`}
+            disabled={isLoading}
           >
             <svg
               className="w-6 h-6"
@@ -126,38 +129,41 @@ export const DepositModal: React.FC<DepositModalProps> = ({
             >
               Select Admin's address to deposit
             </label>
-            {isLoading ? (
-              <div className="text-center py-4">
-                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-500 mx-auto"></div>
-                <p
-                  className={`text-sm mt-2 ${
-                    isDarkMode ? "text-gray-400" : "text-gray-500"
-                  }`}
+            {
+              /*isLoading*/ 0 ? (
+                <div className="text-center py-4">
+                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-500 mx-auto"></div>
+                  <p
+                    className={`text-sm mt-2 ${
+                      isDarkMode ? "text-gray-400" : "text-gray-500"
+                    }`}
+                  >
+                    Loading admin address...
+                  </p>
+                </div>
+              ) : (
+                <select
+                  value={selectedAdminAddress}
+                  onChange={(e) => setSelectedAdminAddress(e.target.value)}
+                  className={`w-full px-3 py-2 rounded-lg border ${
+                    isDarkMode
+                      ? "bg-gray-700 border-gray-600 text-white"
+                      : "bg-white border-gray-300 text-gray-900"
+                  } focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                  required
+                  disabled={isLoading}
                 >
-                  Loading admin address...
-                </p>
-              </div>
-            ) : (
-              <select
-                value={selectedAdminAddress}
-                onChange={(e) => setSelectedAdminAddress(e.target.value)}
-                className={`w-full px-3 py-2 rounded-lg border ${
-                  isDarkMode
-                    ? "bg-gray-700 border-gray-600 text-white"
-                    : "bg-white border-gray-300 text-gray-900"
-                } focus:outline-none focus:ring-2 focus:ring-blue-500`}
-                required
-              >
-                <option value="" disabled>
-                  Select a admin address
-                </option>
-                {adminWallets.map((wallet) => (
-                  <option key={wallet.address} value={wallet.address}>
-                    {wallet.address} ({wallet.token_type || "USDT"})
+                  <option value="" disabled>
+                    Select a admin address
                   </option>
-                ))}
-              </select>
-            )}
+                  {adminWallets.map((wallet) => (
+                    <option key={wallet.address} value={wallet.address}>
+                      {wallet.address} ({wallet.token_type || "USDT"})
+                    </option>
+                  ))}
+                </select>
+              )
+            }
           </div>
 
           <div className="mb-4">
@@ -166,7 +172,7 @@ export const DepositModal: React.FC<DepositModalProps> = ({
                 isDarkMode ? "text-gray-300" : "text-gray-700"
               }`}
             >
-              Amount
+              Amount (USDT)
             </label>
             <input
               type="number"
@@ -181,6 +187,7 @@ export const DepositModal: React.FC<DepositModalProps> = ({
               } focus:outline-none focus:ring-2 focus:ring-blue-500`}
               placeholder="Enter amount to deposit"
               required
+              disabled={isLoading}
             />
           </div>
 
@@ -188,24 +195,26 @@ export const DepositModal: React.FC<DepositModalProps> = ({
             <button
               type="button"
               onClick={onClose}
-              className={`px-4 py-2 rounded-lg ${
+              className={`px-4 py-2 flex items-center rounded-lg ${
                 isDarkMode
                   ? "bg-gray-700 text-white hover:bg-gray-600"
                   : "bg-gray-200 text-white hover:bg-gray-300"
               }`}
+              disabled={isLoading}
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={isLoading || !selectedAdminAddress || !!error}
-              className={`px-4 py-2 rounded-lg ${
+              className={`px-4 py-2 flex items-center rounded-lg ${
                 isLoading || !selectedAdminAddress || !!error
                   ? "bg-gray-400 text-white cursor-not-allowed"
                   : "bg-blue-500 text-white hover:bg-blue-600"
               }`}
             >
-              Deposit
+              {isLoading && <SpinnerIconSVG />}
+              {isLoading ? "Processing..." : "Deposit"}
             </button>
           </div>
         </form>

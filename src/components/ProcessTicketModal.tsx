@@ -119,6 +119,7 @@ const ProcessTicketModal: React.FC<ProcessTicketModalProps> = ({
           return;
         }
         const file = await uploadPhoto(completionFiles[0]);
+        console.log("submitProcessTicket file:", file);
         if (file.message) {
           try {
             const response = await sendTelegramPhoto(

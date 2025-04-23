@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Wallet, walletService } from "../services/wallet.service";
 import { useAlert } from "../contexts/AlertContext";
+import SpinnerIconSVG from "./common/SpinnerIconSVG";
 
 interface WithdrawModalProps {
   isOpen: boolean;
@@ -103,7 +104,9 @@ const WithdrawModal: React.FC<WithdrawModalProps> = ({
     }
 
     try {
+      console.log("submit1: ", isLoading);
       setIsLoading(true);
+      console.log("submit2: ", isLoading);
       onWithdraw(
         numericAmount,
         selectedAdminAddress,
@@ -111,12 +114,12 @@ const WithdrawModal: React.FC<WithdrawModalProps> = ({
         privateKey,
         selectedAdminUserId
       );
+      console.log("submit3: ", isLoading);
+
       setAmount("");
       setError("");
     } catch (err) {
       setError("Failed to process withdrawal. Please try again.");
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -144,6 +147,7 @@ const WithdrawModal: React.FC<WithdrawModalProps> = ({
                 ? "text-gray-400 hover:text-gray-300"
                 : "text-gray-500 hover:text-gray-700"
             }`}
+            disabled={isLoading}
           >
             <svg
               className="w-6 h-6"
@@ -267,13 +271,14 @@ const WithdrawModal: React.FC<WithdrawModalProps> = ({
             </button>
             <button
               type="submit"
-              className={`px-4 py-2 rounded-lg ${
+              className={`px-4 py-2 flex items-center rounded-lg ${
                 isDarkMode
                   ? "bg-blue-600 text-white hover:bg-blue-700"
                   : "bg-blue-500 text-white hover:bg-blue-600"
               } ${isLoading ? "opacity-50 cursor-not-allowed" : ""}`}
               disabled={isLoading}
             >
+              {isLoading && <SpinnerIconSVG />}
               {isLoading ? "Processing..." : "Withdraw"}
             </button>
           </div>
