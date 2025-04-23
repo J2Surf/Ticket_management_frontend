@@ -473,16 +473,11 @@ export const FulfillerPayment: React.FC = () => {
   useEffect(() => {
     const fetchWallets = async () => {
       try {
-        const fetchedWallets = await walletService.getWallets();
+        const fetchedWallets = await walletService.getAdminWallets();
         setWallets(fetchedWallets);
 
         if (fetchedWallets.length > 0) {
-          const connectedWallet = await walletService.connectWallet({
-            type: "ETH", // Default to USDT for now
-            tokenType: "USDT",
-            walletAddress: fetchedWallets[0].address,
-          });
-          setBalance(connectedWallet.balance);
+          setBalance(fetchedWallets[0].balance);
         }
       } catch (error) {
         showAlert("error", "Failed to fetch wallets");

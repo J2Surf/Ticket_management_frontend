@@ -214,7 +214,7 @@ const WithdrawModal: React.FC<WithdrawModalProps> = ({
             />
           </div>
 
-          <div className="mb-4">
+          {/* <div className="mb-4">
             <p
               className={`text-sm ${
                 isDarkMode ? "text-gray-400" : "text-gray-500"
@@ -236,7 +236,7 @@ const WithdrawModal: React.FC<WithdrawModalProps> = ({
             >
               Maximum Withdrawable: {adminBalance - numericGasFee} USDT
             </p>
-          </div>
+          </div> */}
 
           {error && <div className="mb-4 text-red-500 text-sm">{error}</div>}
 
