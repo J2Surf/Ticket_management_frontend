@@ -10,6 +10,7 @@ interface DepositModalProps {
     adminAddress: string,
     adminUserId: number
   ) => void;
+  isCancelDeposit?: boolean;
   isDarkMode?: boolean;
   selectedWallet?: Wallet | null;
 }
@@ -18,6 +19,7 @@ export const DepositModal: React.FC<DepositModalProps> = ({
   isOpen,
   onClose,
   onDeposit,
+  isCancelDeposit = false,
   isDarkMode = false,
   selectedWallet = null,
 }) => {
@@ -27,6 +29,12 @@ export const DepositModal: React.FC<DepositModalProps> = ({
   const [selectedAdminAddress, setSelectedAdminAddress] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (isCancelDeposit) {
+      setIsLoading(false);
+    }
+  }, [isCancelDeposit]);
 
   useEffect(() => {
     const fetchAdminWallets = async () => {
@@ -61,9 +69,7 @@ export const DepositModal: React.FC<DepositModalProps> = ({
       return;
     }
     setIsLoading(true);
-
     onDeposit(numericAmount, selectedAdminAddress, selectedUserId);
-    setAmount("");
   };
 
   if (!isOpen) return null;

@@ -440,6 +440,7 @@ export const ClientPayment: React.FC = () => {
   >([]);
   const [isCryptoLoading, setIsCryptoLoading] = useState(true);
   const [isCompletedDeposit, setIsCompletedDeposit] = useState<boolean>(true);
+  const [isCancleDeposit, setIsCancelDeposit] = useState(false);
 
   const walletContext = useWallet();
 
@@ -615,26 +616,31 @@ export const ClientPayment: React.FC = () => {
     adminAddress: string,
     adminUserId: number
   ) => {
+    setIsCancelDeposit(false);
     setIsCompletedDeposit(false);
     console.log("handleDepositSubmit address:", walletContext?.account, amount);
 
-    const tx = await walletContext.sendUSDT(adminAddress, amount.toString());
-    console.log("handleDepositSubmit tx", tx);
-    showAlert("success", "Deposit successful");
+    try {
+      const tx = await walletContext.sendUSDT(adminAddress, amount.toString());
+      console.log("handleDepositSubmit tx", tx);
+      showAlert("success", "Deposit successful");
 
-    await walletService.deposit({
-      type: "DEPOSIT",
-      amount: amount,
-      token_type: "USDT",
-      description: "Deposit from client's wallet to admin's wallet",
-      user_id_to: adminUserId,
-      address_from: tx.from,
-      address_to: adminAddress,
-      transaction_hash: tx.hash,
-    });
+      await walletService.deposit({
+        type: "DEPOSIT",
+        amount: amount,
+        token_type: "USDT",
+        description: "Deposit from client's wallet to admin's wallet",
+        user_id_to: adminUserId,
+        address_from: tx.from,
+        address_to: adminAddress,
+        transaction_hash: tx.hash,
+      });
 
-    setIsDepositModalOpen(false);
-    setIsCompletedDeposit(true);
+      setIsDepositModalOpen(false);
+      setIsCompletedDeposit(true);
+    } catch (err) {
+      setIsCancelDeposit(true);
+    }
   };
 
   const handleWithdraw = () => {
@@ -702,6 +708,7 @@ export const ClientPayment: React.FC = () => {
         onDeposit={handleDepositSubmit}
         isDarkMode={isDarkMode}
         selectedWallet={selectedWallet}
+        isCancelDeposit={isCancleDeposit}
       />
     </div>
   );
