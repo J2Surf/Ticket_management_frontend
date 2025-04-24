@@ -49,41 +49,6 @@ const ProcessTicketModal: React.FC<ProcessTicketModalProps> = ({
   const ticketIdRef = useRef<HTMLInputElement | null>(null);
 
   const submitProcessTicket = async () => {
-    // try {
-    //   setAcceptedTickets((prev) => prev.filter((t) => t.id !== ticket.id));
-
-    //   setTicketTimers((prev) => {
-    //     const newTimers = { ...prev };
-    //     delete newTimers[ticket.id];
-    //     return newTimers;
-    //   });
-
-    //   setCurrentBalance(
-    //     (prevBalance) => Number(prevBalance) + Number(ticket.amount)
-    //   );
-
-    //   if (!user) {
-    //     showAlert("error", "User not authenticated");
-    //     return;
-    //   }
-
-    //   const userID: number = user.id;
-    //   if (!userID) {
-    //     showAlert("error", "User ID is not available");
-    //     return;
-    //   }
-
-    //   await ticketService.completeTicket(
-    //     ticket.id.toString(),
-    //     userID,
-    //     "http://example.com/image.png"
-    //   );
-
-    //   handleTicketAction("refresh", ticket.ticket_id);
-    // } catch (error) {
-    //   console.error("Error processing ticket:", error);
-    // }
-
     setIsProcessing(true);
 
     // Create the message
@@ -124,7 +89,7 @@ const ProcessTicketModal: React.FC<ProcessTicketModalProps> = ({
           try {
             const response = await sendTelegramPhoto(
               formDomains[0].telegram_chat_id,
-              file.fileUrl ?? "",
+              completionFiles[0],
               message || null,
               "HTML",
               botToken
@@ -133,28 +98,16 @@ const ProcessTicketModal: React.FC<ProcessTicketModalProps> = ({
             // setResult(response);
 
             if (!response.ok) {
-              // setError(response.description || "Failed to send photo");
             } else {
-              // Reset form on success
-              // setFile(null);
-              // setCaption("");
-              // if (fileInputRef.current) {
-              //   fileInputRef.current.value = "";
-              // }
+              onClose();
             }
           } catch (err) {
-            // setError(
-            //   err instanceof Error ? err.message : "An unknown error occurred"
-            // );
           } finally {
             setIsProcessing(false);
           }
         } else {
         }
       } catch (err) {
-        // setError(
-        //   err instanceof Error ? err.message : "An unknown error occurred"
-        // );
       } finally {
         setIsProcessing(false);
       }
