@@ -262,7 +262,7 @@ const ProcessTicketModal: React.FC<ProcessTicketModalProps> = ({
                       className="file-input"
                       id="completionImages"
                       name="completion_images[]"
-                      multiple
+                      // multiple
                       accept="image/*"
                       onChange={handleCompletionFileChange}
                     />
@@ -311,7 +311,7 @@ const ProcessTicketModal: React.FC<ProcessTicketModalProps> = ({
                       className="file-input"
                       id="errorImages"
                       name="error_images[]"
-                      multiple
+                      // multiple
                       accept="image/*"
                       onChange={handleErrorFileChange}
                     />
