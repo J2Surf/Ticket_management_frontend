@@ -116,7 +116,6 @@ const WithdrawModal: React.FC<WithdrawModalProps> = ({
       );
       console.log("submit3: ", isLoading);
 
-      setAmount("");
       setError("");
     } catch (err) {
       setError("Failed to process withdrawal. Please try again.");
