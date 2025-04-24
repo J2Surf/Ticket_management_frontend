@@ -79,9 +79,7 @@ const TicketSection: React.FC<{
           {/* Last updated: {new Date().toLocaleTimeString()} */}
         </span>
       </div>
-      <div
-        className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4 mb-8`}
-      >
+      <div className={`gap-4 mb-8`}>
         <div
           className={`${
             isDarkMode ? "bg-[#1F2937]" : "bg-white"
@@ -121,7 +119,7 @@ const TicketSection: React.FC<{
             </div>
           </div>
         </div>
-        <div
+        {/* <div
           className={`${
             isDarkMode ? "bg-[#1F2937]" : "bg-white"
           } p-6 rounded-xl ${isDarkMode ? "" : "shadow-sm"}`}
@@ -159,7 +157,7 @@ const TicketSection: React.FC<{
               </div>
             </div>
           </div>
-        </div>
+        </div> */}
       </div>
       <div
         className={`grid grid-cols-1 md:grid-cols-4 lg:grid-cols-4 gap-4 mb-8`}
@@ -914,7 +912,10 @@ export const FulfillerTicket: React.FC = () => {
       // Remove the ticket from incoming tickets
       setIncomingTickets((prev) => prev.filter((t) => t.id !== ticket.id));
 
-      setHoldingBalance(
+      // setHoldingBalance(
+      //   (prevBalance) => Number(prevBalance) + Number(ticket.amount)
+      // );
+      setCurrentBalance(
         (prevBalance) => Number(prevBalance) + Number(ticket.amount)
       );
       setAcceptedTickets((prev) => [...prev, ticket]);
