@@ -13,6 +13,7 @@ export default function CreateTicketForm() {
     payment_tag: "",
     account_name: "",
     payment_qr_code: "",
+    telegram_chat_id: "",
   });
 
   const createMutation = useMutation({
@@ -28,6 +29,7 @@ export default function CreateTicketForm() {
         payment_tag: "",
         account_name: "",
         payment_qr_code: "",
+        telegram_chat_id: "",
       });
     },
   });
