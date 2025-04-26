@@ -68,7 +68,7 @@ const Panel: React.FC<PanelProps> = ({ items }) => {
                 title={item.description || item.name}
               >
                 {item.icon}
-                <span className="text-sm">{item.name}</span>
+                <span className="text-lg font-bold">{item.name}</span>
                 {item.badge && (
                   <span className="ml-auto bg-blue-500 text-white text-xs px-2 py-0.5 rounded-full">
                     {item.badge}

@@ -393,7 +393,11 @@ const PaymentSection: React.FC<{
                         isDarkMode ? "text-gray-300" : "text-gray-900"
                       }`}
                     >
-                      {transaction.description || "-"}
+                      {transaction.transaction_type === "deposit"
+                        ? "Deposit"
+                        : transaction.transaction_type === "withdraw"
+                        ? "Withdraw"
+                        : "Ticket Settlement"}
                     </td>
                     <td
                       className={`p-4 font-mono ${
@@ -627,7 +631,7 @@ export const FulfillerPayment: React.FC = () => {
         amount: amount,
         token_type: "USDT",
         wallet_id: 0,
-        description: "Withdrawal from admin's wallet to fulfiller's wallet",
+        description: "Withdraw",
         address_from: adminAddress,
         address_to: to,
         user_id_from: adminUserId,

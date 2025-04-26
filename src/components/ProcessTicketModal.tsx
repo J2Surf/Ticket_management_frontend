@@ -12,6 +12,7 @@ interface ProcessTicketModalProps {
   ticket: Ticket | null;
   isDarkMode: boolean;
   onClose: () => void;
+  onTicketProcessed: () => void;
 }
 
 const ProcessTicketModal: React.FC<ProcessTicketModalProps> = ({
@@ -19,11 +20,13 @@ const ProcessTicketModal: React.FC<ProcessTicketModalProps> = ({
   ticket,
   isDarkMode,
   onClose,
+  onTicketProcessed,
 }) => {
   if (!isOpen) return null;
 
   const [isProcessing, setIsProcessing] = useState(false);
   const [action, setAction] = useState<string>("complete");
+  const [errorType, setErrorType] = useState<string>("errorCustomer");
   const [completionFiles, setCompletionFiles] = useState<File[]>([]);
   const [errorFiles, setErrorFiles] = useState<File[]>([]);
 
@@ -52,13 +55,30 @@ const ProcessTicketModal: React.FC<ProcessTicketModalProps> = ({
     setIsProcessing(true);
 
     // Create the message
-    const message = `✅ Ticket completed!
+    var message = `${
+      action === "complete" ? "✅ Ticket completed!" : "⚠️ ERROR REPORTED"
+    }
                     🎫 ID: ${ticket?.ticket_id}
                     💰 Amount: ${ticket?.amount}
                     👤 Facebook: ${ticket?.facebook_name}
                     🎮 Game: ${ticket?.game}
                     🆔 Game ID: ${ticket?.game_id}`;
-
+    var errorTypeMsg =
+      errorType == "errorCustomer"
+        ? "ERROR_CUSTOMER"
+        : errorType == "errorInfo"
+        ? "ERROR_INFO"
+        : "ERROR_ADMIN";
+    var errorTypeDetails =
+      errorType == "errorCustomer"
+        ? "Customer account info cannot be found"
+        : errorType == "errorInfo"
+        ? "Customer information doesn't match"
+        : "Cannot fulfill, please contact admin";
+    if (action !== "complete") {
+      message += `\n\n🚫Error Type: ${errorTypeMsg}
+      🔍Details: ${errorTypeDetails}`;
+    }
     console.log(
       "submitProcessTicket message:",
       message,
@@ -80,32 +100,33 @@ const ProcessTicketModal: React.FC<ProcessTicketModalProps> = ({
         );
 
         // setResult(response);
-        if (completionFiles.length <= 0) {
-          return;
-        }
-        const file = await uploadPhoto(completionFiles[0]);
-        console.log("submitProcessTicket file:", file);
-        if (file.message) {
-          try {
-            const response = await sendTelegramPhoto(
-              formDomains[0].telegram_chat_id,
-              completionFiles[0],
-              message || null,
-              "HTML",
-              botToken
-            );
+        if (response) {
+          if (completionFiles.length > 0) {
+            const file = await uploadPhoto(completionFiles[0]);
+            console.log("submitProcessTicket file:", file);
+            if (file.message) {
+              try {
+                const response = await sendTelegramPhoto(
+                  formDomains[0].telegram_chat_id,
+                  completionFiles[0],
+                  message || null,
+                  "HTML",
+                  botToken
+                );
 
-            // setResult(response);
+                // setResult(response);
 
-            if (!response.ok) {
-            } else {
-              onClose();
+                if (response.ok) {
+                  onTicketProcessed();
+                }
+              } catch (err) {
+              } finally {
+                setIsProcessing(false);
+              }
             }
-          } catch (err) {
-          } finally {
-            setIsProcessing(false);
+          } else {
+            onTicketProcessed();
           }
-        } else {
         }
       } catch (err) {
       } finally {
@@ -254,11 +275,64 @@ const ProcessTicketModal: React.FC<ProcessTicketModalProps> = ({
                   display: action === "report_error" ? "block" : "none",
                 }}
               >
-                <div className="mb-3">
+                <div className="flex-col mb-3">
+                  <div className="flex px-16 form-check ">
+                    <input
+                      className="form-check-input"
+                      type="radio"
+                      name="error_type"
+                      id="errorCustomer"
+                      value="ACCOUNT_NOT_FOUND"
+                      checked={errorType === "errorCustomer"}
+                      onChange={() => setErrorType("errorCustomer")}
+                    />
+                    <label
+                      className="ml-2 form-check-label"
+                      htmlFor="errorCustomer"
+                    >
+                      Customer account info cannot be found
+                    </label>
+                  </div>
+                  <div className="flex px-16 form-check">
+                    <input
+                      className="form-check-input"
+                      type="radio"
+                      name="error_type"
+                      id="errorInfo"
+                      value="INVALID_PAYMENT"
+                      checked={errorType === "errorInfo"}
+                      onChange={() => setErrorType("errorInfo")}
+                    />
+                    <label
+                      className="ml-2 form-check-label"
+                      htmlFor="errorInfo"
+                    >
+                      Customer information doesn't match
+                    </label>
+                  </div>
+                  <div className="flex px-16 form-check">
+                    <input
+                      className="form-check-input"
+                      type="radio"
+                      name="error_type"
+                      id="errorAdmin"
+                      value="CONTACT_HOST"
+                      checked={errorType === "errorAdmin"}
+                      onChange={() => setErrorType("errorAdmin")}
+                    />
+                    <label
+                      className="ml-2 form-check-label"
+                      htmlFor="errorAdmin"
+                    >
+                      Cannot fulfill, please contact admin
+                    </label>
+                  </div>
+                </div>
+                <div className="flex flex-col items-start mb-3">
                   <label className="text-left mb-2">
                     Upload Screenshots (Optional)
                   </label>
-                  <div className="file-input-container">
+                  <div className="w-full file-input-container">
                     <input
                       ref={errorInputRef}
                       type="file"

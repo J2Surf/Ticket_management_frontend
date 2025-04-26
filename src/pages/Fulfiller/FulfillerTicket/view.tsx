@@ -945,6 +945,11 @@ export const FulfillerTicket: React.FC = () => {
     return;
   };
 
+  const handleTicketProcessed = () => {
+    setIsProcessTicketModalOpen(false);
+    setAcceptedTickets((prev) => prev.filter((t) => t.id !== ticket?.id));
+  };
+
   const getTicketAction = (status: string): boolean => {
     // return status.toLowerCase() === "validated";
     return true;
@@ -1016,6 +1021,7 @@ export const FulfillerTicket: React.FC = () => {
         ticket={ticket}
         isDarkMode={isDarkMode}
         onClose={() => setIsProcessTicketModalOpen(false)}
+        onTicketProcessed={handleTicketProcessed}
       />
     </div>
   );

@@ -366,7 +366,11 @@ const PaymentSection: React.FC<{
                         isDarkMode ? "text-gray-300" : "text-gray-900"
                       }`}
                     >
-                      {transaction.description || "-"}
+                      {transaction.transaction_type === "deposit"
+                        ? "Deposit"
+                        : transaction.transaction_type === "withdraw"
+                        ? "Withdraw"
+                        : "Ticket Settlement"}
                     </td>
                     <td
                       className={`p-4 font-mono ${
@@ -629,7 +633,7 @@ export const ClientPayment: React.FC = () => {
         type: "DEPOSIT",
         amount: amount,
         token_type: "USDT",
-        description: "Deposit from client's wallet to admin's wallet",
+        description: "Deposit",
         user_id_to: adminUserId,
         address_from: tx.from,
         address_to: adminAddress,
