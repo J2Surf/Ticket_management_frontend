@@ -62,11 +62,12 @@ const ProcessTicketModal: React.FC<ProcessTicketModalProps> = ({
     var message = `${
       action === "complete" ? "✅ Ticket completed!" : "⚠️ ERROR REPORTED"
     }
-                    🎫 ID: ${ticket?.ticket_id}
-                    💰 Amount: ${ticket?.amount}
-                    👤 Facebook: ${ticket?.facebook_name}
-                    🎮 Game: ${ticket?.game}
-                    🆔 Game ID: ${ticket?.game_id}`;
+🎫 ID: ${ticket?.ticket_id}
+💰 Amount: ${ticket?.amount}
+👤 Facebook: ${ticket?.facebook_name}
+🎮 Game: ${ticket?.game}
+🆔 Game ID: ${ticket?.game_id}`;
+
     var errorTypeMsg =
       errorType == "errorCustomer"
         ? "ERROR_CUSTOMER"
