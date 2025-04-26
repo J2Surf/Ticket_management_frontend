@@ -15,6 +15,7 @@ export interface Ticket {
   game_id: string;
   payment_tag: string;
   payment_qr_code: string;
+  chat_group_id: string;
 }
 
 export interface CreateTicketDto {
@@ -26,6 +27,7 @@ export interface CreateTicketDto {
   payment_tag: string;
   account_name: string;
   payment_qr_code: string;
+  telegram_chat_id: string;
 }
 
 export interface TicketResponse {

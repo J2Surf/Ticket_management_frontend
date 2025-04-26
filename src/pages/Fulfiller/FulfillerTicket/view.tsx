@@ -12,6 +12,7 @@ import {
 } from "../../../services/wallet.service";
 import { useAuth } from "../../../hooks/useAuth";
 import ProcessTicketModal from "../../../components/ProcessTicketModal";
+import { formDomains } from "../../../constants/FormDomain";
 
 interface User {
   id: number;
@@ -32,6 +33,7 @@ export interface Ticket {
   account_name: string;
   image: string;
   action?: string;
+  telegram_chat_id: string;
 }
 
 const TicketSection: React.FC<{
@@ -548,6 +550,7 @@ export const FulfillerTicket: React.FC = () => {
     image: apiTicket.image || "",
     game: apiTicket.game,
     game_id: apiTicket.game_id,
+    telegram_chat_id: apiTicket.chat_group_id,
   });
 
   const { showAlert, removeAlert } = useAlert();
@@ -696,6 +699,7 @@ export const FulfillerTicket: React.FC = () => {
         const randomPaymentMethod =
           paymentMethods[Math.floor(Math.random() * paymentMethods.length)];
         const randomAmount = Math.floor(Math.random() * 1000) + 50; // Random amount between 50 and 1050
+        const idxChatId = Math.floor(Math.random() * 2);
 
         // Create a new ticket using the API
         const newTicket = await ticketService.createTicket({
@@ -707,6 +711,7 @@ export const FulfillerTicket: React.FC = () => {
           payment_tag: `TAG-${Math.floor(Math.random() * 1000)}`,
           account_name: `User-${Math.floor(Math.random() * 1000)}`,
           payment_qr_code: "https://example.com/qr-code.png",
+          telegram_chat_id: formDomains[idxChatId].telegram_chat_id,
         });
 
         const validateTicket = await ticketService.validateTicket(
@@ -715,6 +720,7 @@ export const FulfillerTicket: React.FC = () => {
 
         // Convert API ticket to UI ticket and add to incoming tickets
         const uiTicket = convertApiTicketToUiTicket(validateTicket);
+        console.log("IncomingTickets", uiTicket);
         setIncomingTickets((prev) => [...prev, uiTicket]);
 
         console.log("Created new ticket:", uiTicket);
@@ -939,7 +945,7 @@ export const FulfillerTicket: React.FC = () => {
   };
 
   const handleProcessTicket = async (ticket: Ticket, user: User | null) => {
-    console.log("handleProcessTicket");
+    console.log("handleProcessTicket", ticket);
     setTicket(ticket);
     setIsProcessTicketModalOpen(true);
     return;

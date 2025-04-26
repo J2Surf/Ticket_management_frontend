@@ -52,6 +52,10 @@ const ProcessTicketModal: React.FC<ProcessTicketModalProps> = ({
   const ticketIdRef = useRef<HTMLInputElement | null>(null);
 
   const submitProcessTicket = async () => {
+    if (!ticket) {
+      return;
+    }
+
     setIsProcessing(true);
 
     // Create the message
@@ -82,7 +86,8 @@ const ProcessTicketModal: React.FC<ProcessTicketModalProps> = ({
     console.log(
       "submitProcessTicket message:",
       message,
-      process.env.TELEGRAM_BOT_TOKEN
+      process.env.TELEGRAM_BOT_TOKEN,
+      ticket
     );
 
     // Ensure that TELEGRAM_BOT_TOKEN is defined and is a string
@@ -94,7 +99,8 @@ const ProcessTicketModal: React.FC<ProcessTicketModalProps> = ({
 
       try {
         const response = await sendTelegramMessage(
-          formDomains[0].telegram_chat_id,
+          // formDomains[0].telegram_chat_id,
+          ticket.telegram_chat_id,
           message || null,
           botToken
         );
@@ -107,7 +113,8 @@ const ProcessTicketModal: React.FC<ProcessTicketModalProps> = ({
             if (file.message) {
               try {
                 const response = await sendTelegramPhoto(
-                  formDomains[0].telegram_chat_id,
+                  // formDomains[0].telegram_chat_id,
+                  ticket.telegram_chat_id,
                   completionFiles[0],
                   message || null,
                   "HTML",
